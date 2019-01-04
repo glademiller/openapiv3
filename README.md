@@ -1,5 +1,7 @@
 # OpenAPI v3 &emsp;
 
+This crate aims to provide data structures that represent the [Open API v3 specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md).
+
 ## Example
 
 ```rust
@@ -12,6 +14,19 @@ fn main() {
     println!("{:?}", openapi);
 }
 ```
+
+## Goals
+* Provide a deserialization for the specification that maps cleanly to Rust enums etc.
+
+## Non Goals
+* Deserialization and subsequent re-serialization are 100% the same.
+    * Some defaults show-up when serializing that may not have existed in the input.
+
+## Issues
+Schemas without a type will endup as any data type as per the specification and can have any parameters of any schema type. Some Open API documents don't include the type parameter it would be nice to try to derive the type but the crate as of right now meets my needs.
+
+## Similar Crates
+* [openapi](https://crates.io/crates/openapi)
 
 ## License
 

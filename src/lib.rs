@@ -1,7 +1,6 @@
 mod callback;
 mod components;
 mod contact;
-mod deserialization_test;
 mod discriminator;
 mod encoding;
 mod example;
