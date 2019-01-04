@@ -1,3 +1,5 @@
+# OpenAPI v3 &emsp;
+
 ## Example
 
 ```rust
@@ -6,7 +8,7 @@ use openapiv3::OpenAPI;
 
 fn main() {
     let data = include_str!("openapi.json");
-    let openapi: OpenAPI = serde_json::from_str(data);
+    let openapi: OpenAPI = serde_json::from_str(data).expect("Could not deserialize input");
     println!("{:?}", openapi);
 }
 ```
