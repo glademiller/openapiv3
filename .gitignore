@@ -2,3 +2,6 @@
 **/*.rs.bk
 Cargo.lock
 .idea/
+test_data/swagger.*
+.DS_Store
+*/._*

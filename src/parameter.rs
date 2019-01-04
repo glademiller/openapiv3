@@ -1,9 +1,11 @@
+use crate::*;
 use serde::{Deserialize, Serialize};
+use std::collections::BTreeMap;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 /// Describes a single operation parameter.
 ///
 /// A unique parameter is defined by a combination of a name and location.
-pub struct Parameter {
+pub struct ParameterData {
     /// REQUIRED. The name of the parameter. Parameter names are case sensitive.
     /// If in is "path", the name field MUST correspond to the associated path
     /// segment from the path field in the Paths Object. See Path Templating for
@@ -15,41 +17,134 @@ pub struct Parameter {
     /// For all other cases, the name corresponds to the parameter name
     /// used by the in property.
     pub name: String,
-    /// REQUIRED. The location of the parameter. Possible values
-    /// are "query", "header", "path" or "cookie".
-    #[serde(rename = "in")]
-    pub location: ParameterLocation,
     /// A brief description of the parameter. This could
     /// contain examples of use. CommonMark syntax MAY be
     /// used for rich text representation.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
     /// Determines whether this parameter is mandatory.
     /// If the parameter location is "path", this property
     /// is REQUIRED and its value MUST be true. Otherwise,
     /// the property MAY be included and its default value
     /// is false.
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "is_false")]
     pub required: bool,
     /// Specifies that a parameter is deprecated and SHOULD
     /// be transitioned out of usage.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub deprecated: Option<bool>,
-    /// Sets the ability to pass empty-valued parameters. This is
-    /// valid only for query parameters and allows sending a parameter
-    /// with an empty value. Default value is false. If style is used,
-    /// and if behavior is n/a (cannot be serialized), the value of
-    /// allowEmptyValue SHALL be ignored.
-    #[serde(rename = "allowEmptyValue")]
-    pub allow_empty_value: Option<bool>,
+    #[serde(flatten)]
+    format: ParameterSchemaOrContent,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub example: Option<serde_json::Value>,
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub examples: BTreeMap<String, ReferenceOr<Example>>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum ParameterLocation {
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub enum ParameterSchemaOrContent {
+    #[serde(rename = "schema")]
+    Schema(ReferenceOr<Schema>),
+    #[serde(rename = "content")]
+    Content(Content),
+}
+
+pub type Content = BTreeMap<String, MediaType>;
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(tag = "in")]
+pub enum Parameter {
     #[serde(rename = "query")]
-    Query,
+    Query {
+        #[serde(flatten)]
+        parameter_data: ParameterData,
+        #[serde(default)]
+        #[serde(rename = "allowReserved", skip_serializing_if = "is_false")]
+        allow_reserved: bool,
+        #[serde(default)]
+        style: QueryStyle,
+        /// Sets the ability to pass empty-valued parameters. This is
+        /// valid only for query parameters and allows sending a parameter
+        /// with an empty value. Default value is false. If style is used,
+        /// and if behavior is n/a (cannot be serialized), the value of
+        /// allowEmptyValue SHALL be ignored.
+        #[serde(rename = "allowEmptyValue", skip_serializing_if = "Option::is_none")]
+        allow_empty_value: Option<bool>,
+    },
     #[serde(rename = "header")]
-    Header,
+    Header {
+        #[serde(flatten)]
+        parameter_data: ParameterData,
+        #[serde(default)]
+        style: HeaderStyle,
+    },
     #[serde(rename = "path")]
-    Path,
+    Path {
+        #[serde(flatten)]
+        parameter_data: ParameterData,
+        #[serde(default)]
+        style: PathStyle,
+    },
     #[serde(rename = "cookie")]
-    Cookie,
+    Cookie {
+        #[serde(flatten)]
+        parameter_data: ParameterData,
+        #[serde(default)]
+        style: CookieStyle,
+    },
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub enum PathStyle {
+    #[serde(rename = "matrix")]
+    Matrix,
+    #[serde(rename = "label")]
+    Label,
+    #[serde(rename = "simple")]
+    Simple,
+}
+
+impl Default for PathStyle {
+    fn default() -> Self {
+        PathStyle::Simple
+    }
+}
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub enum QueryStyle {
+    #[serde(rename = "form")]
+    Form,
+    #[serde(rename = "spaceDelimited")]
+    SpaceDelimited,
+    #[serde(rename = "pipeDelimited")]
+    PipeDelimited,
+    #[serde(rename = "deepObject")]
+    DeepObject,
+}
+
+impl Default for QueryStyle {
+    fn default() -> Self {
+        QueryStyle::Form
+    }
+}
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub enum CookieStyle {
+    #[serde(rename = "form")]
+    Form,
+}
+
+impl Default for CookieStyle {
+    fn default() -> CookieStyle {
+        CookieStyle::Form
+    }
+}
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub enum HeaderStyle {
+    #[serde(rename = "simple")]
+    Simple,
+}
+
+impl Default for HeaderStyle {
+    fn default() -> HeaderStyle {
+        HeaderStyle::Simple
+    }
 }

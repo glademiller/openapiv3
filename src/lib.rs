@@ -1,5 +1,10 @@
+mod callback;
 mod components;
 mod contact;
+mod deserialization_test;
+mod discriminator;
+mod encoding;
+mod example;
 mod external_documentation;
 mod header;
 mod info;
@@ -13,13 +18,21 @@ mod paths;
 mod reference;
 mod request_body;
 mod responses;
+mod schema;
 mod security_requirement;
+mod security_scheme;
 mod server;
 mod server_variable;
 mod tag;
+mod util;
+mod variant_or;
 
+pub use self::callback::*;
 pub use self::components::*;
 pub use self::contact::*;
+pub use self::discriminator::*;
+pub use self::encoding::*;
+pub use self::example::*;
 pub use self::external_documentation::*;
 pub use self::header::*;
 pub use self::info::*;
@@ -33,15 +46,11 @@ pub use self::paths::*;
 pub use self::reference::*;
 pub use self::request_body::*;
 pub use self::responses::*;
+pub use self::schema::*;
 pub use self::security_requirement::*;
+pub use self::security_scheme::*;
 pub use self::server::*;
 pub use self::server_variable::*;
 pub use self::tag::*;
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
-}
+pub use self::util::*;
+pub use self::variant_or::*;

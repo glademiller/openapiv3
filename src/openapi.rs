@@ -19,8 +19,9 @@ pub struct OpenAPI {
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub servers: Vec<Server>,
     /// REQUIRED. The available paths and operations for the API.
-    pub paths: Vec<Paths>,
+    pub paths: Paths,
     /// An element to hold various schemas for the specification.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub components: Option<Components>,
     /// A declaration of which security mechanisms can be used across the API.
     /// The list of values includes alternative security requirement objects
@@ -41,5 +42,6 @@ pub struct OpenAPI {
     pub tags: Vec<Tag>,
     /// Additional external documentation.
     #[serde(rename = "externalDocs")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub external_docs: Option<ExternalDocumentation>,
 }

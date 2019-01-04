@@ -1,0 +1,902 @@
+openapi: 3.0.0
+info:
+  description: REST APIs for Azure Advisor
+  title: AdvisorManagementClient
+  version: '2017-04-19'
+  x-apisguru-categories:
+    - cloud
+  x-logo:
+    url: >-
+      https://api.apis.guru/v2/cache/logo/https_assets.onestore.ms_cdnfiles_onestorerolling-1606-01000_shell_v3_images_logo_microsoft.png
+  x-origin:
+    - format: swagger
+      url: >-
+        https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/specification/advisor/resource-manager/Microsoft.Advisor/stable/2017-04-19/advisor.json
+      version: '2.0'
+  x-preferred: true
+  x-providerName: azure.com
+  x-serviceName: advisor
+  x-tags:
+    - Azure
+    - Microsoft
+security:
+  - azure_auth:
+      - user_impersonation
+paths:
+  /providers/Microsoft.Advisor/operations:
+    get:
+      deprecated: false
+      description: Lists all the available Advisor REST API operations.
+      operationId: Operations_List
+      parameters:
+        - $ref: '#/components/parameters/apiVersionParameter'
+      responses:
+        '200':
+          description: OK. Successfully retrieved operation list.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationEntityListResult'
+      tags:
+        - Operations
+      x-ms-pageable:
+        nextLinkName: nextLink
+  '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/configurations':
+    get:
+      deprecated: false
+      description: >-
+        Retrieve Azure Advisor configurations and also retrieve configurations
+        of contained resource groups.
+      operationId: Configurations_ListBySubscription
+      parameters:
+        - $ref: '#/components/parameters/apiVersionParameter'
+        - $ref: '#/components/parameters/subscriptionIdParameter'
+      responses:
+        '200':
+          description: OK. Successfully retrieved zero or more configurations.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationListResult'
+              examples:
+                GetConfigurations:
+                  $ref: '#/components/examples/GetConfigurations'
+      summary: Retrieve Azure Advisor configurations.
+      tags:
+        - Configurations
+      x-ms-pageable:
+        nextLinkName: nextLink
+    put:
+      deprecated: false
+      description: >-
+        Create/Overwrite Azure Advisor configuration and also delete all
+        configurations of contained resource groups.
+      operationId: Configurations_CreateInSubscription
+      parameters:
+        - $ref: '#/components/parameters/apiVersionParameter'
+        - $ref: '#/components/parameters/subscriptionIdParameter'
+      responses:
+        '204':
+          description: No Content. Successfully created/overwrote configuration.
+        '400':
+          description: >-
+            Bad Request. Client sent invalid configuration scope, properties or
+            values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ARMErrorResponseBody'
+              examples:
+                PutConfigurations:
+                  $ref: '#/components/examples/PutConfigurations'
+      summary: Create/Overwrite Azure Advisor configuration.
+      tags:
+        - Configurations
+      requestBody:
+        $ref: '#/components/requestBodies/ConfigData'
+  '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/generateRecommendations':
+    post:
+      deprecated: false
+      description: >-
+        Initiates the recommendation generation or computation process for a
+        subscription. This operation is asynchronous. The generated
+        recommendations are stored in a cache in the Advisor service.
+      operationId: Recommendations_Generate
+      parameters:
+        - $ref: '#/components/parameters/subscriptionIdParameter'
+        - $ref: '#/components/parameters/apiVersionParameter'
+      responses:
+        '202':
+          description: Accepted. Recommendation generation has been accepted.
+          headers:
+            Location:
+              description: >-
+                The URL where the status of the asynchronous operation can be
+                checked.
+              schema:
+                type: string
+              example: >-
+                https://management.azure.com/subscriptions/subscriptionId/providers/Microsoft.Microsoft.Advisor/generateRecommendations/recGUID?api-version=2017-04-19
+            Retry-After:
+              description: >-
+                The amount of delay to use while the status of the operation is
+                checked. The value is expressed in seconds.
+              schema:
+                type: string
+              example: '60'
+      tags:
+        - GenerateRecommendations
+  '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/generateRecommendations/{operationId}':
+    get:
+      deprecated: false
+      description: >-
+        Retrieves the status of the recommendation computation or generation
+        process. Invoke this API after calling the generation recommendation.
+        The URI of this API is returned in the Location field of the response
+        header.
+      operationId: Recommendations_GetGenerateStatus
+      parameters:
+        - $ref: '#/components/parameters/subscriptionIdParameter'
+        - description: >-
+            The operation ID, which can be found from the Location field in the
+            generate recommendation response header.
+          in: path
+          name: operationId
+          required: true
+          schema:
+            type: string
+            format: uuid
+          examples:
+            CreateSuppression:
+              value: operationGUID
+        - $ref: '#/components/parameters/apiVersionParameter'
+      responses:
+        '202':
+          description: Accepted. Recommendation generation is in progress.
+        '204':
+          description: NoContent. Recommendation generation has been completed.
+      tags:
+        - GenerateRecommendations
+  '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/recommendations':
+    get:
+      deprecated: false
+      description: >-
+        Obtains cached recommendations for a subscription. The recommendations
+        are generated or computed by invoking generateRecommendations.
+      operationId: Recommendations_List
+      parameters:
+        - $ref: '#/components/parameters/subscriptionIdParameter'
+        - $ref: '#/components/parameters/apiVersionParameter'
+        - description: The filter to apply to the recommendations.
+          in: query
+          name: $filter
+          required: false
+          schema:
+            type: string
+        - description: >-
+            The number of recommendations per page if a paged version of this
+            API is being used.
+          in: query
+          name: $top
+          required: false
+          schema:
+            type: integer
+          examples:
+            ListRecommendations:
+              value: 10
+        - description: The page-continuation token to use with a paged version of this API.
+          in: query
+          name: $skipToken
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK. Successfully obtained cached recommendations.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceRecommendationBaseListResult'
+              examples:
+                ListRecommendations:
+                  $ref: '#/components/examples/ListRecommendations'
+      tags:
+        - GetRecommendations
+      x-ms-pageable:
+        nextLinkName: nextLink
+  '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/suppressions':
+    get:
+      deprecated: false
+      description: >-
+        Retrieves the list of snoozed or dismissed suppressions for a
+        subscription. The snoozed or dismissed attribute of a recommendation is
+        referred to as a suppression.
+      operationId: Suppressions_List
+      parameters:
+        - $ref: '#/components/parameters/subscriptionIdParameter'
+        - $ref: '#/components/parameters/apiVersionParameter'
+        - description: >-
+            The number of suppressions per page if a paged version of this API
+            is being used.
+          in: query
+          name: $top
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - description: The page-continuation token to use with a paged version of this API.
+          in: query
+          name: $skipToken
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK. Successfully got all suppressions in a subscription.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuppressionContractListResult'
+              examples:
+                ListSuppressions:
+                  $ref: '#/components/examples/ListSuppressions'
+      tags:
+        - Suppressions
+      x-ms-pageable:
+        nextLinkName: nextLink
+  '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Advisor/configurations':
+    get:
+      deprecated: false
+      operationId: Configurations_ListByResourceGroup
+      parameters:
+        - $ref: '#/components/parameters/apiVersionParameter'
+        - $ref: '#/components/parameters/subscriptionIdParameter'
+        - description: The name of the Azure resource group.
+          in: path
+          name: resourceGroup
+          required: true
+          schema:
+            type: string
+          examples:
+            GetConfigurations:
+              value: resourceGroup
+      responses:
+        '200':
+          description: OK. Successfully retrieved zero or more configurations.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationListResult'
+              examples:
+                GetConfigurations:
+                  $ref: '#/components/examples/GetConfigurations'
+      summary: Retrieve Azure Advisor configurations.
+      tags:
+        - Configurations
+      x-ms-pageable: {}
+    put:
+      deprecated: false
+      operationId: Configurations_CreateInResourceGroup
+      parameters:
+        - $ref: '#/components/parameters/apiVersionParameter'
+        - $ref: '#/components/parameters/subscriptionIdParameter'
+        - description: The name of the Azure resource group.
+          in: path
+          name: resourceGroup
+          required: true
+          schema:
+            type: string
+          examples:
+            PutConfigurations:
+              value: resourceGroup
+      responses:
+        '204':
+          description: No Content. Successfully created/overwrote configuration.
+        '400':
+          description: >-
+            Bad Request. Client sent invalid configuration scope, properties or
+            values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ARMErrorResponseBody'
+              examples:
+                PutConfigurations:
+                  $ref: '#/components/examples/PutConfigurations'
+      summary: Create/Overwrite Azure Advisor configuration.
+      tags:
+        - Configurations
+      requestBody:
+        $ref: '#/components/requestBodies/ConfigData'
+  '/{resourceUri}/providers/Microsoft.Advisor/recommendations/{recommendationId}':
+    get:
+      deprecated: false
+      description: Obtains details of a cached recommendation.
+      operationId: Recommendations_Get
+      parameters:
+        - description: >-
+            The fully qualified Azure Resource Manager identifier of the
+            resource to which the recommendation applies.
+          in: path
+          name: resourceUri
+          required: true
+          schema:
+            type: string
+          examples:
+            GetRecommendationDetail:
+              value: resourceUri
+        - description: The recommendation ID.
+          in: path
+          name: recommendationId
+          required: true
+          schema:
+            type: string
+          examples:
+            GetRecommendationDetail:
+              value: recommendationId
+        - $ref: '#/components/parameters/apiVersionParameter'
+      responses:
+        '200':
+          description: OK. Successfully got recommendation detail.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceRecommendationBase'
+              examples:
+                GetRecommendationDetail:
+                  $ref: '#/components/examples/GetRecommendationDetail'
+      tags:
+        - GetRecommendations
+  '/{resourceUri}/providers/Microsoft.Advisor/recommendations/{recommendationId}/suppressions/{name}':
+    delete:
+      deprecated: false
+      description: >-
+        Enables the activation of a snoozed or dismissed recommendation. The
+        snoozed or dismissed attribute of a recommendation is referred to as a
+        suppression.
+      operationId: Suppressions_Delete
+      parameters:
+        - description: >-
+            The fully qualified Azure Resource Manager identifier of the
+            resource to which the recommendation applies.
+          in: path
+          name: resourceUri
+          required: true
+          schema:
+            type: string
+          examples:
+            DeleteSuppression:
+              value: resourceUri
+        - description: The recommendation ID.
+          in: path
+          name: recommendationId
+          required: true
+          schema:
+            type: string
+          examples:
+            DeleteSuppression:
+              value: recommendationId
+        - description: The name of the suppression.
+          in: path
+          name: name
+          required: true
+          schema:
+            type: string
+          examples:
+            DeleteSuppression:
+              value: suppressionName1
+        - $ref: '#/components/parameters/apiVersionParameter'
+      responses:
+        '204':
+          description: NoContent. The recommendation has been activated.
+      tags:
+        - Suppressions
+    get:
+      deprecated: false
+      description: Obtains the details of a suppression.
+      operationId: Suppressions_Get
+      parameters:
+        - description: >-
+            The fully qualified Azure Resource Manager identifier of the
+            resource to which the recommendation applies.
+          in: path
+          name: resourceUri
+          required: true
+          schema:
+            type: string
+          examples:
+            GetSuppressionDetail:
+              value: resourceUri
+        - description: The recommendation ID.
+          in: path
+          name: recommendationId
+          required: true
+          schema:
+            type: string
+          examples:
+            GetSuppressionDetail:
+              value: recommendationId
+        - description: The name of the suppression.
+          in: path
+          name: name
+          required: true
+          schema:
+            type: string
+          examples:
+            GetSuppressionDetail:
+              value: suppressionName1
+        - $ref: '#/components/parameters/apiVersionParameter'
+      responses:
+        '200':
+          description: OK. Successfully got suppression detail.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuppressionContract'
+              examples:
+                GetSuppressionDetail:
+                  $ref: '#/components/examples/GetSuppressionDetail'
+      tags:
+        - Suppressions
+    put:
+      deprecated: false
+      description: >-
+        Enables the snoozed or dismissed attribute of a recommendation. The
+        snoozed or dismissed attribute is referred to as a suppression. Use this
+        API to create or update the snoozed or dismissed status of a
+        recommendation.
+      operationId: Suppressions_Create
+      parameters:
+        - description: >-
+            The fully qualified Azure Resource Manager identifier of the
+            resource to which the recommendation applies.
+          in: path
+          name: resourceUri
+          required: true
+          schema:
+            type: string
+          examples:
+            CreateSuppression:
+              value: resourceUri
+        - description: The recommendation ID.
+          in: path
+          name: recommendationId
+          required: true
+          schema:
+            type: string
+          examples:
+            CreateSuppression:
+              value: recommendationId
+        - description: The name of the suppression.
+          in: path
+          name: name
+          required: true
+          schema:
+            type: string
+          examples:
+            CreateSuppression:
+              value: suppressionName1
+        - $ref: '#/components/parameters/apiVersionParameter'
+      responses:
+        '200':
+          description: OK. Successfully created suppression.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuppressionContract'
+              examples:
+                CreateSuppression:
+                  $ref: '#/components/examples/CreateSuppression'
+      tags:
+        - Suppressions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SuppressionContract'
+        description: 'The snoozed or dismissed attribute; for example, the snooze duration.'
+        required: true
+servers:
+  - url: 'https://management.azure.com/'
+components:
+  examples:
+    GetConfigurations:
+      value:
+        nextLink: string
+        value:
+          - id: >-
+              /subscriptions/subscriptionId/resourceGroups/resourceGroup/providers/Microsoft.Advisor/configuration/configurationName
+            name: configurationName
+            properties:
+              exclude: false
+              low_cpu_threshold: '5'
+            type: Microsoft.Advisor/configurations
+    PutConfigurations:
+      value:
+        code: ImproperScope
+        message: localizedMessage
+    ListRecommendations:
+      value:
+        nextLink: >-
+          https://management.azure.com/subscriptions/subscriptionId/providers/Microsoft.Advisor/recommendations?api-version=2017-04-19&$top=10&$skiptoken=skiptoken
+        value:
+          - id: /resourceUri/providers/Microsoft.Advisor/recommendations/recGUID
+            name: recGUID
+            properties:
+              category: HighAvailability
+              impact: Medium
+              impactedField: Microsoft.Compute/availabilitySets
+              impactedValue: armavset
+              lastUpdated: '2017-02-24T22:24:43.3216408Z'
+              risk: Warning
+              shortDescription:
+                problem: This availability set is not configured for fault tolerance
+                solution: >-
+                  To ensure high availability add one or more virtual machines
+                  to this availability set
+            type: Microsoft.Advisor/recommendations
+    ListSuppressions:
+      value:
+        nextLink: >-
+          https://management.azure.com/subscriptions/3f75fdf7-977e-44ad-990d-99f14f0f299f/providers/microsoft.Advisor/suppressions?api-version=2017-04-19&$top=3&$skiptoken=skiptoken
+        value:
+          - id: >-
+              /resourceUri/providers/Microsoft.Advisor/recommendations/recommendationId/suppressions/suppressionName1
+            name: suppressionName1
+            properties:
+              suppressionId: suppressionId1
+              ttl: '7.00:00:00'
+            type: Microsoft.Advisor/suppressions
+          - id: >-
+              /resourceUri/providers/Microsoft.Advisor/recommendations/recommendationId/suppressions/suppressionName2
+            name: suppressionName2
+            properties:
+              suppressionId: suppressionId2
+              ttl: '7.00:00:00'
+            type: Microsoft.Advisor/suppressions
+    GetRecommendationDetail:
+      value:
+        id: >-
+          /resourceUri/providers/Microsoft.Advisor/recommendations/recommendationId
+        name: recommendationId
+        properties:
+          category: HighAvailability
+          impact: Medium
+          impactedField: Microsoft.Compute/availabilitySets
+          impactedValue: armavset
+          lastUpdated: '2017-02-24T22:24:43.3216408Z'
+          risk: Warning
+          shortDescription:
+            problem: This availability set is not configured for fault tolerance
+            solution: >-
+              To ensure high availability add one or more virtual machines to
+              this availability set
+        type: Microsoft.Advisor/recommendations
+    GetSuppressionDetail:
+      value:
+        id: >-
+          /resourceUri/providers/Microsoft.Advisor/recommendations/recommendationId/suppressions/suppressionName1
+        name: suppressionName1
+        properties:
+          suppressionId: suppressionId1
+          ttl: '7.00:00:00'
+        type: Microsoft.Advisor/suppressions
+    CreateSuppression:
+      value:
+        id: >-
+          /resourceUri/providers/Microsoft.Advisor/recommendations/recommendationId/suppressions/suppressionName1
+        name: suppressionName1
+        properties:
+          suppressionId: suppresionId
+          ttl: '07:00:00:00'
+        type: Microsoft.Advisor/suppressions
+  parameters:
+    apiVersionParameter:
+      description: The version of the API to be used with the client request.
+      in: query
+      name: api-version
+      required: true
+      schema:
+        type: string
+      examples:
+        GetConfigurations:
+          value: '2017-04-19'
+        PutConfigurations:
+          value: '2017-04-19'
+        GenerateRecommendations:
+          value: '2017-04-19'
+        CreateSuppression:
+          value: '2017-04-19'
+        ListRecommendations:
+          value: '2017-04-19'
+        ListSuppressions:
+          value: '2017-04-19'
+        GetRecommendationDetail:
+          value: '2017-04-19'
+        DeleteSuppression:
+          value: '2017-04-19'
+        GetSuppressionDetail:
+          value: '2017-04-19'
+    subscriptionIdParameter:
+      description: The Azure subscription ID.
+      in: path
+      name: subscriptionId
+      required: true
+      schema:
+        type: string
+      examples:
+        GetConfigurations:
+          value: subscriptionId
+        PutConfigurations:
+          value: subscriptionId
+        GenerateRecommendations:
+          value: subscriptionId
+        CreateSuppression:
+          value: subscriptionId
+        ListRecommendations:
+          value: subscriptionId
+        ListSuppressions:
+          value: subscriptionId1
+  requestBodies:
+    ConfigData:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConfigData'
+      description: The Azure Advisor configuration data structure.
+      required: true
+  securitySchemes:
+    azure_auth:
+      description: Azure Active Directory OAuth2 Flow.
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: 'https://login.microsoftonline.com/common/oauth2/authorize'
+          scopes:
+            user_impersonation: impersonate your user account
+  schemas:
+    ARMErrorResponseBody:
+      description: ARM error response body.
+      properties:
+        code:
+          description: >-
+            Gets or sets the string that can be used to programmatically
+            identify the error.
+          type: string
+        message:
+          description: >-
+            Gets or sets the string that describes the error in detail and
+            provides debugging information.
+          type: string
+      type: object
+    ConfigData:
+      description: The Advisor configuration data structure.
+      properties:
+        id:
+          description: The resource Id of the configuration resource.
+          type: string
+        name:
+          description: The name of the configuration resource.
+          type: string
+        properties:
+          additionalProperties:
+            type: object
+          description: The list of property name/value pairs.
+          properties:
+            exclude:
+              description: >-
+                Exclude the resource from Advisor evaluations. Valid values:
+                False (default) or True.
+              type: boolean
+            low_cpu_threshold:
+              description: >-
+                Minimum percentage threshold for Advisor low CPU utilization
+                evaluation. Valid only for subscriptions. Valid values: 5
+                (default), 10, 15 or 20.
+              type: string
+          type: object
+        type:
+          description: The type of the configuration resource.
+          type: string
+      type: object
+    ConfigurationListResult:
+      description: The list of Advisor configurations.
+      properties:
+        nextLink:
+          description: The link used to get the next page of configurations.
+          type: string
+        value:
+          description: The list of configurations.
+          items:
+            $ref: '#/components/schemas/ConfigData'
+          type: array
+      type: object
+    OperationDisplayInfo:
+      description: The operation supported by Advisor.
+      properties:
+        description:
+          description: The description of the operation.
+          type: string
+        operation:
+          description: 'The action that users can perform, based on their permission level.'
+          type: string
+        provider:
+          description: 'Service provider: Microsoft Advisor.'
+          type: string
+        resource:
+          description: Resource on which the operation is performed.
+          type: string
+      type: object
+    OperationEntity:
+      description: The operation supported by Advisor.
+      properties:
+        display:
+          $ref: '#/components/schemas/OperationDisplayInfo'
+          description: The operation supported by Advisor.
+        name:
+          description: 'Operation name: {provider}/{resource}/{operation}.'
+          type: string
+      type: object
+    OperationEntityListResult:
+      description: The list of Advisor operations.
+      properties:
+        nextLink:
+          description: The link used to get the next page of operations.
+          type: string
+        value:
+          description: The list of operations.
+          items:
+            $ref: '#/components/schemas/OperationEntity'
+          type: array
+      type: object
+    RecommendationProperties:
+      description: The properties of the recommendation.
+      properties:
+        category:
+          description: The category of the recommendation.
+          enum:
+            - HighAvailability
+            - Security
+            - Performance
+            - Cost
+          type: string
+          x-ms-enum:
+            modelAsString: true
+            name: category
+        extendedProperties:
+          additionalProperties:
+            type: string
+          description: Extended properties
+          type: object
+        impact:
+          description: The business impact of the recommendation.
+          enum:
+            - High
+            - Medium
+            - Low
+          type: string
+          x-ms-enum:
+            modelAsString: true
+            name: impact
+        impactedField:
+          description: The resource type identified by Advisor.
+          type: string
+        impactedValue:
+          description: The resource identified by Advisor.
+          type: string
+        lastUpdated:
+          description: >-
+            The most recent time that Advisor checked the validity of the
+            recommendation.
+          format: date-time
+          type: string
+        metadata:
+          additionalProperties:
+            type: object
+          description: The recommendation metadata.
+          type: object
+        recommendationTypeId:
+          description: The recommendation-type GUID.
+          type: string
+        risk:
+          description: The potential risk of not implementing the recommendation.
+          enum:
+            - Error
+            - Warning
+            - None
+          type: string
+          x-ms-enum:
+            modelAsString: true
+            name: risk
+        shortDescription:
+          $ref: '#/components/schemas/ShortDescription'
+          description: A summary of the recommendation.
+        suppressionIds:
+          description: The list of snoozed and dismissed rules for the recommendation.
+          items:
+            format: uuid
+            type: string
+          type: array
+      type: object
+    Resource:
+      description: An Azure resource.
+      properties:
+        id:
+          description: The resource ID.
+          readOnly: true
+          type: string
+        name:
+          description: The name of the resource.
+          readOnly: true
+          type: string
+        type:
+          description: The type of the resource.
+          readOnly: true
+          type: string
+      x-ms-azure-resource: true
+    ResourceRecommendationBase:
+      allOf:
+        - $ref: '#/components/schemas/Resource'
+      description: Advisor Recommendation.
+      properties:
+        properties:
+          $ref: '#/components/schemas/RecommendationProperties'
+          description: The properties of the recommendation.
+          x-ms-client-flatten: true
+      type: object
+    ResourceRecommendationBaseListResult:
+      description: The list of Advisor recommendations.
+      properties:
+        nextLink:
+          description: The link used to get the next page of recommendations.
+          type: string
+        value:
+          description: The list of recommendations.
+          items:
+            $ref: '#/components/schemas/ResourceRecommendationBase'
+          type: array
+      type: object
+    ShortDescription:
+      description: A summary of the recommendation.
+      properties:
+        problem:
+          description: The issue or opportunity identified by the recommendation.
+          type: string
+        solution:
+          description: The remediation action suggested by the recommendation.
+          type: string
+      type: object
+    SuppressionContract:
+      allOf:
+        - $ref: '#/components/schemas/Resource'
+      description: >-
+        The details of the snoozed or dismissed rule; for example, the duration,
+        name, and GUID associated with the rule.
+      properties:
+        properties:
+          $ref: '#/components/schemas/SuppressionProperties'
+          description: The properties of the suppression.
+          x-ms-client-flatten: true
+      type: object
+    SuppressionContractListResult:
+      description: The list of Advisor suppressions.
+      properties:
+        nextLink:
+          description: The link used to get the next page of suppressions.
+          type: string
+        value:
+          description: The list of suppressions.
+          items:
+            $ref: '#/components/schemas/SuppressionContract'
+          type: array
+      type: object
+    SuppressionProperties:
+      description: The properties of the suppression.
+      properties:
+        suppressionId:
+          description: The GUID of the suppression.
+          type: string
+        ttl:
+          description: The duration for which the suppression is valid.
+          type: string
+      type: object

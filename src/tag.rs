@@ -9,8 +9,9 @@ pub struct Tag {
     pub name: String,
     /// A short description for the tag.
     /// CommonMark syntax MAY be used for rich text representation.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
     /// Additional external documentation for this tag.
-    #[serde(rename = "externalDocs")]
+    #[serde(rename = "externalDocs", skip_serializing_if = "Option::is_none")]
     pub external_docs: Option<ExternalDocumentation>,
 }

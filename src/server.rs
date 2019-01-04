@@ -14,8 +14,10 @@ pub struct Server {
     /// An optional string describing the host designated
     /// by the URL. CommonMark syntax MAY be used for rich
     /// text representation.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
     /// A map between a variable name and its value.
     /// The value is used for substitution in the server's URL template.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub variables: Option<BTreeMap<String, ServerVariable>>,
 }

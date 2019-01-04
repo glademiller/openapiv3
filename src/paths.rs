@@ -8,13 +8,21 @@ use std::collections::BTreeMap;
 /// viewer but they will not know which operations and
 /// parameters are available.
 pub struct PathItem {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub get: Option<Operation>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub put: Option<Operation>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub post: Option<Operation>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub delete: Option<Operation>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub options: Option<Operation>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub head: Option<Operation>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub patch: Option<Operation>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub trace: Option<Operation>,
     /// An alternative server array to service all operations in this path.
     #[serde(default)]
