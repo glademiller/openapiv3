@@ -44,43 +44,43 @@ pub enum Schema {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AnySchema {
     #[serde(flatten)]
-    schema_data: SchemaData,
+    pub schema_data: SchemaData,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pattern: Option<String>,
+    pub pattern: Option<String>,
     #[serde(rename = "multipleOf", skip_serializing_if = "Option::is_none")]
-    multiple_of: Option<f64>,
+    pub multiple_of: Option<f64>,
     #[serde(rename = "exclusiveMinimum", skip_serializing_if = "Option::is_none")]
-    exclusive_minimum: Option<bool>,
+    pub exclusive_minimum: Option<bool>,
     #[serde(rename = "exclusiveMaximum", skip_serializing_if = "Option::is_none")]
-    exclusive_maximum: Option<bool>,
+    pub exclusive_maximum: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    minimum: Option<f64>,
+    pub minimum: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    maximum: Option<f64>,
+    pub maximum: Option<f64>,
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
-    properties: BTreeMap<String, ReferenceOr<Box<Schema>>>,
+    pub properties: BTreeMap<String, ReferenceOr<Box<Schema>>>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    required: Vec<String>,
+    pub required: Vec<String>,
     #[serde(
         default,
         rename = "additionalProperties",
         skip_serializing_if = "is_false"
     )]
-    additional_properties: bool, //@todo support this as an empty object
+    pub additional_properties: bool, //@todo support this as an empty object
     #[serde(rename = "minProperties", skip_serializing_if = "Option::is_none")]
-    min_propeties: Option<usize>,
+    pub min_propeties: Option<usize>,
     #[serde(rename = "maxProperties", skip_serializing_if = "Option::is_none")]
-    max_properties: Option<usize>,
+    pub max_properties: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    items: Option<ReferenceOr<Box<Schema>>>, //@todo Mixed type arrays using oneOf
+    pub items: Option<ReferenceOr<Box<Schema>>>, //@todo Mixed type arrays using oneOf
     #[serde(rename = "minItems", skip_serializing_if = "Option::is_none")]
-    min_items: Option<usize>,
+    pub min_items: Option<usize>,
     #[serde(rename = "maxItems", skip_serializing_if = "Option::is_none")]
-    max_items: Option<usize>,
+    pub max_items: Option<usize>,
     #[serde(rename = "uniqueItems", skip_serializing_if = "Option::is_none")]
-    unique_items: Option<bool>,
+    pub unique_items: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    format: Option<String>,
+    pub format: Option<String>,
 }
 
 //@todo  This breaks things

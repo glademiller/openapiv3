@@ -5,21 +5,21 @@ use std::collections::BTreeMap;
 #[serde(rename_all = "camelCase")]
 pub struct Components {
 	#[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
-	security_schemes: BTreeMap<String, ReferenceOr<SecurityScheme>>,
+	pub security_schemes: BTreeMap<String, ReferenceOr<SecurityScheme>>,
 	#[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
-	responses: BTreeMap<String, ReferenceOr<Response>>,
+	pub responses: BTreeMap<String, ReferenceOr<Response>>,
 	#[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
-	parameters: BTreeMap<String, ReferenceOr<Parameter>>,
+	pub parameters: BTreeMap<String, ReferenceOr<Parameter>>,
 	#[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
-	examples: BTreeMap<String, ReferenceOr<Example>>,
+	pub examples: BTreeMap<String, ReferenceOr<Example>>,
 	#[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
-	request_bodies: BTreeMap<String, ReferenceOr<RequestBody>>,
+	pub request_bodies: BTreeMap<String, ReferenceOr<RequestBody>>,
 	#[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
-	headers: BTreeMap<String, ReferenceOr<Header>>,
+	pub headers: BTreeMap<String, ReferenceOr<Header>>,
 	#[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
-	schemas: BTreeMap<String, ReferenceOr<Schema>>,
+	pub schemas: BTreeMap<String, ReferenceOr<Schema>>,
 	#[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
-	links: BTreeMap<String, ReferenceOr<Link>>,
+	pub links: BTreeMap<String, ReferenceOr<Link>>,
 	#[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
-	callbacks: BTreeMap<String, ReferenceOr<Callback>>,
+	pub callbacks: BTreeMap<String, ReferenceOr<Callback>>,
 }
