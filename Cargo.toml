@@ -4,7 +4,10 @@ version = "0.1.0"
 authors = ["Glade Miller <glademiller@gmail.com>"]
 edition = "2018"
 license = "MIT/Apache-2.0"
-keywords = ["serde", "openapi", "v3"]
+keywords = ["openapi", "v3"]
+homepage = "https://github.com/glademiller/openapiv3"
+repository = "https://github.com/glademiller/openapiv3"
+description = "This crate aims to provide data structures that represent the Open API v3 specification easily deserializable with serde."
 
 [dependencies]
 serde = {version = "1.0", features = ["derive"]}
