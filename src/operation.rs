@@ -47,4 +47,18 @@ pub struct Operation {
     /// REQUIRED. The list of possible responses as they are returned
     /// from executing this operation.
     pub responses: Responses,
+    /// A declaration of which security mechanisms can be used for this operation.
+    /// The list of values includes alternative security requirement objects that can
+    /// be used. Only one of the security requirement objects need to be satisfied to
+    /// authorize a request. This definition overrides any declared top-level security.
+    /// To remove a top-level security declaration, an empty array can be used.
+    #[serde(default)]
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub security: Vec<SecurityRequirement>,
+    /// An alternative server array to service this operation.
+    /// If an alternative server object is specified at the
+    /// Path Item Object or Root level, it will be overridden by this value.
+    #[serde(default)]
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub servers: Vec<Server>,
 }
