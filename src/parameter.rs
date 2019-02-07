@@ -34,7 +34,7 @@ pub struct ParameterData {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub deprecated: Option<bool>,
     #[serde(flatten)]
-    format: ParameterSchemaOrContent,
+    pub format: ParameterSchemaOrContent,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub example: Option<serde_json::Value>,
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
