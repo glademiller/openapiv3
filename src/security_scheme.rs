@@ -42,13 +42,13 @@ pub enum APIKeyLocation {
 #[serde(rename_all = "camelCase")]
 pub struct OAuth2Flows {
 	#[serde(flatten)]
-	implicit: Option<OAuth2Flow>,
+	pub implicit: Option<OAuth2Flow>,
 	#[serde(flatten)]
-	password: Option<OAuth2Flow>,
+	pub password: Option<OAuth2Flow>,
 	#[serde(flatten)]
-	client_credentials: Option<OAuth2Flow>,
+	pub client_credentials: Option<OAuth2Flow>,
 	#[serde(flatten)]
-	authorization_code: Option<OAuth2Flow>,
+	pub authorization_code: Option<OAuth2Flow>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
