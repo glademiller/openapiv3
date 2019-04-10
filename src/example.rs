@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
-#[derive(Debug, Clone, Serialize, Deserialize)]
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct Example {
     /// Short description for the example.
     #[serde(skip_serializing_if = "Option::is_none")]

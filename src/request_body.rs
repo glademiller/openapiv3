@@ -1,7 +1,8 @@
 use crate::*;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
-#[derive(Debug, Clone, Serialize, Deserialize)]
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct RequestBody {
     /// A brief description of the request body.
     /// This could contain examples of use.

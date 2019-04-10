@@ -1,10 +1,11 @@
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
-#[derive(Debug, Clone, Serialize, Deserialize)]
+
 /// Defines a security scheme that can be used by the operations.
 /// Supported schemes are HTTP authentication, an API key (either as a
 /// header or as a query parameter), OAuth2's common flows (implicit, password,
 /// application and access code) as defined in RFC6749, and OpenID Connect Discovery.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(tag = "type")]
 pub enum SecurityScheme {
 	#[serde(rename = "apiKey")]
@@ -28,7 +29,7 @@ pub enum SecurityScheme {
 	},
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum APIKeyLocation {
 	#[serde(rename = "query")]
 	Query,
@@ -38,7 +39,7 @@ pub enum APIKeyLocation {
 	Cookie,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct OAuth2Flows {
 	#[serde(flatten)]
@@ -51,7 +52,7 @@ pub struct OAuth2Flows {
 	pub authorization_code: Option<OAuth2Flow>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum OAuth2Flow {
 	#[serde(rename = "implicit")]
 	Implicit {

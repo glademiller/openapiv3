@@ -1,7 +1,8 @@
 use crate::*;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
-#[derive(Debug, Clone, Serialize, Deserialize)]
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct MediaType {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub schema: Option<ReferenceOr<Schema>>,

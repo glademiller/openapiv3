@@ -1,8 +1,9 @@
 use crate::*;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
+
 /// A single encoding definition applied to a single schema property.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct Encoding {
     /// The Content-Type for encoding a specific property.

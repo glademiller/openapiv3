@@ -1,7 +1,8 @@
 use crate::*;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
-#[derive(Debug, Clone, Serialize, Deserialize)]
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct SchemaData {
     #[serde(default, skip_serializing_if = "is_false")]
@@ -20,9 +21,11 @@ pub struct SchemaData {
     pub title: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub discriminator: Option<Discriminator>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(untagged)]
 pub enum Schema {
     Schema(Box<SchemaVariant>),
@@ -41,7 +44,7 @@ pub enum Schema {
     },
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct AnySchema {
     #[serde(flatten)]
     pub schema_data: SchemaData,
@@ -84,7 +87,7 @@ pub struct AnySchema {
 }
 
 //@todo  This breaks things
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(tag = "type")]
 pub enum SchemaVariant {
     #[serde(rename = "string")]
@@ -180,7 +183,7 @@ pub enum SchemaVariant {
     },
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum NumberFormat {
     #[serde(rename = "float")]
     Float,
@@ -188,7 +191,7 @@ pub enum NumberFormat {
     Double,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum IntegerFormat {
     #[serde(rename = "int32")]
     Int32,
@@ -196,7 +199,7 @@ pub enum IntegerFormat {
     Int64,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum StringFormat {
     #[serde(rename = "date")]
     Date,

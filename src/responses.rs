@@ -1,7 +1,8 @@
 use crate::*;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
-#[derive(Debug, Clone, Serialize, Deserialize)]
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct Responses {
     /// The documentation of responses other than the ones declared
     /// for specific HTTP response codes. Use this field to cover
@@ -27,7 +28,7 @@ pub struct Responses {
     pub responses: BTreeMap<String, ReferenceOr<Response>>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct Response {
     /// REQUIRED. A short description of the response.
     /// CommonMark syntax MAY be used for rich text representation.

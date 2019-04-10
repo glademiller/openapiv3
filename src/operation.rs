@@ -1,8 +1,9 @@
 use crate::*;
 use serde::{Deserialize, Serialize};
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+
 /// Describes a single API operation on a path.
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub struct Operation {
     /// A list of tags for API documentation control.
     /// Tags can be used for logical grouping of operations

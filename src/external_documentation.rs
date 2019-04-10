@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
-#[derive(Debug, Clone, Serialize, Deserialize)]
+
 /// Allows referencing an external resource for extended documentation.
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct ExternalDocumentation {
     /// A short description of the target documentation.
     /// CommonMark syntax MAY be used for rich text representation.
