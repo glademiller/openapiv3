@@ -1,12 +1,13 @@
 use crate::*;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
-#[derive(Debug, Clone, Serialize, Deserialize)]
+
 /// Describes the operations available on a single path.
 /// A Path Item MAY be empty, due to ACL constraints.
 /// The path itself is still exposed to the documentation
 /// viewer but they will not know which operations and
 /// parameters are available.
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct PathItem {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub get: Option<Operation>,

@@ -1,11 +1,12 @@
 use crate::*;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
+
 /// Holds a set of reusable objects for different aspects of the OAS.
 /// All objects defined within the components object will have no effect
 /// on the API unless they are explicitly referenced from properties
 /// outside the components object.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct Components {
 	/// An object to hold reusable Security Scheme Objects.

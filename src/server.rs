@@ -1,8 +1,9 @@
 use crate::*;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
-#[derive(Debug, Clone, Serialize, Deserialize)]
+
 /// An object representing a Server.
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct Server {
     /// REQUIRED. A URL to the target host.
     /// This URL supports Server Variables and MAY be relative,

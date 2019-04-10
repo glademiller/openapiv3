@@ -1,7 +1,7 @@
 use crate::*;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct OpenAPI {
     /// REQUIRED. This string MUST be the semantic version number of the
     /// OpenAPI Specification version that the OpenAPI document uses.

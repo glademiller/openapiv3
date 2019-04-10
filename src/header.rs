@@ -1,12 +1,13 @@
 use crate::*;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
+
 /// The Header Object follows the structure of the Parameter Object with the following changes:
 ///
 /// 1) name MUST NOT be specified, it is given in the corresponding headers map.
 /// 2) in MUST NOT be specified, it is implicitly in header.
 /// 3) All traits that are affected by the location MUST be applicable to a location of header (for example, style).
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct Header {
     /// A brief description of the parameter. This could

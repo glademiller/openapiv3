@@ -1,0 +1,51 @@
+---
+openapi: 3.0.0
+info:
+  title: Swagger Petstore
+  license:
+    name: MIT
+  version: 1.0.0
+servers:
+  - url: "http://petstore.swagger.io/v1"
+paths: {}
+components:
+  schemas:
+    Cat:
+      allOf:
+        - $ref: "#/components/schemas/Pet"
+        - type: object
+          properties:
+            huntingSkill:
+              type: string
+              description: The measured skill for hunting
+              enum:
+                - clueless
+                - lazy
+                - adventurous
+                - aggressive
+          required:
+            - huntingSkill
+    Dog:
+      allOf:
+        - $ref: "#/components/schemas/Pet"
+        - type: object
+          properties:
+            packSize:
+              type: integer
+              format: int32
+              description: the size of the pack the dog is from
+              minimum: 0
+          required:
+            - packSize
+    Pet:
+      type: object
+      properties:
+        name:
+          type: string
+        petType:
+          type: string
+      required:
+        - name
+        - petType
+      discriminator:
+        propertyName: petType

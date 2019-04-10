@@ -8,13 +8,13 @@ use std::collections::BTreeMap;
 /// on the value associated with it.
 ///
 /// When using the discriminator, inline schemas will not be considered.
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct Discriminator {
     /// REQUIRED. The name of the property in the payload that
     /// will hold the discriminator value.
     pub property_name: String,
     /// An object to hold mappings between payload values and schema names or references.
-    #[serde(default)]
+    #[serde(default, skip_serializing_if="BTreeMap::is_empty")]
     pub mapping: BTreeMap<String, String>,
 }

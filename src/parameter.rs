@@ -1,10 +1,11 @@
 use crate::*;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
-#[derive(Debug, Clone, Serialize, Deserialize)]
+
 /// Describes a single operation parameter.
 ///
 /// A unique parameter is defined by a combination of a name and location.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct ParameterData {
     /// REQUIRED. The name of the parameter. Parameter names are case sensitive.
     /// If in is "path", the name field MUST correspond to the associated path
@@ -41,7 +42,7 @@ pub struct ParameterData {
     pub examples: BTreeMap<String, ReferenceOr<Example>>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub enum ParameterSchemaOrContent {
     #[serde(rename = "schema")]
     Schema(ReferenceOr<Schema>),
@@ -51,7 +52,7 @@ pub enum ParameterSchemaOrContent {
 
 pub type Content = BTreeMap<String, MediaType>;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 #[serde(tag = "in")]
 pub enum Parameter {
     #[serde(rename = "query")]
@@ -94,7 +95,7 @@ pub enum Parameter {
     },
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub enum PathStyle {
     #[serde(rename = "matrix")]
     Matrix,
@@ -109,7 +110,7 @@ impl Default for PathStyle {
         PathStyle::Simple
     }
 }
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub enum QueryStyle {
     #[serde(rename = "form")]
     Form,
@@ -126,7 +127,7 @@ impl Default for QueryStyle {
         QueryStyle::Form
     }
 }
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub enum CookieStyle {
     #[serde(rename = "form")]
     Form,
@@ -137,7 +138,7 @@ impl Default for CookieStyle {
         CookieStyle::Form
     }
 }
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub enum HeaderStyle {
     #[serde(rename = "simple")]
     Simple,

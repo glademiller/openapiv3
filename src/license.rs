@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
-#[derive(Debug, Clone, Serialize, Deserialize)]
+
 /// License information for the exposed API.
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct License {
     /// REQUIRED. The license name used for the API.
     pub name: String,

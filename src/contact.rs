@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
-#[derive(Debug, Clone, Serialize, Deserialize)]
+
 /// Contact information for the exposed API.
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct Contact {
     /// The identifying name of the contact person/organization.
     #[serde(skip_serializing_if = "Option::is_none")]
