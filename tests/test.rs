@@ -149,80 +149,71 @@ fn petstore_discriminated() {
         ],
         components: Some(Components {
             schemas: map!{
-                "Cat".to_owned() => ReferenceOr::Item(Schema::AllOf{
-                    all_of: vec![
-                        ReferenceOr::Reference { reference: "#/components/schemas/Pet".to_owned() },
-                        ReferenceOr::Item(Schema::Schema(Box::new(SchemaVariant::Object {
-                            properties: map!{
-                                "huntingSkill".to_owned() => ReferenceOr::Item(Box::new(Schema::Schema(Box::new(SchemaVariant::String {
-                                    format: VariantOrUnknownOrEmpty::Empty,
-                                    pattern: None,
-                                    schema_data: SchemaData {
-                                        description: Some("The measured skill for hunting".to_owned()),
-                                        ..Default::default()
-                                    },
-                                    enumeration: vec![
-                                        "clueless".to_owned(),
-                                        "lazy".to_owned(),
-                                        "adventurous".to_owned(),
-                                        "aggressive".to_owned(),
-                                    ]
-                                })))),
-                            },
-                            required: vec!["huntingSkill".to_owned()],
-                            additional_properties: false,
-                            min_properties: None,
-                            max_properties: None,
-                            schema_data: Default::default(),
-                        }))),
-                    ]
-                }),
-                "Dog".to_owned() => ReferenceOr::Item(Schema::AllOf{
-                    all_of: vec![
-                        ReferenceOr::Reference { reference: "#/components/schemas/Pet".to_owned() },
-                        ReferenceOr::Item(Schema::Schema(Box::new(SchemaVariant::Object {
-                            properties: map!{
-                                "packSize".to_owned() => ReferenceOr::Item(Box::new(Schema::Schema(Box::new(SchemaVariant::Integer {
-                                    format: VariantOrUnknownOrEmpty::Item(IntegerFormat::Int32),
-                                    schema_data: SchemaData {
-                                        description: Some("the size of the pack the dog is from".to_owned()),
-                                        ..Default::default()
-                                    },
-                                    multiple_of: None,
-                                    exclusive_minimum: false,
-                                    exclusive_maximum: false,
-                                    minimum: Some(0),
-                                    maximum: None,
-                                    enumeration: Vec::new(),
-                                })))),
-                            },
-                            required: vec!["packSize".to_owned()],
-                            additional_properties: false,
-                            min_properties: None,
-                            max_properties: None,
-                            schema_data: Default::default(),
-                        }))),
-                    ]
-                }),
-                "Pet".to_owned() => ReferenceOr::Item(Schema::Schema(Box::new(SchemaVariant::Object {
-                    properties: map!{
-                        "name".to_owned() => ReferenceOr::Item(Box::new(Schema::Schema(Box::new(SchemaVariant::String {
-                            format: VariantOrUnknownOrEmpty::Empty,
-                            pattern: None,
-                            schema_data: Default::default(),
-                            enumeration: Vec::new(),
-                        })))),
-                        "petType".to_owned() => ReferenceOr::Item(Box::new(Schema::Schema(Box::new(SchemaVariant::String {
-                            format: VariantOrUnknownOrEmpty::Empty,
-                            pattern: None,
-                            schema_data: Default::default(),
-                            enumeration: Vec::new(),
-                        })))),
+                "Cat".to_owned() => ReferenceOr::Item(Schema {
+                    schema_data: SchemaData {
+                        description: Some("A representation of a cat".to_owned()),
+                        ..Default::default()
                     },
-                    required: vec!["name".to_owned(), "petType".to_owned()],
-                    additional_properties: false,
-                    min_properties: None,
-                    max_properties: None,
+                    schema_kind: SchemaKind::AllOf { all_of: vec![
+                        ReferenceOr::ref_("#/components/schemas/Pet"),
+                        ReferenceOr::Item(Schema {
+                            schema_data: Default::default(),
+                            schema_kind: SchemaKind::Type(Type::Object(ObjectType {
+                                properties: map!{
+                                    "huntingSkill".to_owned() => ReferenceOr::boxed_item(Schema {
+                                        schema_data: SchemaData {
+                                            description: Some("The measured skill for hunting".to_owned()),
+                                            ..Default::default()
+                                        },
+                                        schema_kind: SchemaKind::Type(Type::String(StringType {
+                                            enumeration: vec![
+                                                "clueless".to_owned(),
+                                                "lazy".to_owned(),
+                                                "adventurous".to_owned(),
+                                                "aggressive".to_owned(),
+                                            ],
+                                            ..Default::default()
+                                        })),
+                                    }),
+                                },
+                                required: vec!["huntingSkill".to_owned()],
+                                ..Default::default()
+                            })),
+                        }),
+                    ]},
+                }),
+
+                "Dog".to_owned() => ReferenceOr::Item(Schema {
+                    schema_data: SchemaData {
+                        description: Some("A representation of a dog".to_owned()),
+                        ..Default::default()
+                    },
+                    schema_kind: SchemaKind::AllOf { all_of: vec![
+                        ReferenceOr::ref_("#/components/schemas/Pet"),
+                        ReferenceOr::Item(Schema {
+                            schema_data: Default::default(),
+                            schema_kind: SchemaKind::Type(Type::Object(ObjectType {
+                                properties: map!{
+                                    "packSize".to_owned() => ReferenceOr::boxed_item(Schema {
+                                        schema_data: SchemaData {
+                                            description: Some("the size of the pack the dog is from".to_owned()),
+                                            ..Default::default()
+                                        },
+                                        schema_kind: SchemaKind::Type(Type::Integer(IntegerType {
+                                            format: VariantOrUnknownOrEmpty::Item(IntegerFormat::Int32),
+                                            minimum: Some(0),
+                                            ..Default::default()
+                                        })),
+                                    }),
+                                },
+                                required: vec!["packSize".to_owned()],
+                                ..Default::default()
+                            })),
+                        }),
+                    ]},
+                }),
+
+                "Pet".to_owned() => ReferenceOr::Item(Schema {
                     schema_data: SchemaData {
                         discriminator: Some(Discriminator {
                             property_name: "petType".to_owned(),
@@ -230,14 +221,27 @@ fn petstore_discriminated() {
                         }),
                         ..Default::default()
                     },
-                }))),
+                    schema_kind: SchemaKind::Type(Type::Object(ObjectType {
+                        properties: map!{
+                            "name".to_owned() => ReferenceOr::boxed_item(Schema {
+                                schema_data: Default::default(),
+                                schema_kind: SchemaKind::Type(Type::String(Default::default())),
+                            }),
+                            "petType".to_owned() => ReferenceOr::boxed_item(Schema {
+                                schema_data: Default::default(),
+                                schema_kind: SchemaKind::Type(Type::String(Default::default())),
+                            }),
+                        },
+                        required: vec!["name".to_owned(), "petType".to_owned()],
+                        ..Default::default()
+                    })),
+                }),
             },
             ..Default::default()
         }),
         ..Default::default()
     };
-    assert_eq!(
-        serde_yaml::to_string(&api).unwrap(),
-        include_str!("../fixtures/petstore-discriminated.yaml")
-    );
+    let yaml = include_str!("../fixtures/petstore-discriminated.yaml");
+    assert_eq!(serde_yaml::to_string(&api).unwrap(), yaml);
+    assert_eq!(api, serde_yaml::from_str(yaml).unwrap());
 }

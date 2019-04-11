@@ -11,13 +11,14 @@ paths: {}
 components:
   schemas:
     Cat:
+      description: A representation of a cat
       allOf:
         - $ref: "#/components/schemas/Pet"
         - type: object
           properties:
             huntingSkill:
-              type: string
               description: The measured skill for hunting
+              type: string
               enum:
                 - clueless
                 - lazy
@@ -26,18 +27,21 @@ components:
           required:
             - huntingSkill
     Dog:
+      description: A representation of a dog
       allOf:
         - $ref: "#/components/schemas/Pet"
         - type: object
           properties:
             packSize:
+              description: the size of the pack the dog is from
               type: integer
               format: int32
-              description: the size of the pack the dog is from
               minimum: 0
           required:
             - packSize
     Pet:
+      discriminator:
+        propertyName: petType
       type: object
       properties:
         name:
@@ -47,5 +51,3 @@ components:
       required:
         - name
         - petType
-      discriminator:
-        propertyName: petType
