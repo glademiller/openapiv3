@@ -23,38 +23,65 @@ pub struct SchemaData {
     pub description: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub discriminator: Option<Discriminator>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub default: Option<serde_json::Value>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct Schema {
+    #[serde(flatten)]
+    pub schema_data: SchemaData,
+    #[serde(flatten)]
+    pub schema_kind: SchemaKind,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(untagged)]
-pub enum Schema {
-    Schema(Box<SchemaVariant>),
-    Any(Box<AnySchema>),
+pub enum SchemaKind {
+    Type(Type),
     OneOf {
-        #[serde(default, rename = "oneOf")]
+        #[serde(rename = "oneOf")]
         one_of: Vec<ReferenceOr<Schema>>,
     },
     AllOf {
-        #[serde(default, rename = "allOf")]
+        #[serde(rename = "allOf")]
         all_of: Vec<ReferenceOr<Schema>>,
     },
     AnyOf {
-        #[serde(default, rename = "anyOf")]
+        #[serde(rename = "anyOf")]
         any_of: Vec<ReferenceOr<Schema>>,
     },
+    Any(AnySchema),
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(tag = "type", rename_all = "lowercase")]
+pub enum Type {
+    String(StringType),
+    Number(NumberType),
+    Integer(IntegerType),
+    Object(ObjectType),
+    Array(ArrayType),
+    Boolean{},
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(untagged)]
+pub enum AdditionalProperties {
+    Any(bool),
+    Schema(Box<ReferenceOr<Schema>>),
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub struct AnySchema {
-    #[serde(flatten)]
-    pub schema_data: SchemaData,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub pattern: Option<String>,
-    #[serde(rename = "multipleOf", skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub multiple_of: Option<f64>,
-    #[serde(rename = "exclusiveMinimum", skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub exclusive_minimum: Option<bool>,
-    #[serde(rename = "exclusiveMaximum", skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub exclusive_maximum: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub minimum: Option<f64>,
@@ -64,151 +91,120 @@ pub struct AnySchema {
     pub properties: BTreeMap<String, ReferenceOr<Box<Schema>>>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub required: Vec<String>,
-    #[serde(
-        default,
-        rename = "additionalProperties",
-        skip_serializing_if = "is_false"
-    )]
-    pub additional_properties: bool, //@todo support this as an empty object
-    #[serde(rename = "minProperties", skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub additional_properties: Option<AdditionalProperties>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub min_propeties: Option<usize>,
-    #[serde(rename = "maxProperties", skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub max_properties: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub items: Option<ReferenceOr<Box<Schema>>>, //@todo Mixed type arrays using oneOf
-    #[serde(rename = "minItems", skip_serializing_if = "Option::is_none")]
+    pub items: Option<ReferenceOr<Box<Schema>>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub min_items: Option<usize>,
-    #[serde(rename = "maxItems", skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub max_items: Option<usize>,
-    #[serde(rename = "uniqueItems", skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub unique_items: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub format: Option<String>,
 }
 
-//@todo  This breaks things
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-#[serde(tag = "type")]
-pub enum SchemaVariant {
-    #[serde(rename = "string")]
-    String {
-        #[serde(default, skip_serializing_if = "VariantOrUnknownOrEmpty::is_empty")]
-        format: VariantOrUnknownOrEmpty<StringFormat>,
-        #[serde(skip_serializing_if = "Option::is_none")]
-        pattern: Option<String>,
-        #[serde(flatten)]
-        schema_data: SchemaData,
-        #[serde(rename = "enum", default, skip_serializing_if = "Vec::is_empty")]
-        enumeration: Vec<String>,
-    },
-    #[serde(rename = "number")]
-    Number {
-        #[serde(default, skip_serializing_if = "VariantOrUnknownOrEmpty::is_empty")]
-        format: VariantOrUnknownOrEmpty<NumberFormat>,
-        #[serde(flatten)]
-        schema_data: SchemaData,
-        #[serde(rename = "multipleOf")]
-        #[serde(skip_serializing_if = "Option::is_none")]
-        multiple_of: Option<f64>,
-        #[serde(default, rename = "exclusiveMinimum", skip_serializing_if = "is_false")]
-        exclusive_minimum: bool,
-        #[serde(default, rename = "exclusiveMaximum", skip_serializing_if = "is_false")]
-        exclusive_maximum: bool,
-        #[serde(skip_serializing_if = "Option::is_none")]
-        minimum: Option<f64>,
-        #[serde(skip_serializing_if = "Option::is_none")]
-        maximum: Option<f64>,
-        #[serde(rename = "enum", default, skip_serializing_if = "Vec::is_empty")]
-        enumeration: Vec<f64>,
-    },
-    #[serde(rename = "integer")]
-    Integer {
-        #[serde(default, skip_serializing_if = "VariantOrUnknownOrEmpty::is_empty")]
-        format: VariantOrUnknownOrEmpty<IntegerFormat>,
-        #[serde(flatten)]
-        schema_data: SchemaData,
-        #[serde(rename = "multipleOf")]
-        #[serde(skip_serializing_if = "Option::is_none")]
-        multiple_of: Option<i64>,
-        #[serde(default, rename = "exclusiveMinimum", skip_serializing_if = "is_false")]
-        exclusive_minimum: bool,
-        #[serde(default, rename = "exclusiveMaximum", skip_serializing_if = "is_false")]
-        exclusive_maximum: bool,
-        #[serde(skip_serializing_if = "Option::is_none")]
-        minimum: Option<i64>,
-        #[serde(skip_serializing_if = "Option::is_none")]
-        maximum: Option<i64>,
-        #[serde(rename = "enum", default, skip_serializing_if = "Vec::is_empty")]
-        enumeration: Vec<i64>,
-    },
-    #[serde(rename = "object")]
-    Object {
-        #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
-        properties: BTreeMap<String, ReferenceOr<Box<Schema>>>,
-        #[serde(default, skip_serializing_if = "Vec::is_empty")]
-        required: Vec<String>,
-        #[serde(
-            default,
-            rename = "additionalProperties",
-            skip_serializing_if = "is_false"
-        )]
-        additional_properties: bool, //@todo support this as an empty object
-        #[serde(rename = "minProperties")]
-        #[serde(skip_serializing_if = "Option::is_none")]
-        min_properties: Option<usize>,
-        #[serde(rename = "maxProperties")]
-        #[serde(skip_serializing_if = "Option::is_none")]
-        max_properties: Option<usize>,
-        #[serde(flatten)]
-        schema_data: SchemaData,
-    },
-    #[serde(rename = "array")]
-    Array {
-        items: ReferenceOr<Box<Schema>>, //@todo Mixed type arrays using oneOf
-        #[serde(rename = "minItems")]
-        #[serde(skip_serializing_if = "Option::is_none")]
-        min_items: Option<usize>,
-        #[serde(rename = "maxItems")]
-        #[serde(skip_serializing_if = "Option::is_none")]
-        max_items: Option<usize>,
-        #[serde(default, rename = "uniqueItems", skip_serializing_if = "is_false")]
-        unique_items: bool,
-        #[serde(flatten)]
-        schema_data: SchemaData,
-    },
-    #[serde(rename = "boolean")]
-    Boolean {
-        #[serde(flatten)]
-        schema_data: SchemaData,
-    },
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct StringType {
+    #[serde(default, skip_serializing_if = "VariantOrUnknownOrEmpty::is_empty")]
+    pub format: VariantOrUnknownOrEmpty<StringFormat>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub pattern: Option<String>,
+    #[serde(rename = "enum", default, skip_serializing_if = "Vec::is_empty")]
+    pub enumeration: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct NumberType {
+    #[serde(default, skip_serializing_if = "VariantOrUnknownOrEmpty::is_empty")]
+    pub format: VariantOrUnknownOrEmpty<NumberFormat>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub multiple_of: Option<f64>,
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub exclusive_minimum: bool,
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub exclusive_maximum: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub minimum: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub maximum: Option<f64>,
+    #[serde(rename = "enum", default, skip_serializing_if = "Vec::is_empty")]
+    pub enumeration: Vec<f64>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct IntegerType {
+    #[serde(default, skip_serializing_if = "VariantOrUnknownOrEmpty::is_empty")]
+    pub format: VariantOrUnknownOrEmpty<IntegerFormat>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub multiple_of: Option<i64>,
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub exclusive_minimum: bool,
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub exclusive_maximum: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub minimum: Option<i64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub maximum: Option<i64>,
+    #[serde(rename = "enum", default, skip_serializing_if = "Vec::is_empty")]
+    pub enumeration: Vec<i64>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct ObjectType {
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub properties: BTreeMap<String, ReferenceOr<Box<Schema>>>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub required: Vec<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub additional_properties: Option<AdditionalProperties>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub min_properties: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub max_properties: Option<usize>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct ArrayType {
+    pub items: ReferenceOr<Box<Schema>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub min_items: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub max_items: Option<usize>,
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub unique_items: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "lowercase")]
 pub enum NumberFormat {
-    #[serde(rename = "float")]
     Float,
-    #[serde(rename = "double")]
     Double,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "lowercase")]
 pub enum IntegerFormat {
-    #[serde(rename = "int32")]
     Int32,
-    #[serde(rename = "int64")]
     Int64,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "lowercase")]
 pub enum StringFormat {
-    #[serde(rename = "date")]
     Date,
-    #[serde(rename = "datetime")]
     DateTime,
-    #[serde(rename = "password")]
     Password,
-    #[serde(rename = "byte")]
     Byte,
-    #[serde(rename = "binary")]
     Binary,
 }
