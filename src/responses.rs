@@ -25,7 +25,7 @@ pub struct Responses {
     /// definition for that code.
     #[serde(flatten)]
     #[serde(default)]
-    pub responses: BTreeMap<String, ReferenceOr<Response>>,
+    pub responses: BTreeMap<StatusCode, ReferenceOr<Response>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
