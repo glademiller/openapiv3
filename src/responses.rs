@@ -25,7 +25,7 @@ pub struct Responses {
     /// definition for that code.
     #[serde(flatten)]
     #[serde(default)]
-    pub responses: BTreeMap<String, ReferenceOr<Response>>,
+    pub responses: BTreeMap<StatusCode, ReferenceOr<Response>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
@@ -54,4 +54,50 @@ pub struct Response {
     /// the naming constraints of the names for Component Objects.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub links: BTreeMap<String, ReferenceOr<Link>>,
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{ReferenceOr, Responses, StatusCode};
+    use serde_yaml::from_str;
+    use std::collections::BTreeMap;
+
+    #[test]
+    fn deserialize_responses() {
+        assert_eq!(
+            Responses {
+                default: None,
+                responses: {
+                    let mut map = BTreeMap::new();
+                    map.insert(StatusCode::Code(200), ReferenceOr::ref_("test"));
+                    map
+                }
+            },
+            from_str("{ 200: { $ref: 'test' } }").unwrap(),
+        );
+
+        assert_eq!(
+            Responses {
+                default: None,
+                responses: {
+                    let mut map = BTreeMap::new();
+                    map.insert(StatusCode::Code(666), ReferenceOr::ref_("demo"));
+                    map
+                }
+            },
+            from_str("{ \"666\": { $ref: 'demo' } }").unwrap(),
+        );
+
+        assert_eq!(
+            Responses {
+                default: Some(ReferenceOr::ref_("def")),
+                responses: {
+                    let mut map = BTreeMap::new();
+                    map.insert(StatusCode::Code(666), ReferenceOr::ref_("demo"));
+                    map
+                }
+            },
+            from_str("{ default: { $ref: 'def' }, \"666\": { $ref: 'demo' } }").unwrap(),
+        );
+    }
 }
