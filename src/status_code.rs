@@ -68,7 +68,7 @@ impl<'de> Deserialize<'de> for StatusCode {
 
                 match [v[0], v[1], v[2]] {
                     [n, b'X', b'X'] if n.is_ascii_digit() => {
-                        Ok(StatusCode::Range((n - b'0') as u16))
+                        Ok(StatusCode::Range(u16::from(n - b'0')))
                     }
                     _ => Err(E::invalid_value(Unexpected::Str(value), &"format `\\dXX`")),
                 }
