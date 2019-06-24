@@ -5,14 +5,16 @@ use serde::{Deserialize, Serialize};
 pub enum ReferenceOr<T> {
     Reference {
         #[serde(rename = "$ref")]
-        reference: String
+        reference: String,
     },
     Item(T),
 }
 
 impl<T> ReferenceOr<T> {
     pub fn ref_(r: &str) -> Self {
-        ReferenceOr::Reference { reference: r.to_owned() }
+        ReferenceOr::Reference {
+            reference: r.to_owned(),
+        }
     }
     pub fn boxed_item(item: T) -> ReferenceOr<Box<T>> {
         ReferenceOr::Item(Box::new(item))
