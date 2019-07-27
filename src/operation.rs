@@ -70,8 +70,8 @@ pub struct Operation {
 #[cfg(test)]
 mod tests {
     use crate::{Operation, ReferenceOr, Responses, StatusCode};
+    use indexmap::IndexMap;
     use serde_yaml::from_str;
-    use std::collections::BTreeMap;
 
     #[test]
     fn deserialize_responses() {
@@ -80,7 +80,7 @@ mod tests {
                 responses: Responses {
                     default: None,
                     responses: {
-                        let mut map = BTreeMap::new();
+                        let mut map = IndexMap::new();
                         map.insert(StatusCode::Code(200), ReferenceOr::ref_("test"));
                         map
                     }
@@ -95,7 +95,7 @@ mod tests {
                 responses: Responses {
                     default: None,
                     responses: {
-                        let mut map = BTreeMap::new();
+                        let mut map = IndexMap::new();
                         map.insert(StatusCode::Code(666), ReferenceOr::ref_("demo"));
                         map
                     }
@@ -110,7 +110,7 @@ mod tests {
                 responses: Responses {
                     default: Some(ReferenceOr::ref_("def")),
                     responses: {
-                        let mut map = BTreeMap::new();
+                        let mut map = IndexMap::new();
                         map.insert(StatusCode::Code(666), ReferenceOr::ref_("demo"));
                         map.insert(StatusCode::Code(418), ReferenceOr::ref_("demo"));
                         map

@@ -67,7 +67,10 @@ impl<'de> Deserialize<'de> for StatusCode {
                 }
 
                 if !value.is_ascii() {
-                    return Err(E::invalid_value(Unexpected::Str(value), &"ascii, format `\\dXX`"));
+                    return Err(E::invalid_value(
+                        Unexpected::Str(value),
+                        &"ascii, format `\\dXX`",
+                    ));
                 }
 
                 let v = value.as_bytes().to_ascii_uppercase();

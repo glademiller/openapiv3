@@ -1,6 +1,6 @@
 use crate::*;
+use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeMap;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct Responses {
@@ -25,7 +25,7 @@ pub struct Responses {
     /// definition for that code.
     #[serde(flatten)]
     #[serde(default)]
-    pub responses: BTreeMap<StatusCode, ReferenceOr<Response>>,
+    pub responses: IndexMap<StatusCode, ReferenceOr<Response>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
@@ -38,20 +38,20 @@ pub struct Response {
     /// RFC7230 states header names are case insensitive.
     /// If a response header is defined with the name "Content-Type",
     /// it SHALL be ignored.
-    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
-    pub headers: BTreeMap<String, ReferenceOr<Header>>,
+    #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
+    pub headers: IndexMap<String, ReferenceOr<Header>>,
 
     /// A map containing descriptions of potential response payloads.
     /// The key is a media type or media type range and the value
     /// describes it. For responses that match multiple keys,
     /// only the most specific key is applicable. e.g. text/plain
     /// overrides text/*
-    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
-    pub content: BTreeMap<String, MediaType>,
+    #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
+    pub content: IndexMap<String, MediaType>,
 
     /// A map of operations links that can be followed from the response.
     /// The key of the map is a short name for the link, following
     /// the naming constraints of the names for Component Objects.
-    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
-    pub links: BTreeMap<String, ReferenceOr<Link>>,
+    #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
+    pub links: IndexMap<String, ReferenceOr<Link>>,
 }

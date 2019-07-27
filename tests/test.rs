@@ -1,6 +1,6 @@
+use indexmap::IndexMap;
 use openapiv3::*;
 use serde_yaml;
-use std::collections::BTreeMap;
 
 enum FileType {
     YAML,
@@ -125,7 +125,7 @@ fn run_tests() {
 macro_rules! map {
     ( $( $key:expr => $value:expr ),* $(,)? ) => {{
         #[allow(unused_mut)]
-        let mut m = BTreeMap::new();
+        let mut m = IndexMap::new();
         $(m.insert($key, $value);)*
         m
     }};

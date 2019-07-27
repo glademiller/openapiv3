@@ -1,6 +1,6 @@
 use crate::*;
+use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeMap;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
@@ -87,8 +87,8 @@ pub struct AnySchema {
     pub minimum: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub maximum: Option<f64>,
-    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
-    pub properties: BTreeMap<String, ReferenceOr<Box<Schema>>>,
+    #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
+    pub properties: IndexMap<String, ReferenceOr<Box<Schema>>>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub required: Vec<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -161,8 +161,8 @@ pub struct IntegerType {
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ObjectType {
-    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
-    pub properties: BTreeMap<String, ReferenceOr<Box<Schema>>>,
+    #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
+    pub properties: IndexMap<String, ReferenceOr<Box<Schema>>>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub required: Vec<String>,
     #[serde(skip_serializing_if = "Option::is_none")]

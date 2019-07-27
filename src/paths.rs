@@ -1,6 +1,6 @@
 use crate::*;
+use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeMap;
 
 /// Describes the operations available on a single path.
 /// A Path Item MAY be empty, due to ACL constraints.
@@ -45,4 +45,4 @@ pub struct PathItem {
 /// their operations. The path is appended to the URL from the
 /// Server Object in order to construct the full URL. The Paths
 /// MAY be empty, due to ACL constraints.
-pub type Paths = BTreeMap<String, ReferenceOr<PathItem>>;
+pub type Paths = IndexMap<String, ReferenceOr<PathItem>>;

@@ -1,5 +1,5 @@
+use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeMap;
 
 /// When request bodies or response payloads may be one of a number of different schemas,
 /// a discriminator object can be used to aid in serialization, deserialization,
@@ -15,6 +15,6 @@ pub struct Discriminator {
     /// will hold the discriminator value.
     pub property_name: String,
     /// An object to hold mappings between payload values and schema names or references.
-    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
-    pub mapping: BTreeMap<String, String>,
+    #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
+    pub mapping: IndexMap<String, String>,
 }
