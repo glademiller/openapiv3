@@ -47,7 +47,7 @@ pub struct Response {
     /// only the most specific key is applicable. e.g. text/plain
     /// overrides text/*
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
-    pub content: BTreeMap<String, ReferenceOr<MediaType>>,
+    pub content: BTreeMap<String, MediaType>,
 
     /// A map of operations links that can be followed from the response.
     /// The key of the map is a short name for the link, following
