@@ -62,7 +62,7 @@ pub enum Type {
     Integer(IntegerType),
     Object(ObjectType),
     Array(ArrayType),
-    Boolean{},
+    Boolean {},
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]

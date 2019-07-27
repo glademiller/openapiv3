@@ -137,18 +137,19 @@ fn petstore_discriminated() {
         openapi: "3.0.0".to_owned(),
         info: Info {
             title: "Swagger Petstore".to_owned(),
-            license: Some(License { name: "MIT".to_owned(), url: None }),
+            license: Some(License {
+                name: "MIT".to_owned(),
+                url: None,
+            }),
             version: "1.0.0".to_owned(),
             ..Default::default()
         },
-        servers: vec![
-            Server {
-                url: "http://petstore.swagger.io/v1".to_owned(),
-                ..Default::default()
-            }
-        ],
+        servers: vec![Server {
+            url: "http://petstore.swagger.io/v1".to_owned(),
+            ..Default::default()
+        }],
         components: Some(Components {
-            schemas: map!{
+            schemas: map! {
                 "Cat".to_owned() => ReferenceOr::Item(Schema {
                     schema_data: SchemaData {
                         description: Some("A representation of a cat".to_owned()),

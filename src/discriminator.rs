@@ -15,6 +15,6 @@ pub struct Discriminator {
     /// will hold the discriminator value.
     pub property_name: String,
     /// An object to hold mappings between payload values and schema names or references.
-    #[serde(default, skip_serializing_if="BTreeMap::is_empty")]
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub mapping: BTreeMap<String, String>,
 }
