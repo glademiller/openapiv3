@@ -66,3 +66,59 @@ pub struct Operation {
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub servers: Vec<Server>,
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{Operation, ReferenceOr, Responses, StatusCode};
+    use serde_yaml::from_str;
+    use std::collections::BTreeMap;
+
+    #[test]
+    fn deserialize_responses() {
+        assert_eq!(
+            Operation {
+                responses: Responses {
+                    default: None,
+                    responses: {
+                        let mut map = BTreeMap::new();
+                        map.insert(StatusCode::Code(200), ReferenceOr::ref_("test"));
+                        map
+                    }
+                },
+                ..Default::default()
+            },
+            from_str("{ responses: { 200: { $ref: 'test' } } }").unwrap(),
+        );
+
+        assert_eq!(
+            Operation {
+                responses: Responses {
+                    default: None,
+                    responses: {
+                        let mut map = BTreeMap::new();
+                        map.insert(StatusCode::Code(666), ReferenceOr::ref_("demo"));
+                        map
+                    }
+                },
+                ..Default::default()
+            },
+            from_str("{ responses: { \"666\": { $ref: 'demo' } } }").unwrap(),
+        );
+
+        assert_eq!(
+            Operation {
+                responses: Responses {
+                    default: Some(ReferenceOr::ref_("def")),
+                    responses: {
+                        let mut map = BTreeMap::new();
+                        map.insert(StatusCode::Code(666), ReferenceOr::ref_("demo"));
+                        map.insert(StatusCode::Code(418), ReferenceOr::ref_("demo"));
+                        map
+                    }
+                },
+                ..Default::default()
+            },
+            from_str("{ responses: { default: { $ref: 'def' }, \"666\": { $ref: 'demo' }, 418: { $ref: 'demo' } } }").unwrap(),
+        );
+    }
+}

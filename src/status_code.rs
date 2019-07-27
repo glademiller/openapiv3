@@ -29,20 +29,29 @@ impl<'de> Deserialize<'de> for StatusCode {
             type Value = StatusCode;
 
             fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-                formatter.write_str("A number between 100 and 999 (as string or integer) or a string that matches `\\dXX`")
+                formatter.write_str("number between 100 and 999 (as string or integer) or a string that matches `\\dXX`")
             }
 
             fn visit_i64<E>(self, value: i64) -> Result<Self::Value, E>
             where
                 E: de::Error,
             {
-                if value < 100 && value > 100 {
-                    return Err(E::invalid_value(
-                        Unexpected::Signed(value),
-                        &"range 100..1000",
-                    ));
+                if value >= 100 && value < 1000 {
+                    Ok(StatusCode::Code(value as u16))
+                } else {
+                    Err(E::invalid_value(Unexpected::Signed(value), &self))
                 }
-                Ok(StatusCode::Code(value as u16))
+            }
+
+            fn visit_u64<E>(self, value: u64) -> Result<Self::Value, E>
+            where
+                E: de::Error,
+            {
+                if value >= 100 && value < 1000 {
+                    Ok(StatusCode::Code(value as u16))
+                } else {
+                    Err(E::invalid_value(Unexpected::Unsigned(value), &self))
+                }
             }
 
             fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
@@ -58,10 +67,7 @@ impl<'de> Deserialize<'de> for StatusCode {
                 }
 
                 if !value.is_ascii() {
-                    return Err(E::invalid_value(
-                        Unexpected::Str(value),
-                        &"ascii, format `\\dXX`",
-                    ));
+                    return Err(E::invalid_value(Unexpected::Str(value), &"ascii, format `\\dXX`"));
                 }
 
                 let v = value.as_bytes().to_ascii_uppercase();
@@ -75,7 +81,7 @@ impl<'de> Deserialize<'de> for StatusCode {
             }
         }
 
-        deserializer.deserialize_str(StatusCodeVisitor)
+        deserializer.deserialize_any(StatusCodeVisitor)
     }
 }
 
@@ -102,7 +108,7 @@ mod tests {
     #[test]
     #[should_panic = "expected length 3"]
     fn deserialize_invalid_code() {
-        let _: StatusCode = from_str("6666").unwrap();
+        let _: StatusCode = from_str("'6666'").unwrap();
     }
 
     #[test]
