@@ -48,6 +48,9 @@ pub struct Operation {
     /// REQUIRED. The list of possible responses as they are returned
     /// from executing this operation.
     pub responses: Responses,
+    /// Declares this operation to be deprecated.Default value is false.
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub deprecated: bool,
     /// A declaration of which security mechanisms can be used for this operation.
     /// The list of values includes alternative security requirement objects that can
     /// be used. Only one of the security requirement objects need to be satisfied to
