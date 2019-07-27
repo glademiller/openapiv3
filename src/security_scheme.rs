@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use indexmap::IndexMap;
+use serde::{Deserialize, Serialize};
 
 /// Defines a security scheme that can be used by the operations.
 /// Supported schemes are HTTP authentication, an API key (either as a

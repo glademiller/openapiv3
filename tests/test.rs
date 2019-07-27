@@ -1,6 +1,6 @@
+use indexmap::IndexMap;
 use openapiv3::*;
 use serde_yaml;
-use indexmap::IndexMap;
 
 enum FileType {
     YAML,

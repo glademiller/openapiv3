@@ -1,6 +1,6 @@
 use crate::*;
-use serde::{Deserialize, Serialize};
 use indexmap::IndexMap;
+use serde::{Deserialize, Serialize};
 
 /// Describes the operations available on a single path.
 /// A Path Item MAY be empty, due to ACL constraints.

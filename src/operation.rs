@@ -70,8 +70,8 @@ pub struct Operation {
 #[cfg(test)]
 mod tests {
     use crate::{Operation, ReferenceOr, Responses, StatusCode};
-    use serde_yaml::from_str;
     use indexmap::IndexMap;
+    use serde_yaml::from_str;
 
     #[test]
     fn deserialize_responses() {

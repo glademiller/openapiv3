@@ -1,6 +1,6 @@
 use crate::*;
-use serde::{Deserialize, Serialize};
 use indexmap::IndexMap;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]

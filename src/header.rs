@@ -1,6 +1,6 @@
 use crate::*;
-use serde::{Deserialize, Serialize};
 use indexmap::IndexMap;
+use serde::{Deserialize, Serialize};
 
 /// The Header Object follows the structure of the Parameter Object with the following changes:
 ///

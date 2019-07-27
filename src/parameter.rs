@@ -1,6 +1,6 @@
 use crate::*;
-use serde::{Deserialize, Serialize};
 use indexmap::IndexMap;
+use serde::{Deserialize, Serialize};
 
 /// Describes a single operation parameter.
 ///

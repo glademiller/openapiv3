@@ -1,6 +1,6 @@
 use crate::*;
-use serde::{Deserialize, Serialize};
 use indexmap::IndexMap;
+use serde::{Deserialize, Serialize};
 
 /// Holds a set of reusable objects for different aspects of the OAS.
 /// All objects defined within the components object will have no effect

@@ -1,6 +1,6 @@
 use crate::*;
-use serde::{Deserialize, Serialize};
 use indexmap::IndexMap;
+use serde::{Deserialize, Serialize};
 
 /// The Link object represents a possible design-time link for a response.
 /// The presence of a link does not guarantee the caller's ability to

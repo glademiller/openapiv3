@@ -1,6 +1,6 @@
 use crate::*;
-use serde::{Deserialize, Serialize};
 use indexmap::IndexMap;
+use serde::{Deserialize, Serialize};
 
 /// An object representing a Server.
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]

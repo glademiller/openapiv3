@@ -1,6 +1,6 @@
 use crate::*;
-use serde::{Deserialize, Serialize};
 use indexmap::IndexMap;
+use serde::{Deserialize, Serialize};
 
 /// A single encoding definition applied to a single schema property.
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]

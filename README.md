@@ -1,4 +1,4 @@
-# OpenAPI v3 &emsp;
+# OpenAPI v3 [![Build Status](https://travis-ci.com/glademiller/openapiv3.svg?branch=master)](https://travis-ci.com/glademiller/openapiv3)
 
 This crate aims to provide data structures that represent the [Open API v3 specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md).
 
