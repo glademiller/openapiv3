@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeMap;
+use indexmap::IndexMap;
 
 /// Defines a security scheme that can be used by the operations.
 /// Supported schemes are HTTP authentication, an API key (either as a
@@ -61,7 +61,7 @@ pub enum OAuth2Flow {
         #[serde(rename = "refreshUrl")]
         refresh_url: Option<String>,
         #[serde(default)]
-        scopes: BTreeMap<String, String>,
+        scopes: IndexMap<String, String>,
     },
     #[serde(rename = "password")]
     Password {
@@ -70,7 +70,7 @@ pub enum OAuth2Flow {
         #[serde(rename = "tokenUrl")]
         token_url: String,
         #[serde(default)]
-        scopes: BTreeMap<String, String>,
+        scopes: IndexMap<String, String>,
     },
     #[serde(rename = "clientCredentials")]
     ClientCredentials {
@@ -79,7 +79,7 @@ pub enum OAuth2Flow {
         #[serde(rename = "tokenUrl")]
         token_url: String,
         #[serde(default)]
-        scopes: BTreeMap<String, String>,
+        scopes: IndexMap<String, String>,
     },
     #[serde(rename = "authorizationCode")]
     AuthorizationCode {
@@ -90,6 +90,6 @@ pub enum OAuth2Flow {
         #[serde(rename = "refreshUrl")]
         refresh_url: Option<String>,
         #[serde(default)]
-        scopes: BTreeMap<String, String>,
+        scopes: IndexMap<String, String>,
     },
 }

@@ -1,6 +1,6 @@
 use crate::*;
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeMap;
+use indexmap::IndexMap;
 
 /// An object representing a Server.
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
@@ -20,5 +20,5 @@ pub struct Server {
     /// A map between a variable name and its value.
     /// The value is used for substitution in the server's URL template.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub variables: Option<BTreeMap<String, ServerVariable>>,
+    pub variables: Option<IndexMap<String, ServerVariable>>,
 }

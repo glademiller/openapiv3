@@ -1,6 +1,6 @@
 use crate::*;
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeMap;
+use indexmap::IndexMap;
 
 /// Describes a single operation parameter.
 ///
@@ -38,8 +38,8 @@ pub struct ParameterData {
     pub format: ParameterSchemaOrContent,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub example: Option<serde_json::Value>,
-    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
-    pub examples: BTreeMap<String, ReferenceOr<Example>>,
+    #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
+    pub examples: IndexMap<String, ReferenceOr<Example>>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
@@ -50,7 +50,7 @@ pub enum ParameterSchemaOrContent {
     Content(Content),
 }
 
-pub type Content = BTreeMap<String, MediaType>;
+pub type Content = IndexMap<String, MediaType>;
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 #[serde(tag = "in")]

@@ -1,6 +1,6 @@
 use crate::*;
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeMap;
+use indexmap::IndexMap;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct RequestBody {
@@ -14,8 +14,8 @@ pub struct RequestBody {
     /// the value describes it. For requests that match
     /// multiple keys, only the most specific key is applicable.
     ///  e.g. text/plain overrides text/*
-    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
-    pub content: BTreeMap<String, MediaType>,
+    #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
+    pub content: IndexMap<String, MediaType>,
     /// Determines if the request body is required in the
     /// request. Defaults to false.
     #[serde(default, skip_serializing_if = "is_false")]

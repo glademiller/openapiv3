@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use indexmap::IndexMap;
 
 /// Lists the required security schemes to execute this operation.
 /// The name used for each property MUST correspond to a security
@@ -13,4 +13,4 @@ use std::collections::BTreeMap;
 /// Open API object or Operation Object, only one of
 /// Security Requirement Objects in the list needs to be satisfied
 /// to authorize the request.
-pub type SecurityRequirement = BTreeMap<String, Vec<String>>;
+pub type SecurityRequirement = IndexMap<String, Vec<String>>;

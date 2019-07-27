@@ -1,6 +1,6 @@
 use crate::*;
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeMap;
+use indexmap::IndexMap;
 
 /// The Link object represents a possible design-time link for a response.
 /// The presence of a link does not guarantee the caller's ability to
@@ -43,8 +43,8 @@ pub struct Link {
     /// to the linked operation. The parameter name can be qualified
     /// using the parameter location [{in}.]{name} for operations
     /// that use the same parameter name in different locations (e.g. path.id).
-    #[serde(skip_serializing_if = "BTreeMap::is_empty")]
-    pub parameters: BTreeMap<String, String>,
+    #[serde(skip_serializing_if = "IndexMap::is_empty")]
+    pub parameters: IndexMap<String, String>,
     /// A server object to be used by the target operation.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub server: Option<Server>,
