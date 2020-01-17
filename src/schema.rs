@@ -203,6 +203,7 @@ pub enum IntegerFormat {
 #[serde(rename_all = "lowercase")]
 pub enum StringFormat {
     Date,
+    #[serde(rename = "date-time")]
     DateTime,
     Password,
     Byte,
