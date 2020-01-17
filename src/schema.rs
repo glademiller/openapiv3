@@ -118,6 +118,10 @@ pub struct StringType {
     pub pattern: Option<String>,
     #[serde(rename = "enum", default, skip_serializing_if = "Vec::is_empty")]
     pub enumeration: Vec<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub min_length: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub max_length: Option<usize>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
