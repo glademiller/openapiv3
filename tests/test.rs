@@ -103,6 +103,11 @@ static TEST_CASES: &[(FileType, &str, &str)] = &[
         "authentiq.yaml",
         include_str!("../fixtures/authentiq.yaml"),
     ),
+    (
+        FileType::YAML,
+        "stripe.yaml",
+        include_str!("../fixtures/stripe.yaml"),
+    ),
 ];
 
 #[test]

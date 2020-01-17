@@ -14,7 +14,7 @@ pub struct Encoding {
     /// for array – the default is defined based on the inner type.
     /// The value can be a specific media type (e.g. application/json),
     /// a wildcard media type (e.g. image/*), or a comma-separated list of the two types.
-    pub content_type: String,
+    pub content_type: Option<String>,
     /// A map allowing additional information to be provided as headers,
     /// for example Content-Disposition. Content-Type is described separately
     /// and SHALL be ignored in this section. This property SHALL be ignored
