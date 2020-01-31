@@ -94,7 +94,7 @@ pub struct AnySchema {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub additional_properties: Option<AdditionalProperties>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub min_propeties: Option<usize>,
+    pub min_properties: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub max_properties: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
