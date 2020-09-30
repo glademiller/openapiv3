@@ -20,6 +20,7 @@ pub struct Operation {
     pub description: Option<String>,
     /// Additional external documentation for this operation.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename(serialize = "externalDocs"))]
     pub external_documentation: Option<ExternalDocumentation>,
     /// Unique string used to identify the operation.
     /// The id MUST be unique among all operations described in the API.
