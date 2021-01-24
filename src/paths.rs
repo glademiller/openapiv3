@@ -39,6 +39,9 @@ pub struct PathItem {
     #[serde(default)]
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub parameters: Vec<ReferenceOr<Parameter>>,
+    /// Inline extensions to this object.
+    #[serde(flatten)]
+    pub extensions: IndexMap<String, serde_json::Value>,
 }
 
 /// Holds the relative paths to the individual endpoints and

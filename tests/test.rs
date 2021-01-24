@@ -145,8 +145,14 @@ fn petstore_discriminated() {
             license: Some(License {
                 name: "MIT".to_owned(),
                 url: None,
+                ..Default::default()
             }),
             version: "1.0.0".to_owned(),
+            extensions: {
+                let mut ext = IndexMap::new();
+                ext.insert("x-hash".to_string(), serde_json::json!("abc123"));
+                ext
+            },
             ..Default::default()
         },
         servers: vec![Server {

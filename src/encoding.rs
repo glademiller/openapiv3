@@ -45,4 +45,7 @@ pub struct Encoding {
     /// body media type is not application/x-www-form-urlencoded.
     #[serde(default, skip_serializing_if = "is_false")]
     pub allow_reserved: bool,
+    /// Inline extensions to this object.
+    #[serde(flatten)]
+    pub extensions: IndexMap<String, serde_json::Value>,
 }

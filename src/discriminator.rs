@@ -17,4 +17,7 @@ pub struct Discriminator {
     /// An object to hold mappings between payload values and schema names or references.
     #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
     pub mapping: IndexMap<String, String>,
+    /// Inline extensions to this object.
+    #[serde(flatten)]
+    pub extensions: IndexMap<String, serde_json::Value>,
 }
