@@ -1,4 +1,5 @@
 use crate::*;
+use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
 /// Adds metadata to a single tag that is used by the
@@ -15,4 +16,7 @@ pub struct Tag {
     /// Additional external documentation for this tag.
     #[serde(rename = "externalDocs", skip_serializing_if = "Option::is_none")]
     pub external_docs: Option<ExternalDocumentation>,
+    /// Inline extensions to this object.
+    #[serde(flatten)]
+    pub extensions: IndexMap<String, serde_json::Value>,
 }

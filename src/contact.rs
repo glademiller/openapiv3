@@ -1,3 +1,4 @@
+use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
 /// Contact information for the exposed API.
@@ -14,4 +15,7 @@ pub struct Contact {
     /// MUST be in the format of an email address.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub email: Option<String>,
+    /// Inline extensions to this object.
+    #[serde(flatten)]
+    pub extensions: IndexMap<String, serde_json::Value>,
 }

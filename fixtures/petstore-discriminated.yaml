@@ -5,6 +5,7 @@ info:
   license:
     name: MIT
   version: 1.0.0
+  x-hash: abc123
 servers:
   - url: "http://petstore.swagger.io/v1"
 paths: {}

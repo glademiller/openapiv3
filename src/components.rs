@@ -36,4 +36,7 @@ pub struct Components {
     /// An object to hold reusable Callback Objects.
     #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
     pub callbacks: IndexMap<String, ReferenceOr<Callback>>,
+    /// Inline extensions to this object.
+    #[serde(flatten)]
+    pub extensions: IndexMap<String, serde_json::Value>,
 }

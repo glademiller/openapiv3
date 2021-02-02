@@ -21,4 +21,7 @@ pub struct Server {
     /// The value is used for substitution in the server's URL template.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub variables: Option<IndexMap<String, ServerVariable>>,
+    /// Inline extensions to this object.
+    #[serde(flatten)]
+    pub extensions: IndexMap<String, serde_json::Value>,
 }

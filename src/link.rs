@@ -48,4 +48,7 @@ pub struct Link {
     /// A server object to be used by the target operation.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub server: Option<Server>,
+    /// Inline extensions to this object.
+    #[serde(flatten)]
+    pub extensions: IndexMap<String, serde_json::Value>,
 }
