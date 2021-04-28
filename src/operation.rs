@@ -1,4 +1,5 @@
 use crate::*;
+use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
 /// Describes a single API operation on a path.
@@ -65,6 +66,9 @@ pub struct Operation {
     #[serde(default)]
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub servers: Vec<Server>,
+    /// Inline extensions to this object.
+    #[serde(flatten)]
+    pub extensions: IndexMap<String, serde_json::Value>,
 }
 
 #[cfg(test)]
@@ -83,7 +87,8 @@ mod tests {
                         let mut map = IndexMap::new();
                         map.insert(StatusCode::Code(200), ReferenceOr::ref_("test"));
                         map
-                    }
+                    },
+                    ..Default::default()
                 },
                 ..Default::default()
             },
@@ -98,7 +103,8 @@ mod tests {
                         let mut map = IndexMap::new();
                         map.insert(StatusCode::Code(666), ReferenceOr::ref_("demo"));
                         map
-                    }
+                    },
+                    ..Default::default()
                 },
                 ..Default::default()
             },
@@ -114,7 +120,8 @@ mod tests {
                         map.insert(StatusCode::Code(666), ReferenceOr::ref_("demo"));
                         map.insert(StatusCode::Code(418), ReferenceOr::ref_("demo"));
                         map
-                    }
+                    },
+                    ..Default::default()
                 },
                 ..Default::default()
             },

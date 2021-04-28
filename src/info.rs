@@ -1,4 +1,5 @@
 use crate::*;
+use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
 /// The object provides metadata about the API.
@@ -25,4 +26,7 @@ pub struct Info {
     /// REQUIRED. The version of the OpenAPI document (which is distinct from
     /// the OpenAPI Specification version or the API implementation version).
     pub version: String,
+    /// Inline extensions to this object.
+    #[serde(flatten)]
+    pub extensions: IndexMap<String, serde_json::Value>,
 }

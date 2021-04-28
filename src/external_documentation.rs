@@ -1,3 +1,4 @@
+use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
 /// Allows referencing an external resource for extended documentation.
@@ -10,4 +11,7 @@ pub struct ExternalDocumentation {
     /// REQUIRED. The URL for the target documentation.
     /// Value MUST be in the format of a URL.
     pub url: String,
+    /// Inline extensions to this object.
+    #[serde(flatten)]
+    pub extensions: IndexMap<String, serde_json::Value>,
 }

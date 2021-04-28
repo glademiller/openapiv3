@@ -20,4 +20,7 @@ pub struct RequestBody {
     /// request. Defaults to false.
     #[serde(default, skip_serializing_if = "is_false")]
     pub required: bool,
+    /// Inline extensions to this object.
+    #[serde(flatten)]
+    pub extensions: IndexMap<String, serde_json::Value>,
 }

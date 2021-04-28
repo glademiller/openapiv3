@@ -1,3 +1,4 @@
+use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
 /// An object representing a Server Variable
@@ -19,4 +20,7 @@ pub struct ServerVariable {
     /// variable. CommonMark syntax MAY be used
     /// for rich text representation.
     pub description: Option<String>,
+    /// Inline extensions to this object.
+    #[serde(flatten)]
+    pub extensions: IndexMap<String, serde_json::Value>,
 }

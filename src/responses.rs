@@ -54,4 +54,8 @@ pub struct Response {
     /// the naming constraints of the names for Component Objects.
     #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
     pub links: IndexMap<String, ReferenceOr<Link>>,
+
+    /// Inline extensions to this object.
+    #[serde(flatten)]
+    pub extensions: IndexMap<String, serde_json::Value>,
 }
