@@ -107,7 +107,7 @@ impl SkipSerializeIfDefault {
         value == &Default::default()
     }
     #[cfg(not(feature = "skip_serializing_defaults"))]
-    fn skip<D: Default + std::cmp::PartialEq>(value: &D) -> bool {
+    fn skip<D: Default + std::cmp::PartialEq>(_value: &D) -> bool {
         false
     }
 }
