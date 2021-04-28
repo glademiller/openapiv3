@@ -40,6 +40,8 @@ pub struct ParameterData {
     pub example: Option<serde_json::Value>,
     #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
     pub examples: IndexMap<String, ReferenceOr<Example>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub explode: Option<bool>,
     /// Inline extensions to this object.
     #[serde(flatten)]
     pub extensions: IndexMap<String, serde_json::Value>,
@@ -65,7 +67,7 @@ pub enum Parameter {
         #[serde(default)]
         #[serde(rename = "allowReserved", skip_serializing_if = "is_false")]
         allow_reserved: bool,
-        #[serde(default)]
+        #[serde(default, skip_serializing_if = "SkipSerializeIfDefault::skip")]
         style: QueryStyle,
         /// Sets the ability to pass empty-valued parameters. This is
         /// valid only for query parameters and allows sending a parameter
@@ -79,23 +81,35 @@ pub enum Parameter {
     Header {
         #[serde(flatten)]
         parameter_data: ParameterData,
-        #[serde(default)]
+        #[serde(default, skip_serializing_if = "SkipSerializeIfDefault::skip")]
         style: HeaderStyle,
     },
     #[serde(rename = "path")]
     Path {
         #[serde(flatten)]
         parameter_data: ParameterData,
-        #[serde(default)]
+        #[serde(default, skip_serializing_if = "SkipSerializeIfDefault::skip")]
         style: PathStyle,
     },
     #[serde(rename = "cookie")]
     Cookie {
         #[serde(flatten)]
         parameter_data: ParameterData,
-        #[serde(default)]
+        #[serde(default, skip_serializing_if = "SkipSerializeIfDefault::skip")]
         style: CookieStyle,
     },
+}
+
+struct SkipSerializeIfDefault;
+impl SkipSerializeIfDefault {
+    #[cfg(feature = "skip_serializing_defaults")]
+    fn skip<D: Default + std::cmp::PartialEq>(value: &D) -> bool {
+        value == &Default::default()
+    }
+    #[cfg(not(feature = "skip_serializing_defaults"))]
+    fn skip<D: Default + std::cmp::PartialEq>(_value: &D) -> bool {
+        false
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
