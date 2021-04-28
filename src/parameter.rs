@@ -40,6 +40,8 @@ pub struct ParameterData {
     pub example: Option<serde_json::Value>,
     #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
     pub examples: IndexMap<String, ReferenceOr<Example>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub explode: Option<bool>,
     /// Inline extensions to this object.
     #[serde(flatten)]
     pub extensions: IndexMap<String, serde_json::Value>,
