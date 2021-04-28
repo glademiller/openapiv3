@@ -1,6 +1,7 @@
 use indexmap::IndexMap;
 use openapiv3::*;
 use serde_yaml;
+use openapiv3::ReferenceOr::Item;
 
 enum FileType {
     YAML,
@@ -256,4 +257,40 @@ fn petstore_discriminated() {
     let yaml = include_str!("../fixtures/petstore-discriminated.yaml");
     assert_eq!(serde_yaml::to_string(&api).unwrap(), yaml);
     assert_eq!(api, serde_yaml::from_str(yaml).unwrap());
+}
+
+/// Globally defined security may be removed on a per-operation basis
+/// by specifying an empty array for the `security` property. This
+/// test validates this against the `adobe_aem.yaml` specification
+/// which specifies `aemAuth` as the global security, and opting out
+/// on GET `/libs/granite/core/content/login.html` operation.
+#[test]
+fn global_security_removed_with_override() {
+    let openapi: OpenAPI = serde_yaml::from_str(include_str!("../fixtures/adobe_aem.yaml"))
+        .expect(&format!("Could not deserialize adobe_aem.yaml"));
+
+    // Global security is set
+    assert!(openapi.security.is_some());
+
+    // Security is overridden on one path. This path opts out of global security.
+    let path_with_security_override = "/libs/granite/core/content/login.html";
+    if let Item(path_item) = openapi.paths.get(path_with_security_override)
+        .unwrap() {
+        assert!(path_item.get.as_ref().unwrap().security.is_some(),
+                "Spec removes global security with empty array.");
+        assert!(path_item.get.as_ref().unwrap().security.as_ref().unwrap().is_empty(),
+                "Spec removes global security with empty array.");
+    } else {
+        assert!(false, "Path not found")
+    }
+
+    // Security is NOT overridden on other paths. Callers must uses global security.
+    let path_no_security_override = "/libs/granite/security/truststore.json";
+    if let Item(path_item) = openapi.paths.get(path_no_security_override)
+        .unwrap() {
+        assert!(path_item.get.as_ref().unwrap().security.is_none(),
+                "Spec does not specify security on this path.");
+    } else {
+        assert!(false, "Path not found")
+    }
 }
