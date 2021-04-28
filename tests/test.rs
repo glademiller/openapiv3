@@ -257,3 +257,22 @@ fn petstore_discriminated() {
     assert_eq!(serde_yaml::to_string(&api).unwrap(), yaml);
     assert_eq!(api, serde_yaml::from_str(yaml).unwrap());
 }
+
+#[test]
+fn test_operation_extension_docs() {
+    let slack = TEST_CASES.iter().find(|x| x.1 == "slack.json").unwrap();
+    let api: OpenAPI =
+        serde_json::from_str(slack.2).expect(&format!("Could not deserialize file {}", slack.1));
+    let operation_extensions = api
+        .paths
+        .iter()
+        .filter_map(|(_, i)| match i {
+            ReferenceOr::Reference { .. } => None,
+            ReferenceOr::Item(item) => item.get.as_ref(),
+        })
+        .flat_map(|o| o.extensions.iter().filter(|e| !e.0.starts_with("x-")))
+        .collect::<Vec<_>>();
+
+    println!("{:#?}", operation_extensions);
+    assert!(operation_extensions.is_empty());
+}
