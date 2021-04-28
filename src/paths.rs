@@ -44,6 +44,23 @@ pub struct PathItem {
     pub extensions: IndexMap<String, serde_json::Value>,
 }
 
+impl PathItem {
+    pub fn iter(&self) -> impl Iterator<Item = &Operation> + '_ {
+        vec![
+            &self.get,
+            &self.put,
+            &self.post,
+            &self.delete,
+            &self.options,
+            &self.head,
+            &self.patch,
+            &self.trace,
+        ]
+        .into_iter()
+        .flat_map(|o| o.iter())
+    }
+}
+
 /// Holds the relative paths to the individual endpoints and
 /// their operations. The path is appended to the URL from the
 /// Server Object in order to construct the full URL. The Paths
