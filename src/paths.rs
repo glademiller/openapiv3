@@ -57,7 +57,7 @@ impl PathItem {
             &self.trace,
         ]
         .into_iter()
-        .flat_map(|o| o.iter())
+        .flat_map(Option::iter)
     }
 }
 
