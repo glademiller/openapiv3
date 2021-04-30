@@ -269,8 +269,9 @@ fn test_operation_extension_docs() {
         .iter()
         .filter_map(|(_, i)| match i {
             ReferenceOr::Reference { .. } => None,
-            ReferenceOr::Item(item) => item.get.as_ref(),
+            ReferenceOr::Item(item) => Some(item),
         })
+        .flat_map(|item| item.iter())
         .flat_map(|o| o.extensions.iter().filter(|e| !e.0.starts_with("x-")))
         .collect::<Vec<_>>();
 
