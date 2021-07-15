@@ -117,7 +117,7 @@ pub struct StringType {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub pattern: Option<String>,
     #[serde(rename = "enum", default, skip_serializing_if = "Vec::is_empty")]
-    pub enumeration: Vec<String>,
+    pub enumeration: Vec<Option<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub min_length: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
