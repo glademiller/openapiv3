@@ -13,19 +13,29 @@ pub enum SecurityScheme {
         #[serde(rename = "in")]
         location: APIKeyLocation,
         name: String,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        description: Option<String>,
     },
     #[serde(rename = "http")]
     HTTP {
         scheme: String,
         #[serde(rename = "bearerFormat")]
         bearer_format: Option<String>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        description: Option<String>,
     },
     #[serde(rename = "oauth2")]
-    OAuth2 { flows: OAuth2Flows },
+    OAuth2 {
+        flows: OAuth2Flows,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        description: Option<String>,
+    },
     #[serde(rename = "openIdConnect")]
     OpenIDConnect {
         #[serde(rename = "openIdConnectUrl")]
         open_id_connect_url: String,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        description: Option<String>,
     },
 }
 
