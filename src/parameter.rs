@@ -118,6 +118,54 @@ pub enum Parameter {
     },
 }
 
+impl Parameter {
+    pub fn parameter_data(self) -> ParameterData {
+        match self {
+            Parameter::Query {
+                parameter_data,
+                allow_reserved: _,
+                style: _,
+                allow_empty_value: _,
+            } => parameter_data,
+            Parameter::Header {
+                parameter_data,
+                style: _,
+            } => parameter_data,
+            Parameter::Path {
+                parameter_data,
+                style: _,
+            } => parameter_data,
+            Parameter::Cookie {
+                parameter_data,
+                style: _,
+            } => parameter_data,
+        }
+    }
+
+    pub fn parameter_data_ref(&self) -> &ParameterData {
+        match self {
+            Parameter::Query {
+                parameter_data,
+                allow_reserved: _,
+                style: _,
+                allow_empty_value: _,
+            } => parameter_data,
+            Parameter::Header {
+                parameter_data,
+                style: _,
+            } => parameter_data,
+            Parameter::Path {
+                parameter_data,
+                style: _,
+            } => parameter_data,
+            Parameter::Cookie {
+                parameter_data,
+                style: _,
+            } => parameter_data,
+        }
+    }
+}
+
 struct SkipSerializeIfDefault;
 impl SkipSerializeIfDefault {
     #[cfg(feature = "skip_serializing_defaults")]
