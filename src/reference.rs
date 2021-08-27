@@ -19,6 +19,20 @@ impl<T> ReferenceOr<T> {
     pub fn boxed_item(item: T) -> ReferenceOr<Box<T>> {
         ReferenceOr::Item(Box::new(item))
     }
+
+    pub fn into_item(self) -> Option<T> {
+        match self {
+            ReferenceOr::Reference { reference: _ } => None,
+            ReferenceOr::Item(i) => Some(i),
+        }
+    }
+
+    pub fn as_item(&self) -> Option<&T> {
+        match self {
+            ReferenceOr::Reference { reference: _ } => None,
+            ReferenceOr::Item(i) => Some(i),
+        }
+    }
 }
 
 impl<T> ReferenceOr<Box<T>> {
