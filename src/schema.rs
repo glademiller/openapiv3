@@ -180,7 +180,8 @@ pub struct ObjectType {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ArrayType {
-    pub items: ReferenceOr<Box<Schema>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub items: Option<ReferenceOr<Box<Schema>>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub min_items: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
