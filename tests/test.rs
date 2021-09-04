@@ -1,4 +1,5 @@
 use indexmap::IndexMap;
+use newline_converter::dos2unix;
 use openapiv3::ReferenceOr::Item;
 use openapiv3::*;
 use serde_yaml;
@@ -255,7 +256,7 @@ fn petstore_discriminated() {
         ..Default::default()
     };
     let yaml = include_str!("../fixtures/petstore-discriminated.yaml");
-    assert_eq!(serde_yaml::to_string(&api).unwrap(), yaml);
+    assert_eq!(serde_yaml::to_string(&api).unwrap(), dos2unix(yaml));
     assert_eq!(api, serde_yaml::from_str(yaml).unwrap());
 }
 

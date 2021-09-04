@@ -15,5 +15,8 @@ serde_json = "1.0"
 serde_yaml = "0.8"
 indexmap = {version = "1.0", features = ["serde-1"]}
 
+[dev-dependencies]
+newline-converter = "0.2.0"
+
 [features]
 skip_serializing_defaults = []
