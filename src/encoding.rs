@@ -46,6 +46,6 @@ pub struct Encoding {
     #[serde(default, skip_serializing_if = "is_false")]
     pub allow_reserved: bool,
     /// Inline extensions to this object.
-    #[serde(flatten)]
+    #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
     pub extensions: IndexMap<String, serde_json::Value>,
 }

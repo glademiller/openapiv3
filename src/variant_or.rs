@@ -12,7 +12,7 @@ pub enum VariantOrUnknown<T> {
 pub enum VariantOrUnknownOrEmpty<T> {
     Item(T),
     Unknown(String),
-    Empty, // @todo this should serialize as nothing
+    Empty,
 }
 
 impl<T> VariantOrUnknownOrEmpty<T> {

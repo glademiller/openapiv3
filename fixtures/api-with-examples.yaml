@@ -3,7 +3,10 @@ info:
   title: Simple API overview
   version: 2.0.0
 paths:
+  x-paths-extension: paths extension
   /:
+    summary: Stuff off of slash
+    description: Slash stuff
     get:
       operationId: listVersionsv2
       summary: List API versions
@@ -46,6 +49,7 @@ paths:
             300 response
           content:
             application/json: 
+              x-media-type-extension: media-type extension
               examples: 
                 foo:
                   value: |
@@ -80,6 +84,7 @@ paths:
       operationId: getVersionDetailsv2
       summary: Show API version details
       responses:
+        x-responses: responses extension
         '200':
           description: |-
             200 response

@@ -21,6 +21,6 @@ pub struct RequestBody {
     #[serde(default, skip_serializing_if = "is_false")]
     pub required: bool,
     /// Inline extensions to this object.
-    #[serde(flatten)]
+    #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
     pub extensions: IndexMap<String, serde_json::Value>,
 }

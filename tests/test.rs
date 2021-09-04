@@ -1,8 +1,6 @@
 use indexmap::IndexMap;
 use newline_converter::dos2unix;
-use openapiv3::ReferenceOr::Item;
 use openapiv3::*;
-use serde_yaml;
 
 enum FileType {
     YAML,
@@ -267,6 +265,7 @@ fn test_operation_extension_docs() {
         serde_json::from_str(slack.2).expect(&format!("Could not deserialize file {}", slack.1));
     let operation_extensions = api
         .paths
+        .paths
         .iter()
         .filter_map(|(_, i)| match i {
             ReferenceOr::Reference { .. } => None,
@@ -294,7 +293,12 @@ fn global_security_removed_with_override() {
 
     // Security is overridden on one path. This path opts out of global security.
     let path_with_security_override = "/libs/granite/core/content/login.html";
-    if let Item(path_item) = openapi.paths.get(path_with_security_override).unwrap() {
+    if let ReferenceOr::Item(path_item) = openapi
+        .paths
+        .paths
+        .get(path_with_security_override)
+        .unwrap()
+    {
         assert!(
             path_item.get.as_ref().unwrap().security.is_some(),
             "Spec removes global security with empty array."
@@ -311,17 +315,19 @@ fn global_security_removed_with_override() {
             "Spec removes global security with empty array."
         );
     } else {
-        assert!(false, "Path not found")
+        panic!("Path not found")
     }
 
     // Security is NOT overridden on other paths. Callers must uses global security.
     let path_no_security_override = "/libs/granite/security/truststore.json";
-    if let Item(path_item) = openapi.paths.get(path_no_security_override).unwrap() {
+    if let ReferenceOr::Item(path_item) =
+        openapi.paths.paths.get(path_no_security_override).unwrap()
+    {
         assert!(
             path_item.get.as_ref().unwrap().security.is_none(),
             "Spec does not specify security on this path."
         );
     } else {
-        assert!(false, "Path not found")
+        panic!("Path not found")
     }
 }

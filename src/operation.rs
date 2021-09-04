@@ -67,7 +67,7 @@ pub struct Operation {
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub servers: Vec<Server>,
     /// Inline extensions to this object.
-    #[serde(flatten)]
+    #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
     pub extensions: IndexMap<String, serde_json::Value>,
 }
 

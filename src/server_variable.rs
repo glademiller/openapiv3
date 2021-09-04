@@ -21,6 +21,6 @@ pub struct ServerVariable {
     /// for rich text representation.
     pub description: Option<String>,
     /// Inline extensions to this object.
-    #[serde(flatten)]
+    #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
     pub extensions: IndexMap<String, serde_json::Value>,
 }

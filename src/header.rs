@@ -35,6 +35,6 @@ pub struct Header {
     #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
     pub examples: IndexMap<String, ReferenceOr<Example>>,
     /// Inline extensions to this object.
-    #[serde(flatten)]
+    #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
     pub extensions: IndexMap<String, serde_json::Value>,
 }
