@@ -12,4 +12,7 @@ pub struct MediaType {
     pub examples: IndexMap<String, ReferenceOr<Example>>,
     #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
     pub encoding: IndexMap<String, Encoding>,
+    /// Inline extensions to this object.
+    #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
+    pub extensions: IndexMap<String, serde_json::Value>,
 }

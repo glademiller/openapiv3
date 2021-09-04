@@ -43,12 +43,12 @@ pub struct Link {
     /// to the linked operation. The parameter name can be qualified
     /// using the parameter location [{in}.]{name} for operations
     /// that use the same parameter name in different locations (e.g. path.id).
-    #[serde(skip_serializing_if = "IndexMap::is_empty")]
+    #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
     pub parameters: IndexMap<String, String>,
     /// A server object to be used by the target operation.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub server: Option<Server>,
     /// Inline extensions to this object.
-    #[serde(flatten)]
+    #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
     pub extensions: IndexMap<String, serde_json::Value>,
 }

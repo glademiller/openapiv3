@@ -12,6 +12,6 @@ pub struct ExternalDocumentation {
     /// Value MUST be in the format of a URL.
     pub url: String,
     /// Inline extensions to this object.
-    #[serde(flatten)]
+    #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
     pub extensions: IndexMap<String, serde_json::Value>,
 }

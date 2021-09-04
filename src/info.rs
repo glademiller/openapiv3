@@ -27,6 +27,6 @@ pub struct Info {
     /// the OpenAPI Specification version or the API implementation version).
     pub version: String,
     /// Inline extensions to this object.
-    #[serde(flatten)]
+    #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
     pub extensions: IndexMap<String, serde_json::Value>,
 }

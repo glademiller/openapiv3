@@ -22,6 +22,6 @@ pub struct Server {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub variables: Option<IndexMap<String, ServerVariable>>,
     /// Inline extensions to this object.
-    #[serde(flatten)]
+    #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
     pub extensions: IndexMap<String, serde_json::Value>,
 }
