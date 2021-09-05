@@ -13,25 +13,16 @@ use serde::{Deserialize, Serialize};
 /// For computing links, and providing instructions to execute them,
 /// a runtime expression is used for accessing values in an operation
 /// and using them as parameters while invoking the linked operation.
-#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
-#[serde(rename = "camelCase")]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub struct Link {
     /// A description of the link.
     /// CommonMark syntax MAY be used for rich text representation.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
-    /// A relative or absolute reference to an OAS operation.
-    /// This field is mutually exclusive of the operationId field,
-    /// and MUST point to an Operation Object. Relative operationRef
-    /// values MAY be used to locate an existing Operation Object
-    /// in the OpenAPI definition.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub operation_ref: Option<String>,
-    /// The name of an existing, resolvable OAS operation,
-    /// as defined with a unique operationId. This field is
-    /// mutually exclusive of the operationRef field.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub operation_id: Option<String>,
+    /// Either a operationRef or operationId
+    #[serde(flatten)]
+    pub operation: LinkOperation,
     /// A literal value or {expression} to use as a request body
     /// when calling the target operation.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -51,4 +42,19 @@ pub struct Link {
     /// Inline extensions to this object.
     #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
     pub extensions: IndexMap<String, serde_json::Value>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub enum LinkOperation {
+    /// A relative or absolute reference to an OAS operation.
+    /// This field is mutually exclusive of the operationId field,
+    /// and MUST point to an Operation Object. Relative operationRef
+    /// values MAY be used to locate an existing Operation Object
+    /// in the OpenAPI definition.
+    OperationRef(String),
+    /// The name of an existing, resolvable OAS operation,
+    /// as defined with a unique operationId. This field is
+    /// mutually exclusive of the operationRef field.
+    OperationId(String),
 }

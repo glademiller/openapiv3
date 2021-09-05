@@ -176,7 +176,7 @@ components:
         slug: $response.body#/repository/slug
         pid: $response.body#/id
     NoParams:
-      operationId: mergePullRequest
+      operationRef: xyz
   schemas: 
     user: 
       type: object

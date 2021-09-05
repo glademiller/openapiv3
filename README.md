@@ -1,6 +1,7 @@
-# OpenAPI v3 [![Build Status](https://travis-ci.com/glademiller/openapiv3.svg?branch=master)](https://travis-ci.com/glademiller/openapiv3)
+# OpenAPI v3 ![example workflow](https://github.com/glademiller/openapiv3/actions/workflows/rust.yml/badge.svg)
 
-This crate aims to provide data structures that represent the [Open API v3 specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md).
+
+This crate provides data structures that represent the [OpenAPI v3.0.x specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md). Note this does not cover OpenAPI v3.1 which was an incompatible change.
 
 ## Example
 
@@ -23,7 +24,7 @@ fn main() {
     * Some defaults show-up when serializing that may not have existed in the input.
 
 ## Issues
-Schemas without a type will endup as any data type as per the specification and can have any parameters of any schema type. Some Open API documents don't include the type parameter it would be nice to try to derive the type but the crate as of right now meets my needs.
+Schemas without a type will end up as any data type as per the specification and can have any parameters of any schema type. Some Open API documents don't include the type parameter it would be nice to try to derive the type but the crate as of right now meets my needs.
 
 ## Similar Crates
 * [openapi](https://crates.io/crates/openapi)

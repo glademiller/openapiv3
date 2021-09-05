@@ -1,7 +1,7 @@
 #
 # Configuration for GitHub-based CI, based on the stock GitHub Rust config.
 #
-name: Rust
+name: Build
 
 on:
   push:
