@@ -48,25 +48,34 @@ pub struct ParameterData {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub enum ParameterSchemaOrContent {
-    #[serde(rename = "schema")]
+    /// The schema defining the type used for the parameter.
     Schema(ReferenceOr<Schema>),
-    #[serde(rename = "content")]
+    /// A map containing the representations for the parameter. The key is the
+    /// media type and the value describes it. The map MUST only contain one
+    /// entry.
     Content(Content),
 }
 
 pub type Content = IndexMap<String, MediaType>;
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-#[serde(tag = "in")]
+#[serde(tag = "in", rename_all = "camelCase")]
 pub enum Parameter {
-    #[serde(rename = "query")]
     Query {
         #[serde(flatten)]
         parameter_data: ParameterData,
-        #[serde(default)]
-        #[serde(rename = "allowReserved", skip_serializing_if = "is_false")]
+        /// Determines whether the parameter value SHOULD allow reserved
+        /// characters, as defined by RFC3986 :/?#[]@!$&'()*+,;= to be included
+        /// without percent-encoding. This property only applies to parameters
+        /// with an in value of query. The default value is false.
+        #[serde(default, skip_serializing_if = "is_false")]
         allow_reserved: bool,
+        /// Describes how the parameter value will be serialized depending on
+        /// the type of the parameter value. Default values (based on value of
+        /// in): for query - form; for path - simple; for header - simple; for
+        /// cookie - form.
         #[serde(default, skip_serializing_if = "SkipSerializeIfDefault::skip")]
         style: QueryStyle,
         /// Sets the ability to pass empty-valued parameters. This is
@@ -74,27 +83,36 @@ pub enum Parameter {
         /// with an empty value. Default value is false. If style is used,
         /// and if behavior is n/a (cannot be serialized), the value of
         /// allowEmptyValue SHALL be ignored.
-        #[serde(rename = "allowEmptyValue", skip_serializing_if = "Option::is_none")]
+        #[serde(skip_serializing_if = "Option::is_none")]
         allow_empty_value: Option<bool>,
     },
-    #[serde(rename = "header")]
     Header {
         #[serde(flatten)]
         parameter_data: ParameterData,
+        /// Describes how the parameter value will be serialized depending on
+        /// the type of the parameter value. Default values (based on value of
+        /// in): for query - form; for path - simple; for header - simple; for
+        /// cookie - form.
         #[serde(default, skip_serializing_if = "SkipSerializeIfDefault::skip")]
         style: HeaderStyle,
     },
-    #[serde(rename = "path")]
     Path {
         #[serde(flatten)]
         parameter_data: ParameterData,
+        /// Describes how the parameter value will be serialized depending on
+        /// the type of the parameter value. Default values (based on value of
+        /// in): for query - form; for path - simple; for header - simple; for
+        /// cookie - form.
         #[serde(default, skip_serializing_if = "SkipSerializeIfDefault::skip")]
         style: PathStyle,
     },
-    #[serde(rename = "cookie")]
     Cookie {
         #[serde(flatten)]
         parameter_data: ParameterData,
+        /// Describes how the parameter value will be serialized depending on
+        /// the type of the parameter value. Default values (based on value of
+        /// in): for query - form; for path - simple; for header - simple; for
+        /// cookie - form.
         #[serde(default, skip_serializing_if = "SkipSerializeIfDefault::skip")]
         style: CookieStyle,
     },
@@ -113,12 +131,10 @@ impl SkipSerializeIfDefault {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub enum PathStyle {
-    #[serde(rename = "matrix")]
     Matrix,
-    #[serde(rename = "label")]
     Label,
-    #[serde(rename = "simple")]
     Simple,
 }
 
@@ -128,14 +144,11 @@ impl Default for PathStyle {
     }
 }
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub enum QueryStyle {
-    #[serde(rename = "form")]
     Form,
-    #[serde(rename = "spaceDelimited")]
     SpaceDelimited,
-    #[serde(rename = "pipeDelimited")]
     PipeDelimited,
-    #[serde(rename = "deepObject")]
     DeepObject,
 }
 
@@ -145,8 +158,8 @@ impl Default for QueryStyle {
     }
 }
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub enum CookieStyle {
-    #[serde(rename = "form")]
     Form,
 }
 
@@ -156,8 +169,8 @@ impl Default for CookieStyle {
     }
 }
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub enum HeaderStyle {
-    #[serde(rename = "simple")]
     Simple,
 }
 

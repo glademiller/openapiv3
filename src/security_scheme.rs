@@ -40,12 +40,10 @@ pub enum SecurityScheme {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub enum APIKeyLocation {
-    #[serde(rename = "query")]
     Query,
-    #[serde(rename = "header")]
     Header,
-    #[serde(rename = "cookie")]
     Cookie,
 }
 
@@ -63,41 +61,33 @@ pub struct OAuth2Flows {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub enum OAuth2Flow {
-    #[serde(rename = "implicit")]
+    #[serde(rename_all = "camelCase")]
     Implicit {
-        #[serde(rename = "authorizationUrl")]
         authorization_url: String,
-        #[serde(rename = "refreshUrl")]
         refresh_url: Option<String>,
         #[serde(default)]
         scopes: IndexMap<String, String>,
     },
-    #[serde(rename = "password")]
+    #[serde(rename_all = "camelCase")]
     Password {
-        #[serde(rename = "refreshUrl")]
         refresh_url: Option<String>,
-        #[serde(rename = "tokenUrl")]
         token_url: String,
         #[serde(default)]
         scopes: IndexMap<String, String>,
     },
-    #[serde(rename = "clientCredentials")]
+    #[serde(rename_all = "camelCase")]
     ClientCredentials {
-        #[serde(rename = "refreshUrl")]
         refresh_url: Option<String>,
-        #[serde(rename = "tokenUrl")]
         token_url: String,
         #[serde(default)]
         scopes: IndexMap<String, String>,
     },
-    #[serde(rename = "authorizationCode")]
+    #[serde(rename_all = "camelCase")]
     AuthorizationCode {
-        #[serde(rename = "authorizationUrl")]
         authorization_url: String,
-        #[serde(rename = "tokenUrl")]
         token_url: String,
-        #[serde(rename = "refreshUrl")]
         refresh_url: Option<String>,
         #[serde(default)]
         scopes: IndexMap<String, String>,
