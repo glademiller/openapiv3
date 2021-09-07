@@ -26,7 +26,7 @@ pub struct Link {
     /// A literal value or {expression} to use as a request body
     /// when calling the target operation.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub request_body: Option<String>,
+    pub request_body: Option<serde_json::Value>,
     /// A map representing parameters to pass to an operation
     /// as specified with operationId or identified via operationRef.
     /// The key is the parameter name to be used, whereas the value
@@ -35,7 +35,7 @@ pub struct Link {
     /// using the parameter location [{in}.]{name} for operations
     /// that use the same parameter name in different locations (e.g. path.id).
     #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
-    pub parameters: IndexMap<String, String>,
+    pub parameters: IndexMap<String, serde_json::Value>,
     /// A server object to be used by the target operation.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub server: Option<Server>,
