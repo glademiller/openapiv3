@@ -119,6 +119,7 @@ pub enum Parameter {
 }
 
 impl Parameter {
+    /// Returns the `parameter_data` field of this [ParameterData].
     pub fn parameter_data(self) -> ParameterData {
         match self {
             Parameter::Query {
@@ -142,6 +143,7 @@ impl Parameter {
         }
     }
 
+    /// Returns the `parameter_data` field of this [ParameterData] by reference.
     pub fn parameter_data_ref(&self) -> &ParameterData {
         match self {
             Parameter::Query {

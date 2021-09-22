@@ -54,6 +54,7 @@ pub struct PathItem {
 }
 
 impl PathItem {
+    /// Returns an iterator of the [Operation]s in the [PathItem].
     pub fn into_iter(self) -> impl Iterator<Item = Operation> {
         vec![
             self.get,
@@ -69,6 +70,7 @@ impl PathItem {
         .flat_map(Option::into_iter)
     }
 
+    /// Returns an iterator of references to the [Operation]s in the [PathItem].
     pub fn iter(&self) -> impl Iterator<Item = &Operation> + '_ {
         vec![
             &self.get,
