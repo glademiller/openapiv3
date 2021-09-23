@@ -25,6 +25,9 @@ pub struct SchemaData {
     pub discriminator: Option<Discriminator>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub default: Option<serde_json::Value>,
+    /// Inline extensions to this object.
+    #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
+    pub extensions: IndexMap<String, serde_json::Value>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -213,4 +216,24 @@ pub enum StringFormat {
     Password,
     Byte,
     Binary,
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::json;
+
+    use crate::Schema;
+
+    #[test]
+    fn test_schema_with_extensions() {
+        let schema = serde_json::from_str::<Schema>(
+        r#"{
+            "type": "boolean",
+            "x-foo": "bar"
+        }"#,
+        )
+        .unwrap();
+
+        assert_eq!(schema.schema_data.extensions.get("x-foo"), Some(&json!("bar")));
+    }
 }
