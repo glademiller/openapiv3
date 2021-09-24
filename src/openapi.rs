@@ -50,3 +50,17 @@ pub struct OpenAPI {
     #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
     pub extensions: IndexMap<String, serde_json::Value>,
 }
+
+impl OpenAPI {
+    /// Iterates through all [Operation]s in this API.
+    ///
+    /// The iterated items are pairs of `(&str, &Operation)` containing the path and the operation.
+    ///
+    /// Path items containing `$ref`s are skipped.
+    pub fn operations(&self) -> impl Iterator<Item = (&str, &Operation)> {
+        self.paths
+            .iter()
+            .filter_map(|(path, item)| item.as_item().map(|i| (path, i)))
+            .flat_map(|(path, item)| item.iter().map(move |op| (path.as_str(), op)))
+    }
+}

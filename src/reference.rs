@@ -19,6 +19,50 @@ impl<T> ReferenceOr<T> {
     pub fn boxed_item(item: T) -> ReferenceOr<Box<T>> {
         ReferenceOr::Item(Box::new(item))
     }
+
+    /// Converts this [ReferenceOr] to the item inside, if it exists.
+    ///
+    /// The return value will be [Option::Some] if this was a [ReferenceOr::Item] or [Option::None] if this was a [ReferenceOr::Reference].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use openapiv3::ReferenceOr;
+    ///
+    /// let i = ReferenceOr::Item(1);
+    /// assert_eq!(i.into_item(), Some(1));
+    ///
+    /// let j: ReferenceOr<u8> = ReferenceOr::Reference { reference: String::new() };
+    /// assert_eq!(j.into_item(), None);
+    /// ```
+    pub fn into_item(self) -> Option<T> {
+        match self {
+            ReferenceOr::Reference { .. } => None,
+            ReferenceOr::Item(i) => Some(i),
+        }
+    }
+
+    /// Returns a reference to to the item inside this [ReferenceOr], if it exists.
+    ///
+    /// The return value will be [Option::Some] if this was a [ReferenceOr::Item] or [Option::None] if this was a [ReferenceOr::Reference].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use openapiv3::ReferenceOr;
+    ///
+    /// let i = ReferenceOr::Item(1);
+    /// assert_eq!(i.as_item(), Some(&1));
+    ///
+    /// let j: ReferenceOr<u8> = ReferenceOr::Reference { reference: String::new() };
+    /// assert_eq!(j.as_item(), None);
+    /// ```
+    pub fn as_item(&self) -> Option<&T> {
+        match self {
+            ReferenceOr::Reference { .. } => None,
+            ReferenceOr::Item(i) => Some(i),
+        }
+    }
 }
 
 impl<T> ReferenceOr<Box<T>> {

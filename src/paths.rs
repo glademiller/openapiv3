@@ -54,6 +54,23 @@ pub struct PathItem {
 }
 
 impl PathItem {
+    /// Returns an iterator of the [Operation]s in the [PathItem].
+    pub fn into_iter(self) -> impl Iterator<Item = Operation> {
+        vec![
+            self.get,
+            self.put,
+            self.post,
+            self.delete,
+            self.options,
+            self.head,
+            self.patch,
+            self.trace,
+        ]
+        .into_iter()
+        .flat_map(Option::into_iter)
+    }
+
+    /// Returns an iterator of references to the [Operation]s in the [PathItem].
     pub fn iter(&self) -> impl Iterator<Item = &Operation> + '_ {
         vec![
             &self.get,
@@ -111,4 +128,27 @@ where
         |key: &String| key.starts_with('/'),
         PhantomData,
     ))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_path_item_iterators() {
+        let operation = Operation::default();
+
+        let path_item = PathItem {
+            get: Some(operation.clone()),
+            post: Some(operation.clone()),
+            delete: Some(operation.clone()),
+            ..Default::default()
+        };
+
+        let expected = vec![&operation; 3];
+        assert_eq!(path_item.iter().collect::<Vec<_>>(), expected);
+
+        let expected = vec![operation; 3];
+        assert_eq!(path_item.into_iter().collect::<Vec<_>>(), expected);
+    }
 }
