@@ -84,6 +84,22 @@ pub struct Paths {
     pub extensions: IndexMap<String, serde_json::Value>,
 }
 
+impl Paths {
+    pub fn iter(&self) -> indexmap::map::Iter<String, ReferenceOr<PathItem>> {
+        self.paths.iter()
+    }
+}
+
+impl IntoIterator for Paths {
+    type Item = (String, ReferenceOr<PathItem>);
+
+    type IntoIter = indexmap::map::IntoIter<String, ReferenceOr<PathItem>>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.paths.into_iter()
+    }
+}
+
 fn deserialize_paths<'de, D>(
     deserializer: D,
 ) -> Result<IndexMap<String, ReferenceOr<PathItem>>, D::Error>
