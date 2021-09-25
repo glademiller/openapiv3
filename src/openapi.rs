@@ -54,13 +54,17 @@ pub struct OpenAPI {
 impl OpenAPI {
     /// Iterates through all [Operation]s in this API.
     ///
-    /// The iterated items are pairs of `(&str, &Operation)` containing the path and the operation.
+    /// The iterated items are tuples of `(&str, &str, &Operation)` containing
+    /// the path, method,  and the operation.
     ///
     /// Path items containing `$ref`s are skipped.
-    pub fn operations(&self) -> impl Iterator<Item = (&str, &Operation)> {
+    pub fn operations(&self) -> impl Iterator<Item = (&str, &str, &Operation)> {
         self.paths
             .iter()
             .filter_map(|(path, item)| item.as_item().map(|i| (path, i)))
-            .flat_map(|(path, item)| item.iter().map(move |op| (path.as_str(), op)))
+            .flat_map(|(path, item)| {
+                item.iter()
+                    .map(move |(method, op)| (path.as_str(), method, op))
+            })
     }
 }

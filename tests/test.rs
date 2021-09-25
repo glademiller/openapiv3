@@ -272,7 +272,7 @@ fn test_operation_extension_docs() {
             ReferenceOr::Item(item) => Some(item),
         })
         .flat_map(|item| item.iter())
-        .flat_map(|o| o.extensions.iter().filter(|e| !e.0.starts_with("x-")))
+        .flat_map(|(_, o)| o.extensions.iter().filter(|e| !e.0.starts_with("x-")))
         .collect::<Vec<_>>();
 
     println!("{:#?}", operation_extensions);
