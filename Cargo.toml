@@ -1,6 +1,6 @@
 [package]
 name = "openapiv3"
-version = "1.0.0-beta.1"
+version = "1.0.0-beta.2"
 authors = ["Glade Miller <glademiller@gmail.com>"]
 edition = "2018"
 license = "MIT/Apache-2.0"

@@ -54,36 +54,44 @@ pub struct PathItem {
 }
 
 impl PathItem {
-    /// Returns an iterator of the [Operation]s in the [PathItem].
-    pub fn into_iter(self) -> impl Iterator<Item = Operation> {
-        vec![
-            self.get,
-            self.put,
-            self.post,
-            self.delete,
-            self.options,
-            self.head,
-            self.patch,
-            self.trace,
-        ]
-        .into_iter()
-        .flat_map(Option::into_iter)
-    }
-
     /// Returns an iterator of references to the [Operation]s in the [PathItem].
-    pub fn iter(&self) -> impl Iterator<Item = &Operation> + '_ {
+    pub fn iter(&self) -> impl Iterator<Item = (&str, &'_ Operation)> {
         vec![
-            &self.get,
-            &self.put,
-            &self.post,
-            &self.delete,
-            &self.options,
-            &self.head,
-            &self.patch,
-            &self.trace,
+            ("get", &self.get),
+            ("put", &self.put),
+            ("post", &self.post),
+            ("delete", &self.delete),
+            ("options", &self.options),
+            ("head", &self.head),
+            ("patch", &self.patch),
+            ("trace", &self.trace),
         ]
         .into_iter()
-        .flat_map(Option::iter)
+        .filter_map(|(method, maybe_op)| maybe_op.as_ref().map(|op| (method, op)))
+    }
+}
+
+impl IntoIterator for PathItem {
+    type Item = (&'static str, Operation);
+
+    type IntoIter = std::vec::IntoIter<Self::Item>;
+
+    /// Returns an iterator of the [Operation]s in the [PathItem].
+    fn into_iter(self) -> Self::IntoIter {
+        vec![
+            ("get", self.get),
+            ("put", self.put),
+            ("post", self.post),
+            ("delete", self.delete),
+            ("options", self.options),
+            ("head", self.head),
+            ("patch", self.patch),
+            ("trace", self.trace),
+        ]
+        .into_iter()
+        .filter_map(|(method, maybe_op)| maybe_op.map(|op| (method, op)))
+        .collect::<Vec<_>>()
+        .into_iter()
     }
 }
 
@@ -145,10 +153,18 @@ mod tests {
             ..Default::default()
         };
 
-        let expected = vec![&operation; 3];
+        let expected = vec![
+            ("get", &operation),
+            ("post", &operation),
+            ("delete", &operation),
+        ];
         assert_eq!(path_item.iter().collect::<Vec<_>>(), expected);
 
-        let expected = vec![operation; 3];
+        let expected = vec![
+            ("get", operation.clone()),
+            ("post", operation.clone()),
+            ("delete", operation.clone()),
+        ];
         assert_eq!(path_item.into_iter().collect::<Vec<_>>(), expected);
     }
 }
