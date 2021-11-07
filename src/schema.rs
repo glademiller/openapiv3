@@ -54,6 +54,10 @@ pub enum SchemaKind {
         #[serde(rename = "anyOf")]
         any_of: Vec<ReferenceOr<Schema>>,
     },
+    Not {
+        #[serde(rename = "not")]
+        not: Box<ReferenceOr<Schema>>,
+    },
     Any(AnySchema),
 }
 
@@ -222,7 +226,7 @@ pub enum StringFormat {
 mod tests {
     use serde_json::json;
 
-    use crate::Schema;
+    use crate::{Schema, SchemaKind};
 
     #[test]
     fn test_schema_with_extensions() {
@@ -238,5 +242,17 @@ mod tests {
             schema.schema_data.extensions.get("x-foo"),
             Some(&json!("bar"))
         );
+    }
+
+    #[test]
+    fn test_not() {
+        let value = json! {
+            {
+                "not": {}
+            }
+        };
+
+        let schema = serde_json::from_value::<Schema>(value).unwrap();
+        assert!(matches!(schema.schema_kind, SchemaKind::Not { not: _ }));
     }
 }
