@@ -129,7 +129,7 @@ pub struct AnySchema {
     all_of: Vec<ReferenceOr<Schema>>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     any_of: Vec<ReferenceOr<Schema>>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     not: Option<Box<ReferenceOr<Schema>>>,
 }
 
