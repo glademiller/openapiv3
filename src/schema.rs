@@ -55,7 +55,6 @@ pub enum SchemaKind {
         any_of: Vec<ReferenceOr<Schema>>,
     },
     Not {
-        #[serde(rename = "not")]
         not: Box<ReferenceOr<Schema>>,
     },
     Any(AnySchema),
@@ -79,9 +78,13 @@ pub enum AdditionalProperties {
     Schema(Box<ReferenceOr<Schema>>),
 }
 
+/// Catch-all for any combination of properties that doesn't correspond to one
+/// of the predefined subsets.
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct AnySchema {
+    #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
+    pub typ: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub pattern: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -112,8 +115,22 @@ pub struct AnySchema {
     pub max_items: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub unique_items: Option<bool>,
+    #[serde(rename = "enum", default, skip_serializing_if = "Vec::is_empty")]
+    pub enumeration: Vec<serde_json::Value>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub format: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub min_length: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub max_length: Option<usize>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    one_of: Vec<ReferenceOr<Schema>>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    all_of: Vec<ReferenceOr<Schema>>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    any_of: Vec<ReferenceOr<Schema>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    not: Option<Box<ReferenceOr<Schema>>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
@@ -147,7 +164,7 @@ pub struct NumberType {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub maximum: Option<f64>,
     #[serde(rename = "enum", default, skip_serializing_if = "Vec::is_empty")]
-    pub enumeration: Vec<f64>,
+    pub enumeration: Vec<Option<f64>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
@@ -166,7 +183,7 @@ pub struct IntegerType {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub maximum: Option<i64>,
     #[serde(rename = "enum", default, skip_serializing_if = "Vec::is_empty")]
-    pub enumeration: Vec<i64>,
+    pub enumeration: Vec<Option<i64>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
@@ -226,7 +243,7 @@ pub enum StringFormat {
 mod tests {
     use serde_json::json;
 
-    use crate::{Schema, SchemaKind};
+    use crate::{AnySchema, Schema, SchemaData, SchemaKind};
 
     #[test]
     fn test_schema_with_extensions() {
@@ -245,6 +262,12 @@ mod tests {
     }
 
     #[test]
+    fn test_any() {
+        let value = json! { {} };
+        serde_json::from_value::<AnySchema>(value).unwrap();
+    }
+
+    #[test]
     fn test_not() {
         let value = json! {
             {
@@ -254,5 +277,24 @@ mod tests {
 
         let schema = serde_json::from_value::<Schema>(value).unwrap();
         assert!(matches!(schema.schema_kind, SchemaKind::Not { not: _ }));
+    }
+
+    #[test]
+    fn test_null() {
+        let value = json! {
+            {
+                "nullable": true,
+                "enum": [ null ],
+            }
+        };
+
+        let schema = serde_json::from_value::<Schema>(value).unwrap();
+        assert!(matches!(
+            &schema.schema_data,
+            SchemaData { nullable: true, .. }
+        ));
+        assert!(matches!(
+            &schema.schema_kind,
+            SchemaKind::Any(AnySchema { enumeration, .. }) if enumeration[0] == json!(null)));
     }
 }
