@@ -124,13 +124,13 @@ pub struct AnySchema {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub max_length: Option<usize>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    one_of: Vec<ReferenceOr<Schema>>,
+    pub one_of: Vec<ReferenceOr<Schema>>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    all_of: Vec<ReferenceOr<Schema>>,
+    pub all_of: Vec<ReferenceOr<Schema>>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    any_of: Vec<ReferenceOr<Schema>>,
+    pub any_of: Vec<ReferenceOr<Schema>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    not: Option<Box<ReferenceOr<Schema>>>,
+    pub not: Option<Box<ReferenceOr<Schema>>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
