@@ -4,11 +4,6 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct OpenAPI {
-    /// REQUIRED. This string MUST be the version number of the OpenAPI
-    /// Specification that the OpenAPI document uses. The `openapi` field SHOULD
-    /// be used by tooling to interpret the OpenAPI document. This is *not*
-    /// related to the API `info.version` string.
-    pub openapi: String,
     /// REQUIRED. Provides metadata about the API.
     /// The metadata MAY be used by tooling as required.
     pub info: Info,

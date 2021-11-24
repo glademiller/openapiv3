@@ -114,7 +114,7 @@ static TEST_CASES: &[(FileType, &str, &str)] = &[
 fn run_tests() {
     for (file_type, name, contents) in TEST_CASES {
         println!("{}", name);
-        let openapi: OpenAPI = match file_type {
+        let openapi: openapiv3::OpenAPI = match file_type {
             FileType::YAML => serde_yaml::from_str(contents)
                 .expect(&format!("Could not deserialize file {}", name)),
             FileType::JSON => serde_json::from_str(contents)
@@ -138,8 +138,7 @@ macro_rules! map {
 
 #[test]
 fn petstore_discriminated() {
-    let api = OpenAPI {
-        openapi: "3.0.0".to_owned(),
+    let api = openapiv3::OpenAPI::Version30(OpenAPI {
         info: Info {
             title: "Swagger Petstore".to_owned(),
             license: Some(License {
@@ -252,7 +251,7 @@ fn petstore_discriminated() {
             ..Default::default()
         }),
         ..Default::default()
-    };
+    });
     let yaml = include_str!("../fixtures/petstore-discriminated.yaml");
     assert_eq!(serde_yaml::to_string(&api).unwrap(), dos2unix(yaml));
     assert_eq!(api, serde_yaml::from_str(yaml).unwrap());
