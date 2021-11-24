@@ -1,4 +1,4 @@
-use crate::*;
+use crate::v3_0::*;
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
@@ -8,7 +8,8 @@ use serde::{Deserialize, Serialize};
 /// traversal mechanism between responses and other operations.
 ///
 /// Unlike dynamic links (i.e. links provided in the response payload),
-/// the OAS linking mechanism does not require link information in the runtime response.
+/// the OAS linking mechanism does not require link information in the runtime
+/// response.
 ///
 /// For computing links, and providing instructions to execute them,
 /// a runtime expression is used for accessing values in an operation

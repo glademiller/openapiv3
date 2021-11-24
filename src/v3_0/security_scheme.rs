@@ -4,7 +4,8 @@ use serde::{Deserialize, Serialize};
 /// Defines a security scheme that can be used by the operations.
 /// Supported schemes are HTTP authentication, an API key (either as a
 /// header or as a query parameter), OAuth2's common flows (implicit, password,
-/// application and access code) as defined in RFC6749, and OpenID Connect Discovery.
+/// application and access code) as defined in RFC6749, and OpenID Connect
+/// Discovery.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(tag = "type")]
 pub enum SecurityScheme {

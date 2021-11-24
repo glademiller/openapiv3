@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::*;
+use crate::{util::*, v3_0::*};
 use indexmap::IndexMap;
 use serde::{Deserialize, Deserializer, Serialize};
 
@@ -79,7 +79,7 @@ where
 mod tests {
     use serde_json::json;
 
-    use crate::{ReferenceOr, Response, Responses, StatusCode};
+    use crate::v3_0::{ReferenceOr, Response, Responses, StatusCode};
 
     #[test]
     fn test_responses() {

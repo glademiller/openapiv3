@@ -1,4 +1,4 @@
-use crate::*;
+use crate::{util::*, v3_0::*};
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
@@ -13,7 +13,8 @@ pub struct Encoding {
     /// for object - application/json;
     /// for array – the default is defined based on the inner type.
     /// The value can be a specific media type (e.g. application/json),
-    /// a wildcard media type (e.g. image/*), or a comma-separated list of the two types.
+    /// a wildcard media type (e.g. image/*), or a comma-separated list of the
+    /// two types.
     pub content_type: Option<String>,
     /// A map allowing additional information to be provided as headers,
     /// for example Content-Disposition. Content-Type is described separately
@@ -36,13 +37,15 @@ pub struct Encoding {
     /// SHALL be ignored if the request body media type is
     /// not application/x-www-form-urlencoded.
     ///
-    /// In this Library this value defaults to false always despite the specification.
+    /// In this Library this value defaults to false always despite the
+    /// specification.
     #[serde(default, skip_serializing_if = "is_false")]
     pub explode: bool,
     /// Determines whether the parameter value SHOULD allow reserved characters,
-    /// as defined by RFC3986 :/?#[]@!$&'()*+,;= to be included without percent-encoding.
-    /// The default value is false. This property SHALL be ignored if the request
-    /// body media type is not application/x-www-form-urlencoded.
+    /// as defined by RFC3986 :/?#[]@!$&'()*+,;= to be included without
+    /// percent-encoding. The default value is false. This property SHALL be
+    /// ignored if the request body media type is not
+    /// application/x-www-form-urlencoded.
     #[serde(default, skip_serializing_if = "is_false")]
     pub allow_reserved: bool,
     /// Inline extensions to this object.

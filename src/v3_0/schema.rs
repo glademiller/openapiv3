@@ -1,4 +1,4 @@
-use crate::*;
+use crate::{util::*, v3_0::*};
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
@@ -243,7 +243,7 @@ pub enum StringFormat {
 mod tests {
     use serde_json::json;
 
-    use crate::{AnySchema, Schema, SchemaData, SchemaKind};
+    use crate::v3_0::{AnySchema, Schema, SchemaData, SchemaKind};
 
     #[test]
     fn test_schema_with_extensions() {

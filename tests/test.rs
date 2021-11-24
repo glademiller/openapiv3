@@ -1,6 +1,6 @@
 use indexmap::IndexMap;
 use newline_converter::dos2unix;
-use openapiv3::*;
+use openapiv3::v3_0::*;
 
 enum FileType {
     YAML,

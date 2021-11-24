@@ -1,4 +1,4 @@
-use crate::*;
+use crate::{util::*, v3_0::*};
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
@@ -52,11 +52,12 @@ pub struct Operation {
     /// Declares this operation to be deprecated.Default value is false.
     #[serde(default, skip_serializing_if = "is_false")]
     pub deprecated: bool,
-    /// A declaration of which security mechanisms can be used for this operation.
-    /// The list of values includes alternative security requirement objects that can
-    /// be used. Only one of the security requirement objects need to be satisfied to
-    /// authorize a request. This definition overrides any declared top-level security.
-    /// To remove a top-level security declaration, an empty array can be used.
+    /// A declaration of which security mechanisms can be used for this
+    /// operation. The list of values includes alternative security
+    /// requirement objects that can be used. Only one of the security
+    /// requirement objects need to be satisfied to authorize a request.
+    /// This definition overrides any declared top-level security. To remove
+    /// a top-level security declaration, an empty array can be used.
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub security: Option<Vec<SecurityRequirement>>,
@@ -73,7 +74,7 @@ pub struct Operation {
 
 #[cfg(test)]
 mod tests {
-    use crate::{Operation, ReferenceOr, Responses, StatusCode};
+    use crate::v3_0::{Operation, ReferenceOr, Responses, StatusCode};
     use indexmap::IndexMap;
     use serde_yaml::from_str;
 

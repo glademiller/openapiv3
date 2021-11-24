@@ -1,4 +1,4 @@
-use crate::*;
+use crate::v3_0::*;
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
@@ -28,8 +28,8 @@ pub struct OpenAPI {
     /// The list of values includes alternative security requirement objects
     /// that can be used. Only one of the security requirement objects need to
     /// be satisfied to authorize a request. Individual operations can override
-    /// this definition. Global security settings may be overridden on a per-path
-    /// basis.
+    /// this definition. Global security settings may be overridden on a
+    /// per-path basis.
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub security: Option<Vec<SecurityRequirement>>,

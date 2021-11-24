@@ -22,12 +22,14 @@ impl<T> ReferenceOr<T> {
 
     /// Converts this [ReferenceOr] to the item inside, if it exists.
     ///
-    /// The return value will be [Option::Some] if this was a [ReferenceOr::Item] or [Option::None] if this was a [ReferenceOr::Reference].
+    /// The return value will be [Option::Some] if this was a
+    /// [ReferenceOr::Item] or [Option::None] if this was a
+    /// [ReferenceOr::Reference].
     ///
     /// # Examples
     ///
     /// ```
-    /// # use openapiv3::ReferenceOr;
+    /// # use openapiv3::v3_0::ReferenceOr;
     ///
     /// let i = ReferenceOr::Item(1);
     /// assert_eq!(i.into_item(), Some(1));
@@ -42,14 +44,17 @@ impl<T> ReferenceOr<T> {
         }
     }
 
-    /// Returns a reference to to the item inside this [ReferenceOr], if it exists.
+    /// Returns a reference to to the item inside this [ReferenceOr], if it
+    /// exists.
     ///
-    /// The return value will be [Option::Some] if this was a [ReferenceOr::Item] or [Option::None] if this was a [ReferenceOr::Reference].
+    /// The return value will be [Option::Some] if this was a
+    /// [ReferenceOr::Item] or [Option::None] if this was a
+    /// [ReferenceOr::Reference].
     ///
     /// # Examples
     ///
     /// ```
-    /// # use openapiv3::ReferenceOr;
+    /// # use openapiv3::v3_0::ReferenceOr;
     ///
     /// let i = ReferenceOr::Item(1);
     /// assert_eq!(i.as_item(), Some(&1));
