@@ -63,6 +63,7 @@ pub type Content = IndexMap<String, MediaType>;
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 #[serde(tag = "in", rename_all = "camelCase")]
 pub enum Parameter {
+    #[serde(rename_all = "camelCase")]
     Query {
         #[serde(flatten)]
         parameter_data: ParameterData,
