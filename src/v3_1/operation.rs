@@ -80,15 +80,15 @@ pub struct Operation {
 
 #[cfg(test)]
 mod tests {
-    use crate::v3_1::{Operation, Response, Responses, StatusCode};
+    use crate::v3_1::{Operation, ReferenceOr, Response, Responses, StatusCode};
     use indexmap::IndexMap;
     use serde_yaml::from_str;
 
-    fn response(desc: &str) -> Response {
-        Response {
+    fn response(desc: &str) -> ReferenceOr<Response> {
+        ReferenceOr::Item(Response {
             description: desc.to_owned(),
             ..Default::default()
-        }
+        })
     }
 
     #[test]

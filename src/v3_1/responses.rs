@@ -10,7 +10,7 @@ pub struct Responses {
     /// for specific HTTP response codes. Use this field to cover
     /// undeclared responses.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub default: Option<Response>,
+    pub default: Option<ReferenceOr<Response>>,
     /// Any HTTP status code can be used as the property name,
     /// but only one property per code, to describe the expected
     /// response for that HTTP status code. This field MUST be enclosed in
@@ -23,7 +23,7 @@ pub struct Responses {
     /// explicit code definition takes precedence over the range
     /// definition for that code.
     #[serde(flatten, deserialize_with = "deserialize_responses")]
-    pub responses: IndexMap<StatusCode, Response>,
+    pub responses: IndexMap<StatusCode, ReferenceOr<Response>>,
     /// Inline extensions to this object.
     #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
     pub extensions: IndexMap<String, serde_json::Value>,
@@ -63,7 +63,7 @@ pub struct Response {
 
 fn deserialize_responses<'de, D>(
     deserializer: D,
-) -> Result<IndexMap<StatusCode, Response>, D::Error>
+) -> Result<IndexMap<StatusCode, ReferenceOr<Response>>, D::Error>
 where
     D: Deserializer<'de>,
 {
@@ -76,7 +76,7 @@ where
 mod tests {
     use serde_json::json;
 
-    use crate::v3_1::{Response, Responses, StatusCode};
+    use crate::v3_1::{ReferenceOr, Response, Responses, StatusCode};
 
     #[test]
     fn test_responses() {
@@ -93,10 +93,10 @@ mod tests {
 
         assert_eq!(
             responses.responses.get(&StatusCode::Code(404)),
-            Some(&Response {
+            Some(&ReferenceOr::Item(Response {
                 description: "xxx".to_string(),
                 ..Default::default()
-            })
+            }))
         );
         assert_eq!(responses.extensions.get("x-foo"), Some(&json!("bar")));
     }
