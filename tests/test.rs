@@ -108,6 +108,16 @@ static TEST_CASES: &[(FileType, &str, &str)] = &[
         "stripe.yaml",
         include_str!("../fixtures/stripe.yaml"),
     ),
+    (
+        FileType::YAML,
+        "non-oauth-scopes.yaml",
+        include_str!("../fixtures/non-oauth-scopes.yaml"),
+    ),
+    (
+        FileType::YAML,
+        "webhook-example.yaml",
+        include_str!("../fixtures/webhook-example.yaml"),
+    ),
 ];
 
 #[test]
