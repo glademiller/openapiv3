@@ -1,13 +1,13 @@
 [package]
 name = "openapiv3"
-version = "1.0.0"
+version = "1.0.1"
 authors = ["Glade Miller <glademiller@gmail.com>"]
 edition = "2018"
 license = "MIT/Apache-2.0"
 keywords = ["openapi", "v3"]
 homepage = "https://github.com/glademiller/openapiv3"
 repository = "https://github.com/glademiller/openapiv3"
-description = "This crate aims to provide data structures that represent the Open API v3 specification easily deserializable with serde."
+description = "This crate provides data structures that represent the OpenAPI v3.0.x specification easily deserializable with serde."
 
 [dependencies]
 serde = {version = "1.0", features = ["derive"]}
