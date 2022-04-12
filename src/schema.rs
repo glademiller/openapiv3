@@ -190,7 +190,7 @@ pub struct IntegerType {
 #[serde(rename_all = "camelCase")]
 pub struct ObjectType {
     #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
-    pub properties: IndexMap<String, ReferenceOr<Box<Schema>>>,
+    pub properties: IndexMap<String, ReferenceOr<Schema>>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub required: Vec<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -237,6 +237,46 @@ pub enum StringFormat {
     Password,
     Byte,
     Binary,
+}
+
+
+impl Schema {
+    pub fn properties(&self) -> Option<&IndexMap<String, ReferenceOr<Schema>>> {
+        match &self.schema_kind {
+            SchemaKind::Type(t) => {
+                match t {
+                    Type::Object(o) => Some(&o.properties),
+
+                    _ => None,
+                }
+            }
+            _ => None,
+        }
+    }
+
+    pub fn required(&self, field: &str) -> bool {
+        match &self.schema_kind {
+            SchemaKind::Type(t) => {
+                match t {
+                    Type::Object(o) => o.required.iter().any(|r| r == field),
+                    _ => true,
+                }
+            }
+            _ => true,
+        }
+    }
+
+    pub fn is_anonymous_object(&self) -> bool {
+        match &self.schema_kind {
+            SchemaKind::Type(t) => {
+                match t {
+                    Type::Object(o) => o.properties.is_empty(),
+                    _ => false,
+                }
+            }
+            _ => false,
+        }
+    }
 }
 
 #[cfg(test)]

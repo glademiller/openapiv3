@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use crate::{OpenAPI, Schema};
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 #[serde(untagged)]
@@ -63,6 +64,56 @@ impl<T> ReferenceOr<T> {
             ReferenceOr::Item(i) => Some(i),
         }
     }
+
+
+}
+
+impl<T: 'static> ReferenceOr<T> {
+    pub fn as_ref(&self) -> ReferenceOr<&T> {
+        match self {
+            ReferenceOr::Reference { reference } => ReferenceOr::Reference { reference: reference.clone() },
+            ReferenceOr::Item(i) => ReferenceOr::Item(i),
+        }
+    }
+}
+
+pub fn get_struct_name_from_reference(reference: &str) -> Option<&str> {
+    let mut parts = reference.split('/');
+    if parts.next() != Some("#") {
+        return None;
+    }
+    if parts.next() != Some("components") {
+        return None;
+    }
+    if parts.next() != Some("schemas") {
+        return None;
+    }
+    parts.next()
+}
+
+impl<'a> ReferenceOr<&'a Schema> {
+    pub fn resolve(&self, spec: &'a OpenAPI) -> Option<&'a Schema> {
+        match self {
+            ReferenceOr::Reference { reference } => {
+                let name = get_struct_name_from_reference(&reference).unwrap();
+                spec.components.as_ref().and_then(|c|
+                    c.schemas.get(name).and_then(|ref_or_schema| {
+                        let s = ref_or_schema.as_ref();
+                        s.resolve(spec)
+                    })
+                )
+            },
+            ReferenceOr::Item(schema) => Some(schema),
+        }
+    }
+
+    pub fn get_struct_name(&self) -> Option<&str> {
+        match self {
+            ReferenceOr::Reference { reference } => get_struct_name_from_reference(&reference),
+            ReferenceOr::Item(_schema) => None,
+        }
+    }
+
 }
 
 impl<T> ReferenceOr<Box<T>> {
@@ -70,6 +121,13 @@ impl<T> ReferenceOr<Box<T>> {
         match self {
             ReferenceOr::Reference { reference } => ReferenceOr::Reference { reference },
             ReferenceOr::Item(boxed) => ReferenceOr::Item(*boxed),
+        }
+    }
+
+    pub fn unbox_ref(&self) -> ReferenceOr<&T> {
+        match self {
+            ReferenceOr::Reference { reference } => ReferenceOr::Reference { reference: reference.to_owned() },
+            ReferenceOr::Item(boxed) => ReferenceOr::Item(boxed.as_ref()),
         }
     }
 }
