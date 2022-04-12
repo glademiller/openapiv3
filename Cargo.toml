@@ -1,13 +1,13 @@
 [package]
-name = "openapiv3"
+name = "openapiv3-extended"
 version = "1.0.1"
-authors = ["Glade Miller <glademiller@gmail.com>"]
+authors = ["Kurt Wolf <kurtwolfbuilds@gmail.com>"]
 edition = "2018"
 license = "MIT/Apache-2.0"
 keywords = ["openapi", "v3"]
-homepage = "https://github.com/glademiller/openapiv3"
-repository = "https://github.com/glademiller/openapiv3"
-description = "This crate provides data structures that represent the OpenAPI v3.0.x specification easily deserializable with serde."
+homepage = "https://github.com/kurtbuilds/openapiv3"
+repository = "https://github.com/kurtbuilds/openapiv3"
+description = "Fork of openapiv3 crate. Provides additional methods to simplify working with openapiv3 structs."
 
 [dependencies]
 serde = {version = "1.0", features = ["derive"]}
