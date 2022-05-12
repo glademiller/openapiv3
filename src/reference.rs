@@ -58,7 +58,15 @@ impl<T> ReferenceOr<T> {
     /// let j: ReferenceOr<u8> = ReferenceOr::Reference { reference: String::new() };
     /// assert_eq!(j.as_item(), None);
     /// ```
+    // TODO i believe this should be called as_ref() ?
     pub fn as_item(&self) -> Option<&T> {
+        match self {
+            ReferenceOr::Reference { .. } => None,
+            ReferenceOr::Item(i) => Some(i),
+        }
+    }
+
+    pub fn as_mut(&mut self) -> Option<&mut T> {
         match self {
             ReferenceOr::Reference { .. } => None,
             ReferenceOr::Item(i) => Some(i),
@@ -77,7 +85,8 @@ impl<T: 'static> ReferenceOr<T> {
     }
 }
 
-pub fn get_struct_name_from_reference(reference: &str) -> Option<&str> {
+
+pub fn get_component_name(reference: &str) -> Option<&str> {
     let mut parts = reference.split('/');
     if parts.next() != Some("#") {
         return None;
@@ -91,43 +100,29 @@ pub fn get_struct_name_from_reference(reference: &str) -> Option<&str> {
     parts.next()
 }
 
-impl<'a> ReferenceOr<&'a Schema> {
-    pub fn resolve(&self, spec: &'a OpenAPI) -> Option<&'a Schema> {
+
+impl ReferenceOr<Schema> {
+    pub fn resolve<'a>(&'a self, spec: &'a OpenAPI) -> &'a Schema {
         match self {
             ReferenceOr::Reference { reference } => {
-                let name = get_struct_name_from_reference(&reference).unwrap();
-                spec.components.as_ref().and_then(|c|
-                    c.schemas.get(name).and_then(|ref_or_schema| {
-                        let s = ref_or_schema.as_ref();
-                        s.resolve(spec)
-                    })
-                )
+                let name = get_component_name(&reference).unwrap();
+                let components = spec.components.as_ref().unwrap();
+                let ref_or_schema = components.schemas.get(name).unwrap();
+                match ref_or_schema {
+                    ReferenceOr::Item(schema) => schema,
+                    ReferenceOr::Reference { .. } => ref_or_schema.resolve(spec),
+                }
             },
-            ReferenceOr::Item(schema) => Some(schema),
+            ReferenceOr::Item(schema) => schema,
         }
     }
-
-    pub fn get_struct_name(&self) -> Option<&str> {
-        match self {
-            ReferenceOr::Reference { reference } => get_struct_name_from_reference(&reference),
-            ReferenceOr::Item(_schema) => None,
-        }
-    }
-
 }
 
-impl<T> ReferenceOr<Box<T>> {
-    pub fn unbox(self) -> ReferenceOr<T> {
+impl ReferenceOr<Box<Schema>> {
+    pub fn unbox(&self) -> ReferenceOr<Schema> {
         match self {
-            ReferenceOr::Reference { reference } => ReferenceOr::Reference { reference },
-            ReferenceOr::Item(boxed) => ReferenceOr::Item(*boxed),
-        }
-    }
-
-    pub fn unbox_ref(&self) -> ReferenceOr<&T> {
-        match self {
-            ReferenceOr::Reference { reference } => ReferenceOr::Reference { reference: reference.to_owned() },
-            ReferenceOr::Item(boxed) => ReferenceOr::Item(boxed.as_ref()),
+            ReferenceOr::Reference { reference } => ReferenceOr::Reference { reference: reference.clone() },
+            ReferenceOr::Item(boxed) => ReferenceOr::Item(*boxed.clone()),
         }
     }
 }

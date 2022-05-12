@@ -47,6 +47,18 @@ pub struct ParameterData {
     pub extensions: IndexMap<String, serde_json::Value>,
 }
 
+
+impl ParameterData {
+    /// Returns the parameter schema if it exists.
+    pub fn schema(&self) -> Option<&ReferenceOr<Schema>> {
+        match self.format {
+            ParameterSchemaOrContent::Schema(ref schema) => Some(schema),
+            ParameterSchemaOrContent::Content(_) => None
+        }
+    }
+}
+
+
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub enum ParameterSchemaOrContent {

@@ -69,6 +69,21 @@ impl PathItem {
         .into_iter()
         .filter_map(|(method, maybe_op)| maybe_op.as_ref().map(|op| (method, op)))
     }
+
+    pub fn iter_mut(&mut self) -> impl Iterator<Item = (&str, &'_ mut Operation)> {
+        vec![
+            ("get", &mut self.get),
+            ("put", &mut self.put),
+            ("post", &mut self.post),
+            ("delete", &mut self.delete),
+            ("options", &mut self.options),
+            ("head", &mut self.head),
+            ("patch", &mut self.patch),
+            ("trace", &mut self.trace),
+        ]
+            .into_iter()
+            .filter_map(|(method, mut maybe_op)| maybe_op.as_mut().map(|op| (method, op)))
+    }
 }
 
 impl IntoIterator for PathItem {
