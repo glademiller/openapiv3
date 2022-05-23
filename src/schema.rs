@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use crate::*;
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
@@ -221,6 +223,18 @@ pub enum NumberFormat {
     Double,
 }
 
+impl FromStr for NumberFormat {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "float" => Ok(Self::Float),
+            "double" => Ok(Self::Double),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "lowercase")]
 pub enum IntegerFormat {
@@ -228,15 +242,41 @@ pub enum IntegerFormat {
     Int64,
 }
 
+impl FromStr for IntegerFormat {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "int32" => Ok(Self::Int32),
+            "int64" => Ok(Self::Int64),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-#[serde(rename_all = "lowercase")]
+#[serde(rename_all = "kebab-case")]
 pub enum StringFormat {
     Date,
-    #[serde(rename = "date-time")]
     DateTime,
     Password,
     Byte,
     Binary,
+}
+
+impl FromStr for StringFormat {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "date" => Ok(Self::Date),
+            "date-time" => Ok(Self::DateTime),
+            "password" => Ok(Self::Password),
+            "byte" => Ok(Self::Byte),
+            "binary" => Ok(Self::Binary),
+            _ => Err(()),
+        }
+    }
 }
 
 #[cfg(test)]
