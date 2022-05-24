@@ -1,5 +1,5 @@
+#![allow(clippy::large_enum_variant)]
 use crate::v3_1::*;
-use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]

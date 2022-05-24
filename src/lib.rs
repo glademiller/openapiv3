@@ -1,3 +1,4 @@
+#![allow(clippy::large_enum_variant)]
 mod util;
 pub mod v3_0;
 pub mod v3_1;

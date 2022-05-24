@@ -1,3 +1,4 @@
+#![allow(clippy::large_enum_variant)]
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
