@@ -1,6 +1,6 @@
 use indexmap::IndexMap;
 use newline_converter::dos2unix;
-use openapiv3::v3_0::*;
+use openapiv3::*;
 
 enum FileType {
     YAML,
@@ -124,7 +124,7 @@ static TEST_CASES: &[(FileType, &str, &str)] = &[
 fn run_tests() {
     for (file_type, name, contents) in TEST_CASES {
         println!("{}", name);
-        let openapi: openapiv3::OpenAPI = match file_type {
+        let openapi: openapiv3::versioned::OpenApi = match file_type {
             FileType::YAML => serde_yaml::from_str(contents)
                 .expect(&format!("Could not deserialize file {}", name)),
             FileType::JSON => serde_json::from_str(contents)
@@ -148,7 +148,7 @@ macro_rules! map {
 
 #[test]
 fn petstore_discriminated() {
-    let api = openapiv3::OpenAPI::Version30(OpenAPI {
+    let api = openapiv3::versioned::OpenApi::Version30(OpenAPI {
         info: Info {
             title: "Swagger Petstore".to_owned(),
             license: Some(License {
