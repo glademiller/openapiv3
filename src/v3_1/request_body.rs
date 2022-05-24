@@ -34,7 +34,7 @@ impl From<v3_0::RequestBody> for RequestBody {
         RequestBody {
             description: r.description,
             content: r.content.into_iter().map(|(k, v)| (k, v.into())).collect(),
-            required: r.required(),
+            required: r.required,
             extensions: r.extensions,
         }
     }

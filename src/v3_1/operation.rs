@@ -65,8 +65,8 @@ pub struct Operation {
     /// This definition overrides any declared top-level security. To remove
     /// a top-level security declaration, an empty array can be used.
     #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub security: Option<Vec<SecurityRequirement>>,
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub security: Vec<SecurityRequirement>,
     /// An alternative server array to service this operation.
     /// If an alternative server object is specified at the
     /// Path Item Object or Root level, it will be overridden by this value.
@@ -100,8 +100,8 @@ impl From<v3_0::Operation> for Operation {
             deprecated: o.deprecated,
             security: o
                 .security
-                .map(|s| s.into_iter().map(|v| ReferenceOr::from_v3_0(v)).collect()),
-            servers: o.servers.into_iter().map(|v| v.into::<Server>()).collect(),
+                .into_iter().map(|v| v.into()).collect(),
+            servers: o.servers.into_iter().map(|v| v.into()).collect(),
             extensions: o.extensions,
         }
     }

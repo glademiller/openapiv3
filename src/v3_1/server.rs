@@ -19,8 +19,8 @@ pub struct Server {
     pub description: Option<String>,
     /// A map between a variable name and its value.
     /// The value is used for substitution in the server's URL template.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub variables: Option<IndexMap<String, ServerVariable>>,
+    #[serde(skip_serializing_if = "IndexMap::is_empty")]
+    pub variables: IndexMap<String, ServerVariable>,
     /// Inline extensions to this object.
     #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
     pub extensions: IndexMap<String, serde_json::Value>,
@@ -35,7 +35,7 @@ impl From<v3_0::Server> for Server {
         Server {
             url: s.url,
             description: s.description,
-            variables: s.variables.into(),
+            variables: s.variables.map(|v|v.into_iter().map(|(k,v)|(k, v.into())).collect()).unwrap_or_default(),
             extensions: s.extensions,
         }
     }

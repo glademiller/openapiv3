@@ -83,7 +83,7 @@ impl From<v3_0::Responses> for Responses {
             responses: r
                 .responses
                 .into_iter()
-                .map(|(k, v)| (k, ReferenceOr::from_v3_0(v)))
+                .map(|(k, v)| (k.into(), ReferenceOr::from_v3_0(v)))
                 .collect(),
             extensions: r.extensions,
         }

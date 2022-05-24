@@ -41,8 +41,8 @@ pub struct OpenApi {
     /// this definition. Global security settings may be overridden on a
     /// per-path basis.
     #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub security: Option<Vec<SecurityRequirement>>,
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub security: Vec<SecurityRequirement>,
     /// A list of tags used by the document with additional metadata.
     /// The order of the tags can be used to reflect on their order by the
     /// parsing tools. Not all tags that are used by the Operation Object
@@ -78,5 +78,26 @@ impl OpenApi {
                         .map(move |(method, op)| (path.as_str(), method, op))
                 })
         })
+    }
+}
+
+#[cfg(feature = "conversions")]
+use crate::v3_0;
+
+#[cfg(feature = "conversions")]
+impl From<v3_0::OpenAPI> for OpenApi {
+    fn from(o: v3_0::OpenAPI) -> Self {
+        OpenApi {
+            info: o.info.into(),
+            json_schema_dialect: None, 
+            servers: o.servers.into_iter().map(Into::into).collect(),
+            paths: Some(o.paths.into()),
+            webhooks:  IndexMap::new(),
+            components: o.components.map(Into::into),
+            security: o.security.map(|v| v.into_iter().map(Into::into).collect()).unwrap_or_default(),
+            tags: o.tags.into_iter().map(Into::into).collect(),
+            external_docs: o.external_docs.map(Into::into),
+            extensions: o.extensions, 
+        }
     }
 }

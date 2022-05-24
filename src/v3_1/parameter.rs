@@ -259,10 +259,10 @@ impl From<v3_0::ParameterSchemaOrContent> for ParameterSchemaOrContent {
     fn from(x: v3_0::ParameterSchemaOrContent) -> Self {
         match x {
             v3_0::ParameterSchemaOrContent::Schema(schema) => {
-                ParameterSchemaOrContent::Schema(schema.into())
+                ParameterSchemaOrContent::Schema(schema.into_item().expect("SchemaObject in Parameter must be an Item, not a Reference").into())
             }
-            v3_0::ParameterSchemaOrContent::Context(content) => {
-                ParameterSchemaOrContent::Content(content.into())
+            v3_0::ParameterSchemaOrContent::Content(content) => {
+                ParameterSchemaOrContent::Content(content.into_iter().map(|(k,v)|(k, v.into())).collect())
             }
         }
     }
@@ -285,7 +285,7 @@ impl From<v3_0::Parameter> for Parameter {
             v3_0::Parameter::Header {
                 parameter_data,
                 style,
-            } => Parameter::Query {
+            } => Parameter::Header {
                 parameter_data: parameter_data.into(),
                 style: style.into(),
             },

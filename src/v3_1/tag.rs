@@ -20,3 +20,18 @@ pub struct Tag {
     #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
     pub extensions: IndexMap<String, serde_json::Value>,
 }
+
+#[cfg(feature = "conversions")]
+use crate::v3_0; 
+
+#[cfg(feature = "conversions")]
+impl From<v3_0::Tag> for Tag {
+    fn from(t: v3_0::Tag) -> Self {
+        Tag {
+            name: t.name,
+            description: t.description,
+            external_docs: t.external_docs.map(Into::into),
+            extensions: t.extensions, 
+        }
+    }
+}
