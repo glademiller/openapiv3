@@ -19,7 +19,7 @@ pub struct Server {
     pub description: Option<String>,
     /// A map between a variable name and its value.
     /// The value is used for substitution in the server's URL template.
-    #[serde(skip_serializing_if = "IndexMap::is_empty")]
+    #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
     pub variables: IndexMap<String, ServerVariable>,
     /// Inline extensions to this object.
     #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
