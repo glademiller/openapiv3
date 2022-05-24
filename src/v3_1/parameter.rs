@@ -51,7 +51,7 @@ pub struct ParameterData {
 #[serde(rename_all = "camelCase")]
 pub enum ParameterSchemaOrContent {
     /// The schema defining the type used for the parameter.
-    Schema(Schema),
+    Schema(SchemaObject),
     /// A map containing the representations for the parameter. The key is the
     /// media type and the value describes it. The map MUST only contain one
     /// entry.
@@ -227,5 +227,121 @@ pub enum HeaderStyle {
 impl Default for HeaderStyle {
     fn default() -> HeaderStyle {
         HeaderStyle::Simple
+    }
+}
+
+#[cfg(feature = "conversions")]
+use crate::v3_0;
+
+#[cfg(feature = "conversions")]
+impl From<v3_0::ParameterData> for ParameterData {
+    fn from(p: v3_0::ParameterData) -> Self {
+        ParameterData {
+            name: p.name,
+            description: p.description,
+            required: p.required,
+            deprecated: p.deprecated,
+            format: p.format.into(),
+            example: p.example,
+            examples: p
+                .examples
+                .into_iter()
+                .map(|(k, v)| (k, ReferenceOr::from_v3_0(v)))
+                .collect(),
+            explode: p.explode,
+            extensions: p.extensions,
+        }
+    }
+}
+
+#[cfg(feature = "conversions")]
+impl From<v3_0::ParameterSchemaOrContent> for ParameterSchemaOrContent {
+    fn from(x: v3_0::ParameterSchemaOrContent) -> Self {
+        match x {
+            v3_0::ParameterSchemaOrContent::Schema(schema) => {
+                ParameterSchemaOrContent::Schema(schema.into())
+            }
+            v3_0::ParameterSchemaOrContent::Context(content) => {
+                ParameterSchemaOrContent::Content(content.into())
+            }
+        }
+    }
+}
+#[cfg(feature = "conversions")]
+impl From<v3_0::Parameter> for Parameter {
+    fn from(p: v3_0::Parameter) -> Self {
+        match p {
+            v3_0::Parameter::Query {
+                parameter_data,
+                allow_reserved,
+                style,
+                allow_empty_value,
+            } => Parameter::Query {
+                parameter_data: parameter_data.into(),
+                allow_reserved,
+                style: style.into(),
+                allow_empty_value,
+            },
+            v3_0::Parameter::Header {
+                parameter_data,
+                style,
+            } => Parameter::Query {
+                parameter_data: parameter_data.into(),
+                style: style.into(),
+            },
+            v3_0::Parameter::Path {
+                parameter_data,
+                style,
+            } => Parameter::Path {
+                parameter_data: parameter_data.into(),
+                style: style.into(),
+            },
+            v3_0::Parameter::Cookie {
+                parameter_data,
+                style,
+            } => Parameter::Cookie {
+                parameter_data: parameter_data.into(),
+                style: style.into(),
+            },
+        }
+    }
+}
+#[cfg(feature = "conversions")]
+impl From<v3_0::PathStyle> for PathStyle {
+    fn from(p: v3_0::PathStyle) -> Self {
+        match p {
+            v3_0::PathStyle::Matrix => PathStyle::Matrix,
+            v3_0::PathStyle::Label => PathStyle::Label,
+            v3_0::PathStyle::Simple => PathStyle::Simple,
+        }
+    }
+}
+
+#[cfg(feature = "conversions")]
+impl From<v3_0::QueryStyle> for QueryStyle {
+    fn from(x: v3_0::QueryStyle) -> Self {
+        match x {
+            v3_0::QueryStyle::Form => QueryStyle::Form,
+            v3_0::QueryStyle::SpaceDelimited => QueryStyle::SpaceDelimited,
+            v3_0::QueryStyle::PipeDelimited => QueryStyle::PipeDelimited,
+            v3_0::QueryStyle::DeepObject => QueryStyle::DeepObject,
+        }
+    }
+}
+
+#[cfg(feature = "conversions")]
+impl From<v3_0::CookieStyle> for CookieStyle {
+    fn from(x: v3_0::CookieStyle) -> Self {
+        match x {
+            v3_0::CookieStyle::Form => CookieStyle::Form,
+        }
+    }
+}
+#[cfg(feature = "conversions")]
+impl From<v3_0::HeaderStyle> for HeaderStyle {
+    fn from(x: v3_0::HeaderStyle) -> Self {
+        match x {
+            v3_0::HeaderStyle::Simple => HeaderStyle::Simple,
+        }
     }
 }

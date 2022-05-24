@@ -72,6 +72,45 @@ where
     deserializer.deserialize_map(PredicateVisitor(|_: &StatusCode| true, PhantomData))
 }
 
+#[cfg(feature = "conversions")]
+use crate::v3_0;
+
+#[cfg(feature = "conversions")]
+impl From<v3_0::Responses> for Responses {
+    fn from(r: v3_0::Responses) -> Self {
+        Responses {
+            default: r.default.map(|v| ReferenceOr::from_v3_0(v)),
+            responses: r
+                .responses
+                .into_iter()
+                .map(|(k, v)| (k, ReferenceOr::from_v3_0(v)))
+                .collect(),
+            extensions: r.extensions,
+        }
+    }
+}
+
+#[cfg(feature = "conversions")]
+impl From<v3_0::Response> for Response {
+    fn from(r: v3_0::Response) -> Self {
+        Response {
+            description: r.description,
+            headers: r
+                .headers
+                .into_iter()
+                .map(|(k, v)| (k, ReferenceOr::from_v3_0(v)))
+                .collect(),
+            content: r.content.into_iter().map(|(k, v)| (k, v.into())).collect(),
+            links: r
+                .links
+                .into_iter()
+                .map(|(k, v)| (k, ReferenceOr::from_v3_0(v)))
+                .collect(),
+            extensions: r.extensions,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use serde_json::json;

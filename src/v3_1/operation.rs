@@ -78,6 +78,35 @@ pub struct Operation {
     pub extensions: IndexMap<String, serde_json::Value>,
 }
 
+#[cfg(feature = "conversions")]
+use crate::v3_0;
+
+#[cfg(feature = "conversions")]
+impl From<v3_0::Operation> for Operation {
+    fn from(o: v3_0::Operation) -> Self {
+        Operation {
+            tags: o.tags,
+            summary: o.summary,
+            description: o.description,
+            external_docs: o.external_docs.map(Into::into),
+            operation_id: o.operation_id,
+            parameters: o
+                .parameters
+                .into_iter()
+                .map(|v| ReferenceOr::from_v3_0(v))
+                .collect(),
+            request_body: o.request_body.map(|v| ReferenceOr::from_v3_0(v)),
+            responses: Some(o.responses.into()),
+            deprecated: o.deprecated,
+            security: o
+                .security
+                .map(|s| s.into_iter().map(|v| ReferenceOr::from_v3_0(v)).collect()),
+            servers: o.servers.into_iter().map(|v| v.into::<Server>()).collect(),
+            extensions: o.extensions,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::v3_1::{Operation, ReferenceOr, Response, Responses, StatusCode};

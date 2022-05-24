@@ -25,3 +25,18 @@ pub struct Server {
     #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
     pub extensions: IndexMap<String, serde_json::Value>,
 }
+
+#[cfg(feature = "conversions")]
+use crate::v3_0;
+
+#[cfg(feature = "conversions")]
+impl From<v3_0::Server> for Server {
+    fn from(s: v3_0::Server) -> Self {
+        Server {
+            url: s.url,
+            description: s.description,
+            variables: s.variables.into(),
+            extensions: s.extensions,
+        }
+    }
+}

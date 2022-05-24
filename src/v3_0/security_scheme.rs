@@ -16,6 +16,9 @@ pub enum SecurityScheme {
         name: String,
         #[serde(skip_serializing_if = "Option::is_none")]
         description: Option<String>,
+        /// Inline extensions to this object.
+        #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
+        extensions: IndexMap<String, serde_json::Value>,
     },
     #[serde(rename = "http")]
     HTTP {
@@ -24,12 +27,18 @@ pub enum SecurityScheme {
         bearer_format: Option<String>,
         #[serde(skip_serializing_if = "Option::is_none")]
         description: Option<String>,
+        /// Inline extensions to this object.
+        #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
+        extensions: IndexMap<String, serde_json::Value>,
     },
     #[serde(rename = "oauth2")]
     OAuth2 {
         flows: OAuth2Flows,
         #[serde(skip_serializing_if = "Option::is_none")]
         description: Option<String>,
+        /// Inline extensions to this object.
+        #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
+        extensions: IndexMap<String, serde_json::Value>,
     },
     #[serde(rename = "openIdConnect")]
     OpenIDConnect {
@@ -37,6 +46,9 @@ pub enum SecurityScheme {
         open_id_connect_url: String,
         #[serde(skip_serializing_if = "Option::is_none")]
         description: Option<String>,
+        /// Inline extensions to this object.
+        #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
+        extensions: IndexMap<String, serde_json::Value>,
     },
 }
 

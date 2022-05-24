@@ -22,3 +22,17 @@ pub struct Discriminator {
     #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
     pub extensions: IndexMap<String, serde_json::Value>,
 }
+
+#[cfg(feature = "conversions")]
+use crate::v3_0;
+
+#[cfg(feature = "conversions")]
+impl From<v3_0::Discriminator> for Discriminator {
+    fn from(d: v3_0::Discriminator) -> Self {
+        Discriminator {
+            property_name: d.property_name,
+            mapping: d.mapping,
+            extensions: d.extensions,
+        }
+    }
+}

@@ -40,3 +40,22 @@ pub struct Header {
     #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
     pub extensions: IndexMap<String, serde_json::Value>,
 }
+
+#[cfg(feature = "conversions")]
+use crate::v3_0;
+
+#[cfg(feature = "conversions")]
+impl From<v3_0::Header> for Header {
+    fn from(e: v3_0::Header) -> Self {
+        Header {
+            description: e.description,
+            style: e.style.into(),
+            required: e.required,
+            deprecated: e.deprecated,
+            format: e.format.into(),
+            example: e.example,
+            examples: e.examples.into_iter().map(|(k,v)| (k, ReferenceOr::from_v3_0(v))).collect(),
+            extensions: e.extensions,
+        }
+    }
+}

@@ -15,3 +15,17 @@ pub struct ExternalDocumentation {
     #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
     pub extensions: IndexMap<String, serde_json::Value>,
 }
+
+#[cfg(feature = "conversions")]
+use crate::v3_0;
+
+#[cfg(feature = "conversions")]
+impl From<v3_0::ExternalDocumentation> for ExternalDocumentation {
+    fn from(e: v3_0::ExternalDocumentation) -> Self {
+        ExternalDocumentation {
+            description: e.description,
+            url: e.url,
+            extensions: e.extensions,
+        }
+    }
+}

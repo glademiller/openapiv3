@@ -17,7 +17,7 @@ pub struct PathItem {
     /// object, the behavior is undefined. See the rules for resolving Relative
     /// References.
     #[serde(rename = "$ref", skip_serializing_if = "Option::is_none")]
-    reference: Option<String>,
+    pub reference: Option<String>,
     /// An optional, string summary, intended to apply to all operations in
     /// this path.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -143,6 +143,48 @@ where
         |key: &String| key.starts_with('/'),
         PhantomData,
     ))
+}
+
+#[cfg(feature = "conversions")]
+use crate::v3_0;
+
+#[cfg(feature = "conversions")]
+impl From<v3_0::PathItem> for PathItem {
+    fn from(p: v3_0::PathItem) -> Self {
+        PathItem {
+            reference: p.reference,
+            summary: p.summary,
+            description: p.description,
+            get: p.get.map(Into::into),
+            put: p.put.map(Into::into),
+            post: p.post.map(Into::into),
+            delete: p.delete.map(Into::into),
+            options: p.options.map(Into::into),
+            head: p.head.map(Into::into),
+            patch: p.patch.map(Into::into),
+            trace: p.trace.map(Into::into),
+            servers: p.servers.into_iter().map(Into::into).collect(),
+            parameters: p
+                .parameters
+                .into_iter()
+                .map(|v| ReferenceOr::from_v3_0(v))
+                .collect(),
+            extensions: p.extensions,
+        }
+    }
+}
+
+#[cfg(feature = "conversions")]
+impl From<v3_0::Paths> for Paths {
+    fn from(p: v3_0::Paths) -> Self {
+        Paths {
+            paths: p
+                .into_iter()
+                .map(|(k, v)| (k, ReferenceOr::from_v3_0(v)))
+                .collect(),
+            extensions: p.extensions,
+        }
+    }
 }
 
 #[cfg(test)]

@@ -24,3 +24,18 @@ pub struct RequestBody {
     #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
     pub extensions: IndexMap<String, serde_json::Value>,
 }
+
+#[cfg(feature = "conversions")]
+use crate::v3_0;
+
+#[cfg(feature = "conversions")]
+impl From<v3_0::RequestBody> for RequestBody {
+    fn from(r: v3_0::RequestBody) -> Self {
+        RequestBody {
+            description: r.description,
+            content: r.content.into_iter().map(|(k, v)| (k, v.into())).collect(),
+            required: r.required(),
+            extensions: r.extensions,
+        }
+    }
+}

@@ -29,7 +29,7 @@ pub struct Components {
     pub headers: IndexMap<String, ReferenceOr<Header>>,
     /// An object to hold reusable Schema Objects.
     #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
-    pub schemas: IndexMap<String, Schema>,
+    pub schemas: IndexMap<String, SchemaObject>,
     /// An object to hold reusable Link Objects.
     #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
     pub links: IndexMap<String, ReferenceOr<Link>>,
@@ -42,4 +42,65 @@ pub struct Components {
     /// Inline extensions to this object.
     #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
     pub extensions: IndexMap<String, serde_json::Value>,
+}
+
+#[cfg(feature = "conversions")]
+use crate::v3_0;
+
+#[cfg(feature = "conversions")]
+impl From<v3_0::Components> for Components {
+    fn from(a: v3_0::Components) -> Self {
+        Components {
+            security_schemes: a
+                .security_schemes
+                .into_iter()
+                .map(|(k, v)| (k, ReferenceOr::from_v3_0(v)))
+                .collect(),
+            responses: a
+                .responses
+                .into_iter()
+                .map(|(k, v)| (k, ReferenceOr::from_v3_0(v)))
+                .collect(),
+            parameters: a
+                .parameters
+                .into_iter()
+                .map(|(k, v)| (k, ReferenceOr::from_v3_0(v)))
+                .collect(),
+            examples: a
+                .examples
+                .into_iter()
+                .map(|(k, v)| (k, ReferenceOr::from_v3_0(v)))
+                .collect(),
+            request_bodies: a
+                .request_bodies
+                .into_iter()
+                .map(|(k, v)| (k, ReferenceOr::from_v3_0(v)))
+                .collect(),
+            headers: a
+                .headers
+                .into_iter()
+                .map(|(k, v)| (k, ReferenceOr::from_v3_0(v)))
+                .collect(),
+            schemas: a
+                .schemas
+                .into_iter()
+                .map(|(k, v)| (k, v.into_item().expect("3.1.0 Component/Schema entries cannot be a $ref").into())) 
+                .collect(),
+            links: a
+                .links
+                .into_iter()
+                .map(|(k, v)| (k, ReferenceOr::from_v3_0(v)))
+                .collect(),
+            callbacks: a
+                .callbacks
+                .into_iter()
+                .map(|(k, v)| match v {
+                    v3_0::ReferenceOr::Item(i) => (k, ReferenceOr::Item(callback_from_v3_0(i))),
+                    v3_0::ReferenceOr::Reference{ reference }  => (k, ReferenceOr::Reference { reference, summary: None, description: None }),
+                })
+                .collect(),
+            path_items: IndexMap::new(),
+            extensions: a.extensions,
+        }
+    }
 }

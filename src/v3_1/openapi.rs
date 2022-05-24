@@ -3,12 +3,13 @@ use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
-pub struct OpenAPI {
+pub struct OpenApi {
     /// REQUIRED. Provides metadata about the API.
     /// The metadata MAY be used by tooling as required.
     pub info: Info,
     /// The default value for the `$schema` keyword within Schema Objects
     /// contained within this OAS document. This MUST be in the form of a URI.
+    #[serde(rename = "jsonSchemaDialect")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub json_schema_dialect: Option<String>,
     /// An array of Server Objects, which provide connectivity information to a
@@ -60,7 +61,7 @@ pub struct OpenAPI {
     pub extensions: IndexMap<String, serde_json::Value>,
 }
 
-impl OpenAPI {
+impl OpenApi {
     /// Iterates through all [Operation]s in this API.
     ///
     /// The iterated items are tuples of `(&str, &str, &Operation)` containing

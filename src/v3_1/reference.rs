@@ -101,3 +101,20 @@ impl<T> ReferenceOr<Box<T>> {
         }
     }
 }
+
+#[cfg(feature = "conversions")]
+use crate::v3_0;
+
+#[cfg(feature = "conversions")]
+impl<T> ReferenceOr<T> {
+    pub fn from_v3_0<X: Into<T>>(r: v3_0::ReferenceOr<X>) -> Self {
+        match r {
+            v3_0::ReferenceOr::Reference { reference } => ReferenceOr::Reference {
+                reference,
+                summary: None,
+                description: None,
+            },
+            v3_0::ReferenceOr::Item(item) => ReferenceOr::Item(item.into()),
+        }
+    }
+}

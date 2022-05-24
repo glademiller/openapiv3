@@ -17,3 +17,18 @@ pub struct License {
     #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
     pub extensions: IndexMap<String, serde_json::Value>,
 }
+
+#[cfg(feature = "conversions")]
+use crate::v3_0;
+
+#[cfg(feature = "conversions")]
+impl From<v3_0::License> for License {
+    fn from(i: v3_0::License) -> Self {
+        License {
+            name: i.name,
+            identifier: None, 
+            url: i.url,
+            extensions: i.extensions,
+        }
+    }
+}
