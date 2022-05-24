@@ -1,57 +1,21 @@
-mod callback;
-mod components;
-mod contact;
-mod discriminator;
-mod encoding;
-mod example;
-mod external_documentation;
-mod header;
-mod info;
-mod license;
-mod link;
-mod media_type;
-mod openapi;
-mod operation;
-mod parameter;
-mod paths;
-mod reference;
-mod request_body;
-mod responses;
-mod schema;
-mod security_requirement;
-mod security_scheme;
-mod server;
-mod server_variable;
-mod status_code;
-mod tag;
+#![allow(clippy::large_enum_variant)]
 mod util;
-mod variant_or;
+pub mod v3_0;
+pub mod v3_1;
 
-pub use self::callback::*;
-pub use self::components::*;
-pub use self::contact::*;
-pub use self::discriminator::*;
-pub use self::encoding::*;
-pub use self::example::*;
-pub use self::external_documentation::*;
-pub use self::header::*;
-pub use self::info::*;
-pub use self::license::*;
-pub use self::link::*;
-pub use self::media_type::*;
-pub use self::openapi::*;
-pub use self::operation::*;
-pub use self::parameter::*;
-pub use self::paths::*;
-pub use self::reference::*;
-pub use self::request_body::*;
-pub use self::responses::*;
-pub use self::schema::*;
-pub use self::security_requirement::*;
-pub use self::security_scheme::*;
-pub use self::server::*;
-pub use self::server_variable::*;
-pub use self::status_code::*;
-pub use self::tag::*;
-pub use self::util::*;
-pub use self::variant_or::*;
+pub use schemars;
+pub use v3_0::*;
+
+pub mod versioned {
+    pub use super::v3_0;
+    pub use super::v3_1;
+    use serde::{Deserialize, Serialize};
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+    #[serde(tag = "openapi")]
+    pub enum OpenApi {
+        #[serde(rename = "3.0.0", alias = "3.0.1", alias = "3.0.2", alias = "3.0.3")]
+        Version30(super::v3_0::OpenAPI),
+        #[serde(rename = "3.1.0")]
+        Version31(super::v3_1::OpenApi),
+    }
+}

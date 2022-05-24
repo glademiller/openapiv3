@@ -1,7 +1,7 @@
 # OpenAPI v3 ![example workflow](https://github.com/glademiller/openapiv3/actions/workflows/rust.yml/badge.svg)
 
 
-This crate provides data structures that represent the [OpenAPI v3.0.x specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md). Note this does not cover OpenAPI v3.1 which was an incompatible change.
+This crate provides data structures that represent the [OpenAPI v3.0.x](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md) and [OpenAPI v3.1.x](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md) specifications.
 
 ## Example
 
