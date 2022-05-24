@@ -54,7 +54,11 @@ impl From<v3_0::Header> for Header {
             deprecated: e.deprecated,
             format: e.format.into(),
             example: e.example,
-            examples: e.examples.into_iter().map(|(k,v)| (k, ReferenceOr::from_v3_0(v))).collect(),
+            examples: e
+                .examples
+                .into_iter()
+                .map(|(k, v)| (k, ReferenceOr::from_v3_0(v)))
+                .collect(),
             extensions: e.extensions,
         }
     }

@@ -66,7 +66,11 @@ impl From<v3_0::Encoding> for Encoding {
     fn from(e: v3_0::Encoding) -> Self {
         Encoding {
             content_type: e.content_type,
-            headers: e.headers.into_iter().map(|(k,v)|(k, ReferenceOr::from_v3_0(v))).collect(),
+            headers: e
+                .headers
+                .into_iter()
+                .map(|(k, v)| (k, ReferenceOr::from_v3_0(v)))
+                .collect(),
             style: e.style.map(Into::into),
             explode: e.explode,
             allow_reserved: e.allow_reserved,

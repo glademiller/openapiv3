@@ -26,15 +26,12 @@ impl From<v3_0::MediaType> for MediaType {
         MediaType {
             schema: m.schema.and_then(|v| v.into_item().map(Into::into)),
             example: m.example,
-            examples: m.examples
+            examples: m
+                .examples
                 .into_iter()
                 .map(|(k, v)| (k, ReferenceOr::from_v3_0(v)))
                 .collect(),
-            encoding: m
-                .encoding
-                .into_iter()
-                .map(|(k, v)| (k, v.into())) 
-                .collect(),
+            encoding: m.encoding.into_iter().map(|(k, v)| (k, v.into())).collect(),
             extensions: m.extensions,
         }
     }

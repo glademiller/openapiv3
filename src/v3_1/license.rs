@@ -26,7 +26,7 @@ impl From<v3_0::License> for License {
     fn from(i: v3_0::License) -> Self {
         License {
             name: i.name,
-            identifier: None, 
+            identifier: None,
             url: i.url,
             extensions: i.extensions,
         }

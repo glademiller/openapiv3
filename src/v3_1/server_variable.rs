@@ -26,16 +26,16 @@ pub struct ServerVariable {
 }
 
 #[cfg(feature = "conversions")]
-use crate::v3_0; 
+use crate::v3_0;
 
 #[cfg(feature = "conversions")]
 impl From<v3_0::ServerVariable> for ServerVariable {
     fn from(t: v3_0::ServerVariable) -> Self {
         ServerVariable {
-            enumeration: t.enumeration, 
+            enumeration: t.enumeration,
             default: t.default,
             description: t.description,
-            extensions: t.extensions, 
+            extensions: t.extensions,
         }
     }
 }

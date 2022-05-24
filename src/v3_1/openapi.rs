@@ -89,15 +89,18 @@ impl From<v3_0::OpenAPI> for OpenApi {
     fn from(o: v3_0::OpenAPI) -> Self {
         OpenApi {
             info: o.info.into(),
-            json_schema_dialect: None, 
+            json_schema_dialect: None,
             servers: o.servers.into_iter().map(Into::into).collect(),
             paths: Some(o.paths.into()),
-            webhooks:  IndexMap::new(),
+            webhooks: IndexMap::new(),
             components: o.components.map(Into::into),
-            security: o.security.map(|v| v.into_iter().map(Into::into).collect()).unwrap_or_default(),
+            security: o
+                .security
+                .map(|v| v.into_iter().map(Into::into).collect())
+                .unwrap_or_default(),
             tags: o.tags.into_iter().map(Into::into).collect(),
             external_docs: o.external_docs.map(Into::into),
-            extensions: o.extensions, 
+            extensions: o.extensions,
         }
     }
 }

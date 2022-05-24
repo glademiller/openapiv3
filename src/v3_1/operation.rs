@@ -98,9 +98,7 @@ impl From<v3_0::Operation> for Operation {
             request_body: o.request_body.map(|v| ReferenceOr::from_v3_0(v)),
             responses: Some(o.responses.into()),
             deprecated: o.deprecated,
-            security: o
-                .security
-                .into_iter().map(|v| v.into()).collect(),
+            security: o.security.into_iter().map(|v| v.into()).collect(),
             servers: o.servers.into_iter().map(|v| v.into()).collect(),
             extensions: o.extensions,
         }

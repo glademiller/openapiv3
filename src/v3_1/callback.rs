@@ -9,11 +9,12 @@ use indexmap::IndexMap;
 /// callback operation.
 pub type Callback = IndexMap<String, ReferenceOr<PathItem>>;
 
-
 #[cfg(feature = "conversions")]
 use crate::v3_0;
 
 #[cfg(feature = "conversions")]
 pub fn callback_from_v3_0(a: IndexMap<String, v3_0::PathItem>) -> Callback {
-    a.into_iter().map(|(k,v)| (k, ReferenceOr::<PathItem>::Item(v.into()))).collect()
+    a.into_iter()
+        .map(|(k, v)| (k, ReferenceOr::<PathItem>::Item(v.into())))
+        .collect()
 }

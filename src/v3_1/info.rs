@@ -43,7 +43,7 @@ impl From<v3_0::Info> for Info {
     fn from(i: v3_0::Info) -> Self {
         Info {
             title: i.title,
-            summary: None, 
+            summary: None,
             description: i.description,
             terms_of_service: i.terms_of_service,
             contact: i.contact.map(Into::into),

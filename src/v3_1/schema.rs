@@ -20,7 +20,6 @@ pub struct SchemaObject {
     pub example: Option<serde_json::Value>,
 }
 
-
 #[cfg(feature = "conversions")]
 mod conversions {
     use crate::v3_0;
@@ -28,8 +27,8 @@ mod conversions {
     impl From<v3_0::Schema> for super::SchemaObject {
         fn from(s: v3_0::Schema) -> Self {
             let oldval = serde_json::to_value(&s).expect("Convert Schema to serde_json::Value");
-            serde_json::from_value(oldval).expect("Convert Openapi v3.0.0 Schema to Openapi V3.1.0 Schema")
+            serde_json::from_value(oldval)
+                .expect("Convert Openapi v3.0.0 Schema to Openapi V3.1.0 Schema")
         }
     }
-
 }

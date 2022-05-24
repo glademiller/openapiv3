@@ -152,7 +152,7 @@ use crate::v3_0;
 impl From<v3_0::PathItem> for PathItem {
     fn from(p: v3_0::PathItem) -> Self {
         PathItem {
-            reference: None, 
+            reference: None,
             summary: p.summary,
             description: p.description,
             get: p.get.map(Into::into),
@@ -178,7 +178,8 @@ impl From<v3_0::PathItem> for PathItem {
 impl From<v3_0::Paths> for Paths {
     fn from(p: v3_0::Paths) -> Self {
         Paths {
-            paths: p.paths
+            paths: p
+                .paths
                 .into_iter()
                 .map(|(k, v)| (k, ReferenceOr::from_v3_0(v)))
                 .collect(),

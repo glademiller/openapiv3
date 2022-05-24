@@ -258,12 +258,15 @@ impl From<v3_0::ParameterData> for ParameterData {
 impl From<v3_0::ParameterSchemaOrContent> for ParameterSchemaOrContent {
     fn from(x: v3_0::ParameterSchemaOrContent) -> Self {
         match x {
-            v3_0::ParameterSchemaOrContent::Schema(schema) => {
-                ParameterSchemaOrContent::Schema(schema.into_item().expect("SchemaObject in Parameter must be an Item, not a Reference").into())
-            }
-            v3_0::ParameterSchemaOrContent::Content(content) => {
-                ParameterSchemaOrContent::Content(content.into_iter().map(|(k,v)|(k, v.into())).collect())
-            }
+            v3_0::ParameterSchemaOrContent::Schema(schema) => ParameterSchemaOrContent::Schema(
+                schema
+                    .into_item()
+                    .expect("SchemaObject in Parameter must be an Item, not a Reference")
+                    .into(),
+            ),
+            v3_0::ParameterSchemaOrContent::Content(content) => ParameterSchemaOrContent::Content(
+                content.into_iter().map(|(k, v)| (k, v.into())).collect(),
+            ),
         }
     }
 }

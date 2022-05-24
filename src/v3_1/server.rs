@@ -35,7 +35,10 @@ impl From<v3_0::Server> for Server {
         Server {
             url: s.url,
             description: s.description,
-            variables: s.variables.map(|v|v.into_iter().map(|(k,v)|(k, v.into())).collect()).unwrap_or_default(),
+            variables: s
+                .variables
+                .map(|v| v.into_iter().map(|(k, v)| (k, v.into())).collect())
+                .unwrap_or_default(),
             extensions: s.extensions,
         }
     }

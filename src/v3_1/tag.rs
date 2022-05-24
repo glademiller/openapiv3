@@ -22,7 +22,7 @@ pub struct Tag {
 }
 
 #[cfg(feature = "conversions")]
-use crate::v3_0; 
+use crate::v3_0;
 
 #[cfg(feature = "conversions")]
 impl From<v3_0::Tag> for Tag {
@@ -31,7 +31,7 @@ impl From<v3_0::Tag> for Tag {
             name: t.name,
             description: t.description,
             external_docs: t.external_docs.map(Into::into),
-            extensions: t.extensions, 
+            extensions: t.extensions,
         }
     }
 }

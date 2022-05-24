@@ -84,7 +84,14 @@ impl From<v3_0::Components> for Components {
             schemas: a
                 .schemas
                 .into_iter()
-                .map(|(k, v)| (k, v.into_item().expect("3.1.0 Component/Schema entries cannot be a $ref").into())) 
+                .map(|(k, v)| {
+                    (
+                        k,
+                        v.into_item()
+                            .expect("3.1.0 Component/Schema entries cannot be a $ref")
+                            .into(),
+                    )
+                })
                 .collect(),
             links: a
                 .links
@@ -96,7 +103,14 @@ impl From<v3_0::Components> for Components {
                 .into_iter()
                 .map(|(k, v)| match v {
                     v3_0::ReferenceOr::Item(i) => (k, ReferenceOr::Item(callback_from_v3_0(i))),
-                    v3_0::ReferenceOr::Reference{ reference }  => (k, ReferenceOr::Reference { reference, summary: None, description: None }),
+                    v3_0::ReferenceOr::Reference { reference } => (
+                        k,
+                        ReferenceOr::Reference {
+                            reference,
+                            summary: None,
+                            description: None,
+                        },
+                    ),
                 })
                 .collect(),
             path_items: IndexMap::new(),
