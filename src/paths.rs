@@ -82,7 +82,7 @@ impl PathItem {
             ("trace", &mut self.trace),
         ]
             .into_iter()
-            .filter_map(|(method, mut maybe_op)| maybe_op.as_mut().map(|op| (method, op)))
+            .filter_map(|(method, maybe_op)| maybe_op.as_mut().map(|op| (method, op)))
     }
 }
 

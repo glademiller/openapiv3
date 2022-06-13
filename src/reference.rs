@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use crate::{OpenAPI, Schema};
+use crate::{OpenAPI, Parameter, Response, Schema};
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 #[serde(untagged)]
@@ -123,6 +123,72 @@ impl ReferenceOr<Box<Schema>> {
         match self {
             ReferenceOr::Reference { reference } => ReferenceOr::Reference { reference: reference.clone() },
             ReferenceOr::Item(boxed) => ReferenceOr::Item(*boxed.clone()),
+        }
+    }
+}
+
+pub fn get_parameter_name(reference: &str) -> Option<&str> {
+    let mut parts = reference.split('/');
+    if parts.next() != Some("#") {
+        return None;
+    }
+    if parts.next() != Some("components") {
+        return None;
+    }
+    if parts.next() != Some("parameters") {
+        return None;
+    }
+    parts.next()
+}
+
+
+impl ReferenceOr<Parameter> {
+    pub fn resolve<'a>(&'a self, spec: &'a OpenAPI) -> &'a Parameter {
+        match self {
+            ReferenceOr::Reference { reference } => {
+                let name = get_parameter_name(&reference).unwrap();
+                let components = spec.components.as_ref().unwrap();
+                let ref_or_parameter = components.parameters.get(name).unwrap();
+                match ref_or_parameter {
+                    ReferenceOr::Item(schema) => schema,
+                    ReferenceOr::Reference { .. } => ref_or_parameter.resolve(spec),
+                }
+            },
+            ReferenceOr::Item(parameter) => parameter,
+        }
+    }
+}
+
+
+
+pub fn get_response_name(reference: &str) -> Option<&str> {
+    let mut parts = reference.split('/');
+    if parts.next() != Some("#") {
+        return None;
+    }
+    if parts.next() != Some("components") {
+        return None;
+    }
+    if parts.next() != Some("responses") {
+        return None;
+    }
+    parts.next()
+}
+
+
+impl ReferenceOr<Response> {
+    pub fn resolve<'a>(&'a self, spec: &'a OpenAPI) -> &'a Response {
+        match self {
+            ReferenceOr::Reference { reference } => {
+                let name = get_response_name(&reference).unwrap();
+                let components = spec.components.as_ref().unwrap();
+                let ref_or_response = components.responses.get(name).unwrap();
+                match ref_or_response {
+                    ReferenceOr::Item(schema) => schema,
+                    ReferenceOr::Reference { .. } => ref_or_response.resolve(spec),
+                }
+            },
+            ReferenceOr::Item(response) => response,
         }
     }
 }
