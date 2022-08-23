@@ -129,6 +129,10 @@ impl Paths {
     pub fn iter(&self) -> indexmap::map::Iter<String, ReferenceOr<PathItem>> {
         self.paths.iter()
     }
+
+    pub fn iter_mut(&mut self) -> indexmap::map::IterMut<String, ReferenceOr<PathItem>> {
+        self.paths.iter_mut()
+    }
 }
 
 impl IntoIterator for Paths {

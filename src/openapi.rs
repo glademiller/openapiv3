@@ -67,4 +67,21 @@ impl OpenAPI {
                     .map(move |(method, op)| (path.as_str(), method, op))
             })
     }
+
+    pub fn operations_mut(&mut self) -> impl Iterator<Item = (&str, &str, &mut Operation)> {
+        self.paths
+            .iter_mut()
+            .filter_map(|(path, item)| item.as_mut().map(|i| (path, i)))
+            .flat_map(|(path,item)| {
+                item.iter_mut()
+                    .map(move |(method, op)| (path.as_str(), method, op))
+            })
+    }
+
+    pub fn schemas_mut(&mut self) -> &mut IndexMap<String, ReferenceOr<Schema>>{
+        &mut self.components
+            .as_mut()
+            .unwrap()
+            .schemas
+    }
 }
