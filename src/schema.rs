@@ -254,6 +254,18 @@ impl Schema {
         }
     }
 
+    pub fn properties_mut(&mut self) -> Option<&mut IndexMap<String, ReferenceOr<Schema>>> {
+        match &mut self.schema_kind {
+            SchemaKind::Type(t) => {
+                match t {
+                    Type::Object(ref mut o) => Some(&mut o.properties),
+                    _ => None,
+                }
+            }
+            _ => None,
+        }
+    }
+
     pub fn required(&self, field: &str) -> bool {
         match &self.schema_kind {
             SchemaKind::Type(t) => {
