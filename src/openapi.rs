@@ -58,7 +58,7 @@ impl OpenAPI {
     /// the path, method,  and the operation.
     ///
     /// Path items containing `$ref`s are skipped.
-    pub fn operations(&self) -> impl Iterator<Item = (&str, &str, &Operation)> {
+    pub fn operations(&self) -> impl Iterator<Item=(&str, &str, &Operation)> {
         self.paths
             .iter()
             .filter_map(|(path, item)| item.as_item().map(|i| (path, i)))
@@ -68,19 +68,26 @@ impl OpenAPI {
             })
     }
 
-    pub fn operations_mut(&mut self) -> impl Iterator<Item = (&str, &str, &mut Operation)> {
+    pub fn operations_mut(&mut self) -> impl Iterator<Item=(&str, &str, &mut Operation)> {
         self.paths
             .iter_mut()
             .filter_map(|(path, item)| item.as_mut().map(|i| (path, i)))
-            .flat_map(|(path,item)| {
+            .flat_map(|(path, item)| {
                 item.iter_mut()
                     .map(move |(method, op)| (path.as_str(), method, op))
             })
     }
 
-    pub fn schemas_mut(&mut self) -> &mut IndexMap<String, ReferenceOr<Schema>>{
+    pub fn schemas_mut(&mut self) -> &mut IndexMap<String, ReferenceOr<Schema>> {
         &mut self.components
             .as_mut()
+            .unwrap()
+            .schemas
+    }
+
+    pub fn schemas(&self) -> &IndexMap<String, ReferenceOr<Schema>> {
+        &self.components
+            .as_ref()
             .unwrap()
             .schemas
     }
