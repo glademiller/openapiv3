@@ -1,6 +1,51 @@
 use serde::{Deserialize, Serialize};
 use crate::{OpenAPI, Parameter, Response, Schema};
 
+/// Represents a reference to an OpenAPI Schema. This should probably be moved to openapiv3-extended
+/// e.g. #/components/schemas/Account or #/components/schemas/Account/properties/name
+pub enum SchemaReference {
+    Schema {
+        schema: String,
+    },
+    Property {
+        schema: String,
+        property: String,
+    },
+}
+
+impl SchemaReference {
+    pub fn from_str(reference: &str) -> Self {
+        let mut ns = reference.rsplit('/');
+        let name = ns.next().unwrap();
+        match ns.next().unwrap() {
+            "schemas" => {
+                Self::Schema {
+                    schema: name.to_string(),
+                }
+            }
+            "properties" => {
+                let schema_name = ns.next().unwrap();
+                Self::Property {
+                    schema: schema_name.to_string(),
+                    property: name.to_string(),
+                }
+            }
+            _ => panic!("Unknown reference: {}", reference),
+        }
+    }
+}
+
+
+impl std::fmt::Display for SchemaReference {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            SchemaReference::Schema { schema } => write!(f, "#/components/schemas/{}", schema),
+            SchemaReference::Property { schema, property } => write!(f, "#/components/schemas/{}/properties/{}", schema, property),
+        }
+    }
+}
+
+
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 #[serde(untagged)]
 pub enum ReferenceOr<T> {
@@ -72,8 +117,6 @@ impl<T> ReferenceOr<T> {
             ReferenceOr::Item(i) => Some(i),
         }
     }
-
-
 }
 
 impl<T: 'static> ReferenceOr<T> {
@@ -86,33 +129,34 @@ impl<T: 'static> ReferenceOr<T> {
 }
 
 
-pub fn get_component_name(reference: &str) -> Option<&str> {
-    let mut parts = reference.split('/');
-    if parts.next() != Some("#") {
-        return None;
-    }
-    if parts.next() != Some("components") {
-        return None;
-    }
-    if parts.next() != Some("schemas") {
-        return None;
-    }
-    parts.next()
-}
-
-
 impl ReferenceOr<Schema> {
     pub fn resolve<'a>(&'a self, spec: &'a OpenAPI) -> &'a Schema {
         match self {
             ReferenceOr::Reference { reference } => {
-                let name = get_component_name(&reference).unwrap();
-                let components = spec.components.as_ref().unwrap();
-                let ref_or_schema = components.schemas.get(name).unwrap();
-                match ref_or_schema {
-                    ReferenceOr::Item(schema) => schema,
-                    ReferenceOr::Reference { .. } => ref_or_schema.resolve(spec),
+                let reference = SchemaReference::from_str(&reference);
+                match &reference {
+                    SchemaReference::Schema { ref schema } => {
+                        let schema_ref = spec.schemas().get(schema)
+                            .expect(&format!("Schema {} not found in OpenAPI spec.", schema));
+                        // In theory both this as_item and the one below could have continue to be references
+                        // but assum
+                        schema_ref.as_item()
+                            .expect(&format!("The schema {} was used in a reference, but that schema is itself a reference to another schema.", schema))
+                    }
+                    SchemaReference::Property { schema: ref schema_name, ref property } => {
+                        let schema = spec.schemas().get(schema_name)
+                            .expect(&format!("Schema {} not found in OpenAPI spec.", schema_name))
+                            .as_item()
+                            .expect(&format!("The schema {} was used in a reference, but that schema is itself a reference to another schema.", schema_name));
+                        let prop_schema = schema
+                            .properties()
+                            .expect(&format!("Tried to resolve reference {}, but {} is not an object with properties.", reference, schema_name))
+                            .get(property)
+                            .expect(&format!("Schema {} does not have property {}.", schema_name, property));
+                        prop_schema.resolve(spec)
+                    }
                 }
-            },
+            }
             ReferenceOr::Item(schema) => schema,
         }
     }
@@ -153,12 +197,11 @@ impl ReferenceOr<Parameter> {
                     ReferenceOr::Item(schema) => schema,
                     ReferenceOr::Reference { .. } => ref_or_parameter.resolve(spec),
                 }
-            },
+            }
             ReferenceOr::Item(parameter) => parameter,
         }
     }
 }
-
 
 
 pub fn get_response_name(reference: &str) -> Option<&str> {
@@ -187,7 +230,7 @@ impl ReferenceOr<Response> {
                     ReferenceOr::Item(schema) => schema,
                     ReferenceOr::Reference { .. } => ref_or_response.resolve(spec),
                 }
-            },
+            }
             ReferenceOr::Item(response) => response,
         }
     }
