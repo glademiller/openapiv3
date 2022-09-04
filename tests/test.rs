@@ -172,7 +172,7 @@ fn petstore_discriminated() {
                             schema_data: Default::default(),
                             schema_kind: SchemaKind::Type(Type::Object(ObjectType {
                                 properties: map!{
-                                    "huntingSkill".to_owned() => ReferenceOr::boxed_item(Schema {
+                                    "huntingSkill".to_owned() => ReferenceOr::Item(Schema {
                                         schema_data: SchemaData {
                                             description: Some("The measured skill for hunting".to_owned()),
                                             ..Default::default()
@@ -206,7 +206,7 @@ fn petstore_discriminated() {
                             schema_data: Default::default(),
                             schema_kind: SchemaKind::Type(Type::Object(ObjectType {
                                 properties: map!{
-                                    "packSize".to_owned() => ReferenceOr::boxed_item(Schema {
+                                    "packSize".to_owned() => ReferenceOr::Item(Schema {
                                         schema_data: SchemaData {
                                             description: Some("the size of the pack the dog is from".to_owned()),
                                             ..Default::default()
@@ -235,11 +235,11 @@ fn petstore_discriminated() {
                     },
                     schema_kind: SchemaKind::Type(Type::Object(ObjectType {
                         properties: map!{
-                            "name".to_owned() => ReferenceOr::boxed_item(Schema {
+                            "name".to_owned() => ReferenceOr::Item(Schema {
                                 schema_data: Default::default(),
                                 schema_kind: SchemaKind::Type(Type::String(Default::default())),
                             }),
-                            "petType".to_owned() => ReferenceOr::boxed_item(Schema {
+                            "petType".to_owned() => ReferenceOr::Item(Schema {
                                 schema_data: Default::default(),
                                 schema_kind: SchemaKind::Type(Type::String(Default::default())),
                             }),
