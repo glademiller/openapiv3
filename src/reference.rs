@@ -1,5 +1,6 @@
+use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
-use crate::{OpenAPI, Parameter, Response, Schema};
+use crate::{OpenAPI, Parameter, RequestBody, Response, Schema};
 
 /// Represents a reference to an OpenAPI Schema. This should probably be moved to openapiv3-extended
 /// e.g. #/components/schemas/Account or #/components/schemas/Account/properties/name
@@ -171,67 +172,86 @@ impl ReferenceOr<Box<Schema>> {
     }
 }
 
-pub fn get_parameter_name(reference: &str) -> Option<&str> {
-    let mut parts = reference.split('/');
-    if parts.next() != Some("#") {
-        return None;
-    }
-    if parts.next() != Some("components") {
-        return None;
-    }
-    if parts.next() != Some("parameters") {
-        return None;
-    }
-    parts.next()
-}
-
 
 impl ReferenceOr<Parameter> {
-    pub fn resolve<'a>(&'a self, spec: &'a OpenAPI) -> &'a Parameter {
+    pub fn resolve<'a>(&'a self, spec: &'a OpenAPI) -> Result<&'a Parameter> {
         match self {
             ReferenceOr::Reference { reference } => {
-                let name = get_parameter_name(&reference).unwrap();
+                let name = get_parameter_name(&reference)?;
                 let components = spec.components.as_ref().unwrap();
-                let ref_or_parameter = components.parameters.get(name).unwrap();
-                match ref_or_parameter {
-                    ReferenceOr::Item(schema) => schema,
-                    ReferenceOr::Reference { .. } => ref_or_parameter.resolve(spec),
-                }
+                components.parameters.get(name)
+                    .ok_or(anyhow!("{} not found in OpenAPI spec.", reference))?
+                    .as_item()
+                    .ok_or(anyhow!("{} is circular.", reference))
             }
-            ReferenceOr::Item(parameter) => parameter,
+            ReferenceOr::Item(parameter) => Ok(parameter),
         }
     }
 }
 
 
-pub fn get_response_name(reference: &str) -> Option<&str> {
-    let mut parts = reference.split('/');
-    if parts.next() != Some("#") {
-        return None;
-    }
-    if parts.next() != Some("components") {
-        return None;
-    }
-    if parts.next() != Some("responses") {
-        return None;
-    }
-    parts.next()
+fn parse_reference<'a>(reference: &'a str, group: &str) -> Result<&'a str> {
+    let mut parts = reference.rsplitn(2, '/');
+    let name = parts.next();
+    name.filter(|_| matches!(parts.next(), Some(x) if format!("#/components/{group}") == x))
+        .ok_or(anyhow!("Invalid {} reference: {}", group, reference))
 }
 
+
+fn get_response_name(reference: &str) -> Result<&str> {
+    parse_reference(reference, "responses")
+}
+
+
+fn get_request_body_name(reference: &str) -> Result<&str> {
+    parse_reference(reference, "requestBodies")
+}
+
+fn get_parameter_name(reference: &str) -> Result<&str> {
+    parse_reference(reference, "parameters")
+}
 
 impl ReferenceOr<Response> {
-    pub fn resolve<'a>(&'a self, spec: &'a OpenAPI) -> &'a Response {
+    pub fn resolve<'a>(&'a self, spec: &'a OpenAPI) -> Result<&'a Response> {
         match self {
             ReferenceOr::Reference { reference } => {
-                let name = get_response_name(&reference).unwrap();
+                let name = get_response_name(&reference)?;
                 let components = spec.components.as_ref().unwrap();
-                let ref_or_response = components.responses.get(name).unwrap();
-                match ref_or_response {
-                    ReferenceOr::Item(schema) => schema,
-                    ReferenceOr::Reference { .. } => ref_or_response.resolve(spec),
-                }
+                components.responses.get(name)
+                    .ok_or(anyhow!("{} not found in OpenAPI spec.", reference))?
+                    .as_item()
+                    .ok_or(anyhow!("{} is circular.", reference))
             }
-            ReferenceOr::Item(response) => response,
+            ReferenceOr::Item(response) => Ok(response),
         }
+    }
+}
+
+
+impl ReferenceOr<RequestBody> {
+    pub fn resolve<'a>(&'a self, spec: &'a OpenAPI) -> Result<&'a RequestBody> {
+        match self {
+            ReferenceOr::Reference { reference } => {
+                let name = get_request_body_name(&reference)?;
+                let components = spec.components.as_ref().unwrap();
+                components.request_bodies.get(name)
+                    .ok_or(anyhow!("{} not found in OpenAPI spec.", reference))?
+                    .as_item()
+                    .ok_or(anyhow!("{} is circular.", reference))
+                }
+            ReferenceOr::Item(request_body) => Ok(request_body),
+        }
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_get_request_body_name() {
+        assert!(matches!(get_request_body_name("#/components/requestBodies/Foo"), Ok("Foo")));
+        assert!(get_request_body_name("#/components/schemas/Foo").is_err());
     }
 }
