@@ -1,6 +1,6 @@
 use crate::*;
 use indexmap::IndexMap;
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
@@ -38,7 +38,7 @@ pub struct Schema {
     pub schema_kind: SchemaKind,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, PartialEq)]
 #[serde(untagged)]
 pub enum SchemaKind {
     Type(Type),
@@ -58,6 +58,41 @@ pub enum SchemaKind {
         not: Box<ReferenceOr<Schema>>,
     },
     Any(AnySchema),
+}
+
+
+impl<'de> Deserialize<'de> for SchemaKind {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: Deserializer<'de>,
+    {
+        let mut map = serde_json::Map::deserialize(deserializer)?;
+        println!("map: {:?}", map.keys().collect::<Vec<&String>>());
+        if let Some(one_of) = map.remove("oneOf") {
+            let one_of = serde_json::from_value(one_of).map_err(serde::de::Error::custom)?;
+            Ok(SchemaKind::OneOf { one_of })
+        } else if let Some(all_of) = map.remove("allOf") {
+            let all_of = serde_json::from_value(all_of).map_err(serde::de::Error::custom)?;
+            Ok(SchemaKind::AllOf { all_of })
+        } else if let Some(any_of) = map.remove("anyOf") {
+            let any_of = serde_json::from_value(any_of).map_err(serde::de::Error::custom)?;
+            Ok(SchemaKind::AnyOf { any_of })
+        } else if let Some(not) = map.remove("not") {
+            let not = serde_json::from_value(not).map_err(serde::de::Error::custom)?;
+            Ok(SchemaKind::Not { not })
+        } else if map.contains_key("type") {
+            let typ = serde_json::from_value(serde_json::Value::Object(map)).map_err(serde::de::Error::custom)?;
+            Ok(SchemaKind::Type(typ))
+        } else if map.contains_key("properties") {
+            let assumed_object = serde_json::Value::Object(map);
+            let object = serde_json::from_value(assumed_object).map_err(serde::de::Error::custom)?;
+            Ok(SchemaKind::Type(Type::Object(object)))
+        } else {
+            let assumed_object = serde_json::Value::Object(map);
+            let object = serde_json::from_value(assumed_object).map_err(serde::de::Error::custom)?;
+            Ok(SchemaKind::Any(object))
+        }
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -305,7 +340,7 @@ mod tests {
                 "x-foo": "bar"
             }"#,
         )
-        .unwrap();
+            .unwrap();
 
         assert_eq!(
             schema.schema_data.extensions.get("x-foo"),
@@ -349,4 +384,46 @@ mod tests {
             &schema.schema_kind,
             SchemaKind::Any(AnySchema { enumeration, .. }) if enumeration[0] == json!(null)));
     }
+
+    #[test]
+    fn test_default_to_object() {
+        let s = r##"
+required:
+  - definition
+properties:
+  definition:
+    type: string
+    description: >
+      Serialized definition of the version. This should be an OpenAPI 2.x, 3.x or AsyncAPI 2.x file
+      serialized as a string, in YAML or JSON.
+    example: |
+      {asyncapi: "2.0", "info": { "title: … }}
+  references:
+    type: array
+    description: Import external references used by `definition`. It's usually resources not accessible by Bump servers, like local files or internal URLs.
+    items:
+      $ref: "#/components/schemas/Reference"
+"##.trim();
+        let s = serde_yaml::from_str::<Schema>(s).unwrap();
+        assert!(matches!(s.schema_kind, SchemaKind::Type(crate::Type::Object(_))), "Schema kind was not expected {:?}", s.schema_kind);
+    }
+
+    #[test]
+    fn test_all_of() {
+        let s = r##"
+allOf:
+  - $ref: "#/components/schemas/DocumentationRequest"
+  - $ref: "#/components/schemas/PreviewRequest"
+        "##.trim();
+        let s = serde_yaml::from_str::<Schema>(s).unwrap();
+        match &s.schema_kind {
+            SchemaKind::AllOf { all_of } => {
+                assert_eq!(all_of.len(), 2);
+                assert!(matches!(all_of[0].as_ref_str(), Some("#/components/schemas/DocumentationRequest")));
+                assert!(matches!(all_of[1].as_ref_str(), Some("#/components/schemas/PreviewRequest")));
+            }
+            _ => panic!("Schema kind was not expected {:?}", s.schema_kind)
+        }
+    }
 }
+

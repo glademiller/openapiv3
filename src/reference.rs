@@ -112,6 +112,13 @@ impl<T> ReferenceOr<T> {
         }
     }
 
+    pub fn as_ref_str(&self) -> Option<&str> {
+        match self {
+            ReferenceOr::Reference { reference } => Some(reference),
+            ReferenceOr::Item(_) => None,
+        }
+    }
+
     pub fn as_mut(&mut self) -> Option<&mut T> {
         match self {
             ReferenceOr::Reference { .. } => None,
