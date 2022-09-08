@@ -1,6 +1,7 @@
 use crate::*;
 use indexmap::IndexMap;
-use serde::{Deserialize, Deserializer, Serialize};
+use serde::{Deserialize, Serialize};
+use anyhow::{anyhow, Result};
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
@@ -134,7 +135,7 @@ pub struct AnySchema {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub maximum: Option<f64>,
     #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
-    pub properties: IndexMap<String, ReferenceOr<Box<Schema>>>,
+    pub properties: IndexMap<String, ReferenceOr<Schema>>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub required: Vec<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -279,49 +280,47 @@ pub enum StringFormat {
 impl Schema {
     pub fn properties(&self) -> Option<&IndexMap<String, ReferenceOr<Schema>>> {
         match &self.schema_kind {
-            SchemaKind::Type(t) => {
-                match t {
-                    Type::Object(o) => Some(&o.properties),
-
-                    _ => None,
-                }
-            }
+            SchemaKind::Type(Type::Object(o)) => Some(&o.properties),
+            SchemaKind::Any(AnySchema { properties, .. }) => Some(properties),
             _ => None,
+        }
+    }
+
+    pub fn properties_iter<'a>(&'a self, spec: &'a OpenAPI) -> Result<Box<dyn Iterator<Item=(&'a String, &'a ReferenceOr<Schema>)> + 'a>> {
+        match &self.schema_kind {
+            SchemaKind::Type(Type::Object(o)) => Ok(Box::new(o.properties.iter())),
+            SchemaKind::Any(AnySchema { properties, .. }) => Ok(Box::new(properties.iter())),
+            SchemaKind::AllOf { all_of } => {
+                let mut vec = Vec::new();
+                for schema in all_of {
+                    let schema = schema.resolve(spec).properties_iter(spec)?;
+                    vec.extend(schema);
+                }
+                Ok(Box::new(vec.into_iter()))
+            }
+            _ => Err(anyhow!("Schema is not an object")),
         }
     }
 
     pub fn properties_mut(&mut self) -> Option<&mut IndexMap<String, ReferenceOr<Schema>>> {
         match &mut self.schema_kind {
-            SchemaKind::Type(t) => {
-                match t {
-                    Type::Object(ref mut o) => Some(&mut o.properties),
-                    _ => None,
-                }
-            }
+            SchemaKind::Type(Type::Object(ref mut o)) => Some(&mut o.properties),
+            SchemaKind::Any(AnySchema { ref mut properties, .. }) => Some(properties),
             _ => None,
         }
     }
 
     pub fn required(&self, field: &str) -> bool {
         match &self.schema_kind {
-            SchemaKind::Type(t) => {
-                match t {
-                    Type::Object(o) => o.required.iter().any(|r| r == field),
-                    _ => true,
-                }
-            }
+            SchemaKind::Type(Type::Object(o)) => o.required.iter().any(|s| s == field),
+            SchemaKind::Any(AnySchema { required, .. }) => required.iter().any(|s| s == field),
             _ => true,
         }
     }
 
     pub fn is_anonymous_object(&self) -> bool {
         match &self.schema_kind {
-            SchemaKind::Type(t) => {
-                match t {
-                    Type::Object(o) => o.properties.is_empty(),
-                    _ => false,
-                }
-            }
+            SchemaKind::Type(Type::Object(o) ) => o.properties.is_empty(),
             _ => false,
         }
     }
@@ -406,7 +405,8 @@ properties:
       $ref: "#/components/schemas/Reference"
 "##.trim();
         let s = serde_yaml::from_str::<Schema>(s).unwrap();
-        assert!(matches!(s.schema_kind, SchemaKind::Type(crate::Type::Object(_))), "Schema kind was not expected {:?}", s.schema_kind);
+        // assert!(matches!(s.schema_kind, SchemaKind::Type(crate::Type::Object(_))), "Schema kind was not expected {:?}", s.schema_kind);
+        assert!(matches!(s.schema_kind, SchemaKind::Any(crate::AnySchema{ ref properties, ..}) if properties.len() == 2), "Schema kind was not expected {:?}", s.schema_kind);
     }
 
     #[test]
