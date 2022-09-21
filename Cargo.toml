@@ -12,7 +12,7 @@ description = "Fork of openapiv3 crate. Provides additional methods to simplify 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-indexmap = {version = "1.0", features = ["serde-1"]}
+indexmap = { version = "1.0", features = ["serde-1"] }
 anyhow = "1.0.64"
 
 [dev-dependencies]
@@ -22,3 +22,7 @@ serde_yaml = "0.8"
 
 [features]
 skip_serializing_defaults = []
+
+[patch.crates-io]
+#serde = { git = "https://github.com/kurtbuilds/serde" }
+serde = { path = "../serde/serde" }

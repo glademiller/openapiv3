@@ -63,6 +63,15 @@ impl<T> ReferenceOr<T> {
             reference: r.to_owned(),
         }
     }
+    pub fn item(item: T) -> Self {
+        ReferenceOr::Item(item)
+    }
+    pub fn reference(r: &str) -> Self {
+        ReferenceOr::Reference {
+            reference: r.to_owned(),
+        }
+    }
+
     pub fn boxed_item(item: T) -> ReferenceOr<Box<T>> {
         ReferenceOr::Item(Box::new(item))
     }
@@ -245,7 +254,7 @@ impl ReferenceOr<RequestBody> {
                     .ok_or(anyhow!("{} not found in OpenAPI spec.", reference))?
                     .as_item()
                     .ok_or(anyhow!("{} is circular.", reference))
-                }
+            }
             ReferenceOr::Item(request_body) => Ok(request_body),
         }
     }

@@ -331,3 +331,15 @@ fn global_security_removed_with_override() {
         panic!("Path not found")
     }
 }
+
+#[test]
+fn test_coastal() {
+
+    let s = include_str!("../fixtures/coastalpay.yaml");
+    let api: Result<OpenAPI, serde_yaml::Error> = serde_yaml::from_str(s);
+    if let Err(ref e) = api {
+        println!("Error: {}", e);
+    }
+    let api = api.unwrap();
+    assert_eq!(api.servers.len(), 3);
+}

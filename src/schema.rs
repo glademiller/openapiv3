@@ -330,7 +330,7 @@ impl Schema {
 mod tests {
     use serde_json::json;
 
-    use crate::{AnySchema, Schema, SchemaData, SchemaKind};
+    use crate::{AnySchema, OpenAPI, Schema, SchemaData, SchemaKind};
 
     #[test]
     fn test_schema_with_extensions() {
