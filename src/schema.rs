@@ -62,6 +62,67 @@ pub enum SchemaKind {
 }
 
 
+impl Schema {
+    pub fn new_number() -> Self {
+        Self {
+            schema_data: SchemaData::default(),
+            schema_kind: SchemaKind::Type(Type::Number(NumberType::default())),
+        }
+    }
+
+    pub fn new_object() -> Self {
+        Self {
+            schema_data: SchemaData::default(),
+            schema_kind: SchemaKind::Type(Type::Object(ObjectType::default())),
+        }
+    }
+
+    pub fn new_str_enum(values: Vec<String>) -> Self {
+        Self {
+            schema_data: SchemaData::default(),
+            schema_kind: SchemaKind::Type(Type::String(StringType {
+                enumeration: values.into_iter().map(|s| Some(s)).collect(),
+                ..StringType::default()
+            })),
+        }
+    }
+
+    pub fn new_string() -> Self {
+        Self {
+            schema_data: SchemaData::default(),
+            schema_kind: SchemaKind::Type(Type::String(StringType::default())),
+        }
+    }
+
+    pub fn new_array_ref(reference: &str) -> Self {
+        Self {
+            schema_data: SchemaData::default(),
+            schema_kind: SchemaKind::Type(Type::Array(ArrayType {
+                items: Some(ReferenceOr::schema_ref(reference)),
+                ..ArrayType::default()
+            })),
+        }
+    }
+
+    pub fn add_property(&mut self, s: &str, schema: Schema) -> Result<()> {
+        if let SchemaKind::Type(Type::Object(object_type)) = &mut self.schema_kind {
+            object_type.properties.insert(s.to_string(), ReferenceOr::Item(schema));
+            Ok(())
+        } else {
+            Err(anyhow!("Schema is not an object"))
+        }
+    }
+
+    pub fn add_property_ref(&mut self, s: &str, reference: &str) -> Result<()> {
+        if let SchemaKind::Type(Type::Object(object_type)) = &mut self.schema_kind {
+            object_type.properties.insert(s.to_string(), ReferenceOr::schema_ref(reference));
+            Ok(())
+        } else {
+            Err(anyhow!("Schema is not an object"))
+        }
+    }
+}
+
 // impl<'de> Deserialize<'de> for SchemaKind {
 //     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
 //         where
@@ -238,7 +299,7 @@ pub struct ObjectType {
     pub max_properties: Option<usize>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ArrayType {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -320,7 +381,7 @@ impl Schema {
 
     pub fn is_anonymous_object(&self) -> bool {
         match &self.schema_kind {
-            SchemaKind::Type(Type::Object(o) ) => o.properties.is_empty(),
+            SchemaKind::Type(Type::Object(o)) => o.properties.is_empty(),
             _ => false,
         }
     }

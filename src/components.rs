@@ -40,3 +40,9 @@ pub struct Components {
     #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
     pub extensions: IndexMap<String, serde_json::Value>,
 }
+
+impl Components {
+    pub fn add_schema(&mut self, s: &str, schema: Schema) {
+        self.schemas.insert(s.to_string(), ReferenceOr::Item(schema));
+    }
+}

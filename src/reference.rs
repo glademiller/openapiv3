@@ -66,9 +66,9 @@ impl<T> ReferenceOr<T> {
     pub fn item(item: T) -> Self {
         ReferenceOr::Item(item)
     }
-    pub fn reference(r: &str) -> Self {
+    pub fn schema_ref(r: &str) -> Self {
         ReferenceOr::Reference {
-            reference: r.to_owned(),
+            reference: format!("#/components/schemas/{}", r),
         }
     }
 

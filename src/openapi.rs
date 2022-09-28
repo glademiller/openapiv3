@@ -54,17 +54,17 @@ pub struct OpenAPI {
 impl OpenAPI {
     /// Iterates through all [Operation]s in this API.
     ///
-    /// The iterated items are tuples of `(&str, &str, &Operation)` containing
+    /// The iterated items are tuples of `(&str, &str, &Operation, &PathItem)` containing
     /// the path, method,  and the operation.
     ///
     /// Path items containing `$ref`s are skipped.
-    pub fn operations(&self) -> impl Iterator<Item=(&str, &str, &Operation)> {
+    pub fn operations(&self) -> impl Iterator<Item=(&str, &str, &Operation, &PathItem)> {
         self.paths
             .iter()
             .filter_map(|(path, item)| item.as_item().map(|i| (path, i)))
             .flat_map(|(path, item)| {
                 item.iter()
-                    .map(move |(method, op)| (path.as_str(), method, op))
+                    .map(move |(method, op)| (path.as_str(), method, op, item))
             })
     }
 
@@ -83,7 +83,9 @@ impl OpenAPI {
     }
 
     pub fn get_operation(&self, operation_id: &str) -> Option<&Operation> {
-        self.operations().find(|(_, _, op)| op.operation_id.as_ref().unwrap() == operation_id).map(|(_, _, op)| op)
+        self.operations()
+            .find(|(_, _, op, _)| op.operation_id.as_ref().unwrap() == operation_id)
+            .map(|(_, _, op, _)| op)
     }
 
     pub fn schemas_mut(&mut self) -> &mut IndexMap<String, ReferenceOr<Schema>> {
