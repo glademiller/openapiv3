@@ -3,7 +3,6 @@ use std::marker::PhantomData;
 use crate::*;
 use indexmap::IndexMap;
 use serde::{Deserialize, Deserializer, Serialize};
-use crate::ReferenceOr::Reference;
 
 /// Describes the operations available on a single path.
 /// A Path Item MAY be empty, due to ACL constraints.

@@ -82,10 +82,10 @@ impl OpenAPI {
         self.operations_mut().find(|(_, _, op)| op.operation_id.as_ref().unwrap() == operation_id).map(|(_, _, op)| op)
     }
 
-    pub fn get_operation(&self, operation_id: &str) -> Option<&Operation> {
+    pub fn get_operation(&self, operation_id: &str) -> Option<(&Operation, &PathItem)> {
         self.operations()
             .find(|(_, _, op, _)| op.operation_id.as_ref().unwrap() == operation_id)
-            .map(|(_, _, op, _)| op)
+            .map(|(_, _, op, item)| (op, item))
     }
 
     pub fn schemas_mut(&mut self) -> &mut IndexMap<String, ReferenceOr<Schema>> {
