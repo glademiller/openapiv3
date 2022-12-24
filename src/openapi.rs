@@ -101,4 +101,125 @@ impl OpenAPI {
             .unwrap()
             .schemas
     }
+
+    /// Merge another OpenAPI document into this one, keeping original schemas on conflict.
+    /// `a.merge(b)` will have all schemas from `a` and `b`, but keep `a` for any duplicates.
+    pub fn merge(mut self, other: OpenAPI) -> Result<Self, MergeError> {
+        merge_map(&mut self.info.extensions, other.info.extensions);
+
+        merge_vec(&mut self.servers, other.servers, |a, b| a.url == b.url);
+
+        for (path, item) in other.paths {
+            let item = item.into_item().ok_or_else(|| MergeError::new("PathItem references are not yet supported. Please opena n issue if you need this feature."))?;
+            if self.paths.paths.contains_key(&path) {
+                let self_item = self.paths.paths.get_mut(&path).unwrap().as_mut().ok_or_else(|| MergeError::new("PathItem references are not yet supported. Please open an issue if you need this feature."))?;
+                option_or(&mut self_item.get, item.get);
+                option_or(&mut self_item.put, item.put);
+                option_or(&mut self_item.post, item.post);
+                option_or(&mut self_item.delete, item.delete);
+                option_or(&mut self_item.options, item.options);
+                option_or(&mut self_item.head, item.head);
+                option_or(&mut self_item.patch, item.patch);
+                option_or(&mut self_item.trace, item.trace);
+
+                merge_vec(&mut self_item.servers, item.servers, |a, b| a.url == b.url);
+                merge_map(&mut self_item.extensions, item.extensions);
+
+                if self_item.parameters.len() != item.parameters.len() {
+                    return Err(MergeError(format!("PathItem {} parameters do not have the same length", path)));
+                }
+                for (a, b) in self_item.parameters.iter_mut().zip(item.parameters) {
+                    let a = a.as_item().ok_or_else(|| MergeError::new("Parameter references are not yet supported. Please open an issue if you need this feature."))?;
+                    let b = b.as_item().ok_or_else(|| MergeError::new("Parameter references are not yet supported. Please open an issue if you need this feature."))?;
+                    let a = a.parameter_data_ref();
+                    let b = b.parameter_data_ref();
+                    if a.name != b.name {
+                        return Err(MergeError(format!("PathItem {} parameter {} does not have the same name as {}", path, a.name, b.name)));
+                    }
+                }
+            } else {
+                self.paths.paths.insert(path, ReferenceOr::Item(item));
+            }
+        }
+
+        if self.components.is_none() {
+            self.components = other.components
+        } else if let (Some(self_components), Some(other_components)) = (&mut self.components, other.components) {
+            merge_map(&mut self_components.extensions, other_components.extensions);
+            merge_map(&mut self_components.schemas, other_components.schemas);
+            merge_map(&mut self_components.responses, other_components.responses);
+            merge_map(&mut self_components.parameters, other_components.parameters);
+            merge_map(&mut self_components.examples, other_components.examples);
+            merge_map(&mut self_components.request_bodies, other_components.request_bodies);
+            merge_map(&mut self_components.headers, other_components.headers);
+            merge_map(&mut self_components.security_schemes, other_components.security_schemes);
+            merge_map(&mut self_components.links, other_components.links);
+            merge_map(&mut self_components.callbacks, other_components.callbacks);
+        }
+
+        if self.security.is_none() {
+            self.security = other.security;
+        } else if let (Some(self_security), Some(other_security)) = (&mut self.security, other.security) {
+            merge_vec(self_security, other_security, |a, b| {
+                if a.len() != b.len() {
+                    return false;
+                }
+                a.iter().all(|(a, _)| b.contains_key(a))
+            });
+        }
+
+        merge_vec(&mut self.tags, other.tags, |a, b| a.name == b.name);
+
+        match self.external_docs.as_mut() {
+            Some(ext) => {
+                if let Some(other) = other.external_docs {
+                    merge_map(&mut ext.extensions, other.extensions)
+                }
+            },
+            None => self.external_docs = other.external_docs
+        }
+
+        merge_map(&mut self.extensions, other.extensions);
+        Ok(self)
+    }
+
+    /// Merge another OpenAPI document into this one, replacing any duplicate schemas.
+    /// `a.merge_overwrite(b)` will have all schemas from `a` and `b`, but keep `b` for any duplicates.
+    pub fn merge_overwrite(self, other: OpenAPI) -> Result<Self, MergeError> {
+        other.merge(self)
+    }
+}
+
+
+fn merge_vec<T>(original: &mut Vec<T>, mut other: Vec<T>, cmp: fn(&T, &T) -> bool) {
+    other.retain(|o| original.iter().any(|r| cmp(o, r)));
+    original.extend(other);
+}
+
+fn merge_map<K, V>(original: &mut IndexMap<K, V>, mut other: IndexMap<K, V>) where K: Eq + std::hash::Hash {
+    other.retain(|k, _| original.contains_key(k));
+    original.extend(other);
+}
+
+fn option_or<T>(original: &mut Option<T>, other: Option<T>) {
+    if original.is_none() {
+        *original = other;
+    }
+}
+
+#[derive(Debug)]
+pub struct MergeError(String);
+
+impl MergeError {
+    pub fn new(msg: &str) -> Self {
+        MergeError(msg.to_string())
+    }
+}
+
+impl std::error::Error for MergeError {}
+
+impl std::fmt::Display for MergeError {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
 }

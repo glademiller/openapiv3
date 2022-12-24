@@ -138,6 +138,27 @@ pub struct Paths {
     pub extensions: IndexMap<String, serde_json::Value>,
 }
 
+pub enum PathMethod {
+    Get,
+    Put,
+    Post,
+    Delete,
+    Patch,
+}
+
+impl PathMethod {
+    pub fn from_str(s: &str) -> Self {
+        match s {
+            "get" => Self::Get,
+            "put" => Self::Put,
+            "post" => Self::Post,
+            "delete" => Self::Delete,
+            "patch" => Self::Patch,
+            _ => panic!("Unknown path method: {}", s),
+        }
+    }
+}
+
 impl Paths {
     /// Iterate over path items.
     pub fn iter(&self) -> indexmap::map::Iter<String, ReferenceOr<PathItem>> {
@@ -148,8 +169,27 @@ impl Paths {
         self.paths.iter_mut()
     }
 
-    pub fn insert(&mut self, key: String, value: PathItem) -> Option<ReferenceOr<PathItem>> {
-        self.paths.insert(key, ReferenceOr::Item(value))
+    pub fn insert(&mut self, key: String, path_item: PathItem) -> Option<ReferenceOr<PathItem>> {
+        self.paths.insert(key, ReferenceOr::Item(path_item))
+    }
+
+    pub fn insert_operation(&mut self, path: String, method: PathMethod, operation: Operation) -> Option<Operation> {
+        let path_item = self.paths.get_mut(&path);
+        let path_item = match path_item {
+            None => {
+                let path_item = PathItem::default();
+                self.paths.insert(path.clone(), ReferenceOr::Item(path_item));
+                self.paths.get_mut(&path).unwrap().as_mut().unwrap()
+            }
+            Some(x) => x.as_mut().unwrap(),
+        };
+        match method {
+            PathMethod::Get => path_item.get.replace(operation),
+            PathMethod::Put => path_item.put.replace(operation),
+            PathMethod::Post => path_item.post.replace(operation),
+            PathMethod::Delete => path_item.delete.replace(operation),
+            PathMethod::Patch => path_item.patch.replace(operation),
+        }
     }
 }
 

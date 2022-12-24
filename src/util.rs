@@ -7,6 +7,11 @@ use serde::{
     Deserialize, Deserializer,
 };
 
+/// Use this as a serde skip_serializing_if attribute to skip serializing `false` values:
+/// struct Foo {
+///     #[serde(default, skip_serializing_if = "is_false")]
+///     pub my_optional_property: bool,
+/// }
 #[allow(clippy::trivially_copy_pass_by_ref)] // needs to match signature for use in serde attribute
 #[inline]
 pub const fn is_false(v: &bool) -> bool {

@@ -70,6 +70,19 @@ impl Schema {
         }
     }
 
+    pub fn new_integer() -> Self {
+        Self {
+            schema_data: SchemaData::default(),
+            schema_kind: SchemaKind::Type(Type::Integer(IntegerType::default())),
+        }
+    }
+
+    pub fn new_bool() -> Self {
+        Self {
+            schema_data: SchemaData::default(),
+            schema_kind: SchemaKind::Type(Type::Boolean {}),
+        }
+    }
     pub fn new_object() -> Self {
         Self {
             schema_data: SchemaData::default(),
@@ -91,6 +104,33 @@ impl Schema {
         Self {
             schema_data: SchemaData::default(),
             schema_kind: SchemaKind::Type(Type::String(StringType::default())),
+        }
+    }
+
+    pub fn new_any_object() -> Self {
+        Self {
+            schema_data: SchemaData::default(),
+            schema_kind: SchemaKind::Type(Type::Object(ObjectType {
+                additional_properties: Some(AdditionalProperties::Any(true)),
+                ..ObjectType::default()
+            })),
+        }
+    }
+
+    pub fn new_any_array() -> Self {
+        Self {
+            schema_data: SchemaData::default(),
+            schema_kind: SchemaKind::Type(Type::Array(ArrayType::default()))
+        }
+    }
+
+    pub fn new_array(inner: Schema) -> Self {
+        Self {
+            schema_data: SchemaData::default(),
+            schema_kind: SchemaKind::Type(Type::Array(ArrayType {
+                items: Some(ReferenceOr::boxed_item(inner)),
+                ..ArrayType::default()
+            }))
         }
     }
 
@@ -376,6 +416,30 @@ impl Schema {
             SchemaKind::Type(Type::Object(o)) => o.required.iter().any(|s| s == field),
             SchemaKind::Any(AnySchema { required, .. }) => required.iter().any(|s| s == field),
             _ => true,
+        }
+    }
+
+    pub fn set_required(&mut self, field: &str, is_required: bool) {
+        match &mut self.schema_kind {
+            SchemaKind::Type(Type::Object(ref mut o)) => {
+                if is_required {
+                    if !o.required.iter().any(|s| s == field) {
+                        o.required.push(field.to_string());
+                    }
+                } else {
+                    o.required.retain(|s| s != field);
+                }
+            },
+            SchemaKind::Any(AnySchema { ref mut required, .. }) => {
+                if is_required {
+                    if !required.iter().any(|s| s == field) {
+                        required.push(field.to_string());
+                    }
+                } else {
+                    required.retain(|s| s != field);
+                }
+            },
+            _ => {},
         }
     }
 

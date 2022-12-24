@@ -42,7 +42,7 @@ pub struct Components {
 }
 
 impl Components {
-    pub fn add_schema(&mut self, s: &str, schema: Schema) {
-        self.schemas.insert(s.to_string(), ReferenceOr::Item(schema));
+    pub fn add_schema(&mut self, s: &str, schema: Schema) -> Option<ReferenceOr<Schema>> {
+        self.schemas.insert(s.to_string(), ReferenceOr::Item(schema))
     }
 }
