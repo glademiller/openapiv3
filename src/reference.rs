@@ -72,6 +72,13 @@ impl<T> ReferenceOr<T> {
         }
     }
 
+    pub fn boxed(self) -> ReferenceOr<Box<T>> {
+        match self {
+            ReferenceOr::Reference { reference } => ReferenceOr::Reference{ reference },
+            ReferenceOr::Item(i) => ReferenceOr::Item(Box::new(i))
+        }
+    }
+
     pub fn boxed_item(item: T) -> ReferenceOr<Box<T>> {
         ReferenceOr::Item(Box::new(item))
     }
