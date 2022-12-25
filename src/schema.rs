@@ -2,6 +2,7 @@ use crate::*;
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 use anyhow::{anyhow, Result};
+use serde_json::Value;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
@@ -160,6 +161,21 @@ impl Schema {
         } else {
             Err(anyhow!("Schema is not an object"))
         }
+    }
+
+    pub fn with_format(mut self, format: &str) -> Self {
+        match &mut self.schema_kind {
+            SchemaKind::Type(Type::String(ref mut s)) => {
+                s.format = serde_json::from_value(Value::String(format.to_string())).unwrap();
+            }
+            SchemaKind::OneOf { .. } => {}
+            SchemaKind::AllOf { .. } => {}
+            SchemaKind::AnyOf { .. } => {}
+            SchemaKind::Not { .. } => {}
+            SchemaKind::Any(_) => {}
+            _ => {}
+        }
+        self
     }
 }
 
@@ -453,6 +469,7 @@ impl Schema {
 
 #[cfg(test)]
 mod tests {
+    use assert_matches::assert_matches;
     use serde_json::json;
 
     use crate::{AnySchema, OpenAPI, Schema, SchemaData, SchemaKind};
@@ -550,6 +567,19 @@ allOf:
             }
             _ => panic!("Schema kind was not expected {:?}", s.schema_kind)
         }
+    }
+
+    #[test]
+    fn test_with_format() {
+        use crate::variant_or::VariantOrUnknownOrEmpty;
+        let s = Schema::new_string().with_format("date-time");
+        let SchemaKind::Type(crate::Type::String(s)) = s.schema_kind else { panic!() };
+        assert_matches!(s.format, VariantOrUnknownOrEmpty::Item(crate::StringFormat::DateTime));
+
+        let s = Schema::new_string().with_format("uuid");
+        let SchemaKind::Type(crate::Type::String(s)) = s.schema_kind else { panic!() };
+        assert_matches!(s.format, VariantOrUnknownOrEmpty::Unknown(s) if s == "uuid");
+
     }
 }
 
