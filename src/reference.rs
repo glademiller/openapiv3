@@ -261,6 +261,12 @@ impl ReferenceOr<RequestBody> {
 }
 
 
+impl<T: Default> Default for ReferenceOr<T> {
+    fn default() -> Self {
+        ReferenceOr::Item(T::default())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
