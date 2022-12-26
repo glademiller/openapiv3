@@ -1,7 +1,16 @@
+[Crate](https://crates.io/crates/openapiv3-extended) | [Github](https://github.com/kurtbuilds/openapiv3-extended)
+
 > **NOTE**: This is a fork of https://github.com/glademiller/openapiv3. It includes many methods to modify and create 
 > specs, in addition to de/serializing them.
 
 # Installation
+
+```toml
+[dependencies]
+openapiv3-extended = "1"
+```
+
+Note that the library name is still `openapiv3`, despite the package name being `openapiv3-extended`
 
 # OpenAPI v3 ![example workflow](https://github.com/glademiller/openapiv3/actions/workflows/rust.yml/badge.svg)
 
