@@ -24,7 +24,3 @@ serde_yaml = "0.8"
 
 [features]
 skip_serializing_defaults = []
-
-[patch.crates-io]
-#serde = { git = "https://github.com/kurtbuilds/serde" }
-serde = { path = "../serde/serde" }
