@@ -1,3 +1,8 @@
+> **NOTE**: This is a fork of https://github.com/glademiller/openapiv3. It includes many methods to modify and create 
+> specs, in addition to de/serializing them.
+
+# Installation
+
 # OpenAPI v3 ![example workflow](https://github.com/glademiller/openapiv3/actions/workflows/rust.yml/badge.svg)
 
 
