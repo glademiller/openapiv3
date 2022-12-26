@@ -1,4 +1,5 @@
 set dotenv-load := true
+set positional-arguments
 
 help:
     @just --list --unsorted
