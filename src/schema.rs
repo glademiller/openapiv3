@@ -179,41 +179,6 @@ impl Schema {
     }
 }
 
-// impl<'de> Deserialize<'de> for SchemaKind {
-//     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-//         where
-//             D: Deserializer<'de>,
-//     {
-//         let mut map = serde_json::Map::deserialize(deserializer)?;
-//         println!("mapf: {:?}", map.keys().collect::<Vec<&String>>());
-//         if let Some(one_of) = map.remove("oneOf") {
-//             let one_of = serde_json::from_value(one_of).map_err(serde::de::Error::custom)?;
-//             Ok(SchemaKind::OneOf { one_of })
-//         } else if let Some(all_of) = map.remove("allOf") {
-//             let all_of = serde_json::from_value(all_of).map_err(serde::de::Error::custom)?;
-//             Ok(SchemaKind::AllOf { all_of })
-//         } else if let Some(any_of) = map.remove("anyOf") {
-//             let any_of = serde_json::from_value(any_of).map_err(serde::de::Error::custom)?;
-//             Ok(SchemaKind::AnyOf { any_of })
-//         } else if let Some(not) = map.remove("not") {
-//             let not = serde_json::from_value(not).map_err(serde::de::Error::custom)?;
-//             Ok(SchemaKind::Not { not })
-//         } else if map.contains_key("type") {
-//             println!("found a type: {:?}", map);
-//             let typ = serde_json::from_value(serde_json::Value::Object(map)).map_err(serde::de::Error::custom)?;
-//             Ok(SchemaKind::Type(typ))
-//         } else if map.contains_key("properties") {
-//             let assumed_object = serde_json::Value::Object(map);
-//             let object = serde_json::from_value(assumed_object).map_err(serde::de::Error::custom)?;
-//             Ok(SchemaKind::Type(Type::Object(object)))
-//         } else {
-//             let assumed_object = serde_json::Value::Object(map);
-//             let object = serde_json::from_value(assumed_object).map_err(serde::de::Error::custom)?;
-//             Ok(SchemaKind::Any(object))
-//         }
-//     }
-// }
-
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(tag = "type", rename_all = "lowercase")]
 pub enum Type {

@@ -2,7 +2,7 @@ use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
 use crate::{OpenAPI, Parameter, RequestBody, Response, Schema};
 
-/// Represents a reference to an OpenAPI Schema. This should probably be moved to openapiv3-extended
+/// A structured enum of an OpenAPI reference.
 /// e.g. #/components/schemas/Account or #/components/schemas/Account/properties/name
 pub enum SchemaReference {
     Schema {
@@ -120,7 +120,6 @@ impl<T> ReferenceOr<T> {
     /// let j: ReferenceOr<u8> = ReferenceOr::Reference { reference: String::new() };
     /// assert_eq!(j.as_item(), None);
     /// ```
-    // TODO i believe this should be called as_ref() ?
     pub fn as_item(&self) -> Option<&T> {
         match self {
             ReferenceOr::Reference { .. } => None,
