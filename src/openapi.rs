@@ -2,7 +2,7 @@ use crate::*;
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct OpenAPI {
     /// REQUIRED. This string MUST be the semantic version number of the
     /// OpenAPI Specification version that the OpenAPI document uses.
@@ -190,6 +190,22 @@ impl OpenAPI {
     }
 }
 
+impl Default for OpenAPI {
+    fn default() -> Self {
+        // 3.1 is a backwards incompatible change that we don't support yet.
+        OpenAPI {
+            openapi: "3.0.3".to_string(),
+            info: Default::default(),
+            servers: vec![],
+            paths: Default::default(),
+            components: None,
+            security: None,
+            tags: vec![],
+            external_docs: None,
+            extensions: Default::default(),
+        }
+    }
+}
 
 fn merge_vec<T>(original: &mut Vec<T>, mut other: Vec<T>, cmp: fn(&T, &T) -> bool) {
     other.retain(|o| original.iter().any(|r| cmp(o, r)));
