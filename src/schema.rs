@@ -177,6 +177,15 @@ impl Schema {
         }
         self
     }
+
+    pub fn is_empty(&self) -> bool {
+        match &self.schema_kind {
+            SchemaKind::Type(Type::Object(o)) => {
+                o.properties.is_empty() && o.additional_properties.is_none()
+            }
+            _ => false,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]

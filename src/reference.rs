@@ -183,6 +183,10 @@ impl ReferenceOr<Schema> {
             ReferenceOr::Item(schema) => schema,
         }
     }
+
+    pub fn is_empty(&self) -> bool {
+        self.as_item().map(|s| s.is_empty()).unwrap_or(false)
+    }
 }
 
 impl ReferenceOr<Box<Schema>> {
