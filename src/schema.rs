@@ -95,7 +95,7 @@ impl Schema {
         Self {
             schema_data: SchemaData::default(),
             schema_kind: SchemaKind::Type(Type::String(StringType {
-                enumeration: values.into_iter().map(|s| Some(s)).collect(),
+                enumeration: values.into_iter().map(|s| s).collect(),
                 ..StringType::default()
             })),
         }
@@ -269,7 +269,7 @@ pub struct StringType {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub pattern: Option<String>,
     #[serde(rename = "enum", default, skip_serializing_if = "Vec::is_empty")]
-    pub enumeration: Vec<Option<String>>,
+    pub enumeration: Vec<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub min_length: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -446,7 +446,7 @@ mod tests {
     use assert_matches::assert_matches;
     use serde_json::json;
 
-    use crate::{AnySchema, OpenAPI, Schema, SchemaData, SchemaKind};
+    use crate::{AnySchema, Schema, SchemaData, SchemaKind};
 
     #[test]
     fn test_schema_with_extensions() {
