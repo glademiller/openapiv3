@@ -7,10 +7,11 @@
 
 ```toml
 [dependencies]
-openapiv3-extended = "1"
+# Note that the library name is still `openapiv3`, despite the package name being `openapiv3-extended`
+openapiv3-extended = "..."
+# This declaration is equivalent, and is more explicit about the package name.
+openapiv3 = { version = "...", package="openapiv3-extended" }
 ```
-
-Note that the library name is still `openapiv3`, despite the package name being `openapiv3-extended`
 
 # OpenAPI v3 ![example workflow](https://github.com/glademiller/openapiv3/actions/workflows/rust.yml/badge.svg)
 
