@@ -5,10 +5,18 @@
 
 # Installation
 
+You can declare it directly:
+
 ```toml
 [dependencies]
-# Note that the library name is still `openapiv3`, despite the package name being `openapiv3-extended`
+# Note that it's still imported as `use openapiv3::{...}`, despite the crate name being `openapiv3-extended`
 openapiv3-extended = "..."
+```
+
+Or you can declare it while explicitly naming the imported package.
+
+```toml
+[dependencies]
 # This declaration is equivalent, and is more explicit about the package name.
 openapiv3 = { version = "...", package="openapiv3-extended" }
 ```
