@@ -55,3 +55,4 @@ pub use self::status_code::*;
 pub use self::tag::*;
 pub use self::util::*;
 pub use self::variant_or::*;
+pub use http::method::Method as PathMethod;
