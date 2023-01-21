@@ -88,6 +88,10 @@ impl OpenAPI {
             .map(|(_, _, op, item)| (op, item))
     }
 
+    pub fn components_mut(&mut self) -> &mut Components {
+        self.components.as_mut().unwrap()
+    }
+
     pub fn schemas_mut(&mut self) -> &mut IndexMap<String, ReferenceOr<Schema>> {
         &mut self.components
             .as_mut()
@@ -103,14 +107,12 @@ impl OpenAPI {
     }
 
     pub fn clean(&mut self) {
-        for (c, schema) in self.schemas_mut() {
+        for (_c, schema) in self.schemas_mut() {
             let ReferenceOr::Item(schema) = schema else {
                 continue;
             };
             match &mut schema.schema_kind {
                 SchemaKind::Type(Type::String(StringType {
-                                                  format,
-                                                  pattern,
                                                   enumeration,
                                                   ..
                                               })) => {
@@ -222,7 +224,7 @@ impl Default for OpenAPI {
             info: Default::default(),
             servers: vec![],
             paths: Default::default(),
-            components: None,
+            components: Some(Default::default()),
             security: None,
             tags: vec![],
             external_docs: None,
