@@ -102,6 +102,30 @@ impl OpenAPI {
             .schemas
     }
 
+    pub fn clean(&mut self) {
+        for (c, schema) in self.schemas_mut() {
+            let ReferenceOr::Item(schema) = schema else {
+                continue;
+            };
+            match &mut schema.schema_kind {
+                SchemaKind::Type(Type::String(StringType {
+                                                  format,
+                                                  pattern,
+                                                  enumeration,
+                                                  ..
+                                              })) => {
+                    enumeration.sort();
+                }
+                SchemaKind::OneOf { .. } => {}
+                SchemaKind::AllOf { .. } => {}
+                SchemaKind::AnyOf { .. } => {}
+                SchemaKind::Not { .. } => {}
+                SchemaKind::Any(_) => {}
+                _ => {}
+            }
+        }
+    }
+
     /// Merge another OpenAPI document into this one, keeping original schemas on conflict.
     /// `a.merge(b)` will have all schemas from `a` and `b`, but keep `a` for any duplicates.
     pub fn merge(mut self, other: OpenAPI) -> Result<Self, MergeError> {
@@ -175,7 +199,7 @@ impl OpenAPI {
                 if let Some(other) = other.external_docs {
                     merge_map(&mut ext.extensions, other.extensions)
                 }
-            },
+            }
             None => self.external_docs = other.external_docs
         }
 
@@ -208,12 +232,12 @@ impl Default for OpenAPI {
 }
 
 fn merge_vec<T>(original: &mut Vec<T>, mut other: Vec<T>, cmp: fn(&T, &T) -> bool) {
-    other.retain(|o| original.iter().any(|r| cmp(o, r)));
+    other.retain(|o| !original.iter().any(|r| cmp(o, r)));
     original.extend(other);
 }
 
 fn merge_map<K, V>(original: &mut IndexMap<K, V>, mut other: IndexMap<K, V>) where K: Eq + std::hash::Hash {
-    other.retain(|k, _| original.contains_key(k));
+    other.retain(|k, _| !original.contains_key(k));
     original.extend(other);
 }
 
@@ -237,5 +261,27 @@ impl std::error::Error for MergeError {}
 impl std::fmt::Display for MergeError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{}", self.0)
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_merge_basic() {
+        let mut a = OpenAPI::default();
+        a.servers.push(Server {
+            url: "http://localhost".to_string(),
+            ..Server::default()
+        });
+        let mut b = OpenAPI::default();
+        b.servers.push(Server {
+            url: "http://localhost".to_string(),
+            ..Server::default()
+        });
+        a = a.merge(b).unwrap();
+        assert_eq!(a.servers.len(), 1);
     }
 }
