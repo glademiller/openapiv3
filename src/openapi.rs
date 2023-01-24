@@ -214,6 +214,10 @@ impl OpenAPI {
     pub fn merge_overwrite(self, other: OpenAPI) -> Result<Self, MergeError> {
         other.merge(self)
     }
+
+    pub fn add_schema(&mut self, name: &str, schema: Schema) {
+        self.schemas_mut().insert(name.to_string(), ReferenceOr::Item(schema));
+    }
 }
 
 impl Default for OpenAPI {
