@@ -69,6 +69,10 @@ pub struct Operation {
     /// Inline extensions to this object.
     #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
     pub extensions: IndexMap<String, serde_json::Value>,
+    /// Callbacks are often defined inside the `Operation` of a `PathItem`.
+    /// See also: [`crate::Callback`]
+    #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
+    pub callbacks: IndexMap<String, ReferenceOr<Callback>>,
 }
 
 #[cfg(test)]
