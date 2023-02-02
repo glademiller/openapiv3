@@ -17,10 +17,7 @@ pub enum VariantOrUnknownOrEmpty<T> {
 
 impl<T> VariantOrUnknownOrEmpty<T> {
     pub fn is_empty(&self) -> bool {
-        match self {
-            VariantOrUnknownOrEmpty::Empty => true,
-            _ => false,
-        }
+        matches!(self, VariantOrUnknownOrEmpty::Empty)
     }
 }
 
