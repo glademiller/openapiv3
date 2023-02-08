@@ -173,15 +173,15 @@ pub struct IntegerType {
     #[serde(default, skip_serializing_if = "VariantOrUnknownOrEmpty::is_empty")]
     pub format: VariantOrUnknownOrEmpty<IntegerFormat>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub multiple_of: Option<i64>,
+    pub multiple_of: Option<i128>,
     #[serde(default, skip_serializing_if = "is_false")]
     pub exclusive_minimum: bool,
     #[serde(default, skip_serializing_if = "is_false")]
     pub exclusive_maximum: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub minimum: Option<i64>,
+    pub minimum: Option<i128>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub maximum: Option<i64>,
+    pub maximum: Option<i128>,
     #[serde(rename = "enum", default, skip_serializing_if = "Vec::is_empty")]
     pub enumeration: Vec<Option<i64>>,
 }
