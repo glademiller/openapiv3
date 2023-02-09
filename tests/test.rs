@@ -213,7 +213,7 @@ fn petstore_discriminated() {
                                         },
                                         schema_kind: SchemaKind::Type(Type::Integer(IntegerType {
                                             format: VariantOrUnknownOrEmpty::Item(IntegerFormat::Int32),
-                                            minimum: Some(0),
+                                            minimum: Some(MaybeSignedU64::Unsigned(0)),
                                             ..Default::default()
                                         })),
                                     }),

@@ -173,17 +173,17 @@ pub struct IntegerType {
     #[serde(default, skip_serializing_if = "VariantOrUnknownOrEmpty::is_empty")]
     pub format: VariantOrUnknownOrEmpty<IntegerFormat>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub multiple_of: Option<i64>,
+    pub multiple_of: Option<MaybeSignedU64>,
     #[serde(default, skip_serializing_if = "is_false")]
     pub exclusive_minimum: bool,
     #[serde(default, skip_serializing_if = "is_false")]
     pub exclusive_maximum: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub minimum: Option<i64>,
+    pub minimum: Option<MaybeSignedU64>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub maximum: Option<i64>,
+    pub maximum: Option<MaybeSignedU64>,
     #[serde(rename = "enum", default, skip_serializing_if = "Vec::is_empty")]
-    pub enumeration: Vec<Option<i64>>,
+    pub enumeration: Vec<Option<MaybeSignedU64>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
@@ -239,6 +239,13 @@ pub enum StringFormat {
     Binary,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(untagged)]
+pub enum MaybeSignedU64 {
+    Unsigned(u64),
+    Signed(i64),
+}
+
 #[cfg(test)]
 mod tests {
     use serde_json::json;
@@ -258,6 +265,53 @@ mod tests {
         assert_eq!(
             schema.schema_data.extensions.get("x-foo"),
             Some(&json!("bar"))
+        );
+    }
+
+    #[test]
+    fn test_schema_integer_boundries() {
+        // It's fine to have minimum resolved to another variant and maximum resolved to another
+        // variant, the user of the generated structure should deal with this, this is fine from
+        // the Json deserialization point of view.
+        let schema = serde_json::from_str::<Schema>(
+            r#"{
+                "type": "integer",
+                "minimum": -1,
+                "maximum": 18446744073709551615
+            }"#,
+        )
+        .unwrap();
+
+        assert_eq!(
+            matches!(
+                &schema.schema_kind,
+                SchemaKind::Type(crate::Type::Integer(crate::IntegerType {
+                    minimum: Some(crate::MaybeSignedU64::Signed(-1)),
+                    maximum: Some(crate::MaybeSignedU64::Unsigned(18446744073709551615)),
+                    ..
+                })),
+            ),
+            true
+        );
+
+        assert_eq!(
+            matches!(&schema.schema_kind, SchemaKind::Any(AnySchema { .. }),),
+            false
+        );
+
+        // Just past the U64 limit - Should make it an Any schema
+        let schema = serde_json::from_str::<Schema>(
+            r#"{
+                "type": "integer",
+                "minimum": -1,
+                "maximum": 18446744073709551616
+            }"#,
+        )
+        .unwrap();
+
+        assert_eq!(
+            matches!(&schema.schema_kind, SchemaKind::Any(AnySchema { .. }),),
+            true
         );
     }
 
