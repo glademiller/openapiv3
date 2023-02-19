@@ -367,6 +367,20 @@ pub enum StringFormat {
     Binary,
 }
 
+impl VariantOrUnknownOrEmpty<StringFormat> {
+    pub fn as_str(&self) -> &str {
+        match self {
+            VariantOrUnknownOrEmpty::Item(StringFormat::Date) => "date",
+            VariantOrUnknownOrEmpty::Item(StringFormat::DateTime) => "date-time",
+            VariantOrUnknownOrEmpty::Item(StringFormat::Password) => "password",
+            VariantOrUnknownOrEmpty::Item(StringFormat::Byte) => "byte",
+            VariantOrUnknownOrEmpty::Item(StringFormat::Binary) => "binary",
+            VariantOrUnknownOrEmpty::Unknown(s) => s.as_str(),
+            VariantOrUnknownOrEmpty::Empty => "",
+        }
+    }
+}
+
 
 impl Schema {
     pub fn properties(&self) -> Option<&IndexMap<String, ReferenceOr<Schema>>> {
