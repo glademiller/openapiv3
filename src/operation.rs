@@ -71,9 +71,38 @@ pub struct Operation {
     pub extensions: IndexMap<String, serde_json::Value>,
 }
 
+impl Operation {
+    pub fn add_response_success_json(&mut self, schema: Option<ReferenceOr<Schema>>) {
+        self.responses.responses.insert(StatusCode::Code(200), ReferenceOr::Item({
+            let mut content = indexmap::IndexMap::new();
+            content.insert("application/json".to_string(), MediaType {
+                schema,
+                ..MediaType::default()
+            });
+            Response {
+                content,
+                ..Response::default()
+            }
+        }));
+    }
+
+    pub fn add_request_body_json(&mut self, schema: Option<ReferenceOr<Schema>>) {
+        let mut content = indexmap::IndexMap::new();
+        content.insert("application/json".to_string(), MediaType {
+            schema,
+            ..MediaType::default()
+        });
+        self.request_body = Some(ReferenceOr::Item(RequestBody {
+            content,
+            required: true,
+            ..RequestBody::default()
+        }));
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::{Operation, ReferenceOr, Responses, StatusCode};
+    use crate::{Operation, ReferenceOr, Responses, Schema, StatusCode};
     use indexmap::IndexMap;
     use serde_yaml::from_str;
 
@@ -127,5 +156,11 @@ mod tests {
             },
             from_str("{ responses: { default: { $ref: 'def' }, \"666\": { $ref: 'demo' }, 418: { $ref: 'demo' } } }").unwrap(),
         );
+    }
+
+    #[test]
+    fn test_basic() {
+        let mut op = Operation::default();
+        op.add_request_body_json(Some(ReferenceOr::Item(Schema::new_string())));
     }
 }
