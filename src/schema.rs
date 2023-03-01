@@ -145,6 +145,13 @@ impl Schema {
         }
     }
 
+    pub fn new_any() -> Self {
+        Self {
+            schema_data: SchemaData::default(),
+            schema_kind: SchemaKind::Any(AnySchema::default()),
+        }
+    }
+
     pub fn add_property(&mut self, s: &str, schema: Schema) -> Result<()> {
         if let SchemaKind::Type(Type::Object(object_type)) = &mut self.schema_kind {
             object_type.properties.insert(s.to_string(), ReferenceOr::Item(schema));

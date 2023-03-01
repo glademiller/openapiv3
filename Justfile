@@ -22,10 +22,10 @@ bootstrap:
     cargo install cargo-edit
 
 test *args:
-    cargo test {{args}}
+    cargo test --all-features {{args}}
 
 check:
-    cargo check
+    cargo check --features v2
 alias c := check
 
 fix:

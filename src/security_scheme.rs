@@ -18,6 +18,8 @@ pub enum SecurityScheme {
     },
     #[serde(rename = "http")]
     HTTP {
+        // TODO enum. Values recommended (not required) to come from
+        // https://www.iana.org/assignments/http-authschemes/http-authschemes.xhtml
         scheme: String,
         #[serde(rename = "bearerFormat")]
         bearer_format: Option<String>,

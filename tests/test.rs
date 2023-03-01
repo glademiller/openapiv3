@@ -1,5 +1,4 @@
 use indexmap::IndexMap;
-use newline_converter::dos2unix;
 use openapiv3::*;
 
 enum FileType {
@@ -138,6 +137,7 @@ macro_rules! map {
 
 #[test]
 fn petstore_discriminated() {
+    use pretty_assertions::assert_eq;
     let api = OpenAPI {
         openapi: "3.0.0".to_owned(),
         info: Info {
@@ -254,7 +254,7 @@ fn petstore_discriminated() {
         ..Default::default()
     };
     let yaml = include_str!("../fixtures/petstore-discriminated.yaml");
-    assert_eq!(serde_yaml::to_string(&api).unwrap(), dos2unix(yaml));
+    assert_eq!(serde_yaml::to_string(&api).unwrap(), yaml);
     assert_eq!(api, serde_yaml::from_str(yaml).unwrap());
 }
 
