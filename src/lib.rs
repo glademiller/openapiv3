@@ -1,3 +1,4 @@
+#![cfg_attr(docsrs, feature(doc_cfg))]
 mod callback;
 mod components;
 mod contact;
@@ -27,6 +28,7 @@ mod tag;
 mod util;
 mod variant_or;
 #[cfg(feature = "v2")]
+#[cfg_attr(docsrs, doc(cfg(feature = "v2")))]
 pub mod v2;
 mod versioned;
 

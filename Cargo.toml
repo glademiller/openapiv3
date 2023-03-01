@@ -9,6 +9,10 @@ homepage = "https://github.com/kurtbuilds/openapiv3"
 repository = "https://github.com/kurtbuilds/openapiv3"
 description = "This crate provides data structures that represent the OpenAPI v3.0.x specification easily deserializable with serde."
 
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
 [lib]
 name = "openapiv3"
 path = "src/lib.rs"

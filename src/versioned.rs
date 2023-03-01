@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 #[serde(untagged)]
 pub enum VersionedOpenAPI {
     #[cfg(feature = "v2")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "v2")))]
     V2(crate::v2::OpenAPI),
     V3(v3::OpenAPI),
 }
