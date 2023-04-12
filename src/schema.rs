@@ -430,6 +430,14 @@ impl Schema {
         }
     }
 
+    pub fn required_mut(&mut self) -> Option<&mut Vec<String>> {
+        match &mut self.schema_kind {
+            SchemaKind::Type(Type::Object(ref mut o)) => Some(&mut o.required),
+            SchemaKind::Any(AnySchema { ref mut required, .. }) => Some(required),
+            _ => None,
+        }
+    }
+
     pub fn set_required(&mut self, field: &str, is_required: bool) {
         match &mut self.schema_kind {
             SchemaKind::Type(Type::Object(ref mut o)) => {
