@@ -108,6 +108,11 @@ static TEST_CASES: &[(FileType, &str, &str)] = &[
         "stripe.yaml",
         include_str!("../fixtures/stripe.yaml"),
     ),
+    (
+        FileType::YAML,
+        "ref-with-description.yaml",
+        include_str!("../fixtures/ref-with-description.yaml"),
+    ),
 ];
 
 #[test]
@@ -254,6 +259,7 @@ fn petstore_discriminated() {
         ..Default::default()
     };
     let yaml = include_str!("../fixtures/petstore-discriminated.yaml");
+    println!("{}", serde_yaml::to_string(&api).unwrap());
     assert_eq!(serde_yaml::to_string(&api).unwrap(), dos2unix(yaml));
     assert_eq!(api, serde_yaml::from_str(yaml).unwrap());
 }
@@ -329,5 +335,39 @@ fn global_security_removed_with_override() {
         );
     } else {
         panic!("Path not found")
+    }
+}
+
+#[test]
+fn test_ref_with_description() {
+    let source = TEST_CASES
+        .iter()
+        .find(|x| x.1 == "ref-with-description.yaml")
+        .unwrap();
+    let api: OpenAPI =
+        serde_yaml::from_str(source.2).expect(&format!("Could not deserialize file {}", source.1));
+
+    match api.components.unwrap().schemas.get("Foo") {
+        Some(ReferenceOr::Item(schema)) => {
+            println!("{:#?}", schema);
+            match &schema.schema_kind {
+                SchemaKind::Type(Type::Object(ObjectType { properties, .. })) => {
+                    match properties.get("bar").unwrap() {
+                        ReferenceOr::Reference {
+                            reference,
+                            description,
+                            summary,
+                        } => {
+                            assert_eq!(reference, "#/components/schemas/Bar");
+                            assert_eq!(description, &Some("Bar description".to_string()));
+                            assert_eq!(summary, &Some("Bar summary".to_string()));
+                        }
+                        _ => panic!("Property not matched"),
+                    }
+                }
+                _ => panic!("Schema not found"),
+            }
+        }
+        _ => panic!("Schema not found"),
     }
 }

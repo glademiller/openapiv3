@@ -6,6 +6,10 @@ pub enum ReferenceOr<T> {
     Reference {
         #[serde(rename = "$ref")]
         reference: String,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        description: Option<String>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        summary: Option<String>,
     },
     Item(T),
 }
@@ -14,6 +18,8 @@ impl<T> ReferenceOr<T> {
     pub fn ref_(r: &str) -> Self {
         ReferenceOr::Reference {
             reference: r.to_owned(),
+            description: None,
+            summary: None,
         }
     }
     pub fn boxed_item(item: T) -> ReferenceOr<Box<T>> {
@@ -32,7 +38,7 @@ impl<T> ReferenceOr<T> {
     /// let i = ReferenceOr::Item(1);
     /// assert_eq!(i.into_item(), Some(1));
     ///
-    /// let j: ReferenceOr<u8> = ReferenceOr::Reference { reference: String::new() };
+    /// let j: ReferenceOr<u8> = ReferenceOr::Reference { reference: String::new(), description: None, summary: None };
     /// assert_eq!(j.into_item(), None);
     /// ```
     pub fn into_item(self) -> Option<T> {
@@ -54,7 +60,7 @@ impl<T> ReferenceOr<T> {
     /// let i = ReferenceOr::Item(1);
     /// assert_eq!(i.as_item(), Some(&1));
     ///
-    /// let j: ReferenceOr<u8> = ReferenceOr::Reference { reference: String::new() };
+    /// let j: ReferenceOr<u8> = ReferenceOr::Reference { reference: String::new(), description: None, summary: None };
     /// assert_eq!(j.as_item(), None);
     /// ```
     pub fn as_item(&self) -> Option<&T> {
@@ -68,7 +74,15 @@ impl<T> ReferenceOr<T> {
 impl<T> ReferenceOr<Box<T>> {
     pub fn unbox(self) -> ReferenceOr<T> {
         match self {
-            ReferenceOr::Reference { reference } => ReferenceOr::Reference { reference },
+            ReferenceOr::Reference {
+                reference,
+                description,
+                summary,
+            } => ReferenceOr::Reference {
+                reference,
+                description,
+                summary,
+            },
             ReferenceOr::Item(boxed) => ReferenceOr::Item(*boxed),
         }
     }
