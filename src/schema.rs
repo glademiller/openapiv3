@@ -199,6 +199,8 @@ pub struct ObjectType {
     pub min_properties: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub max_properties: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub one_of: Option<Vec<ReferenceOr<ObjectType>>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
