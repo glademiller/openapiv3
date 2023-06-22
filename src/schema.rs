@@ -27,7 +27,11 @@ pub struct SchemaData {
     pub discriminator: Option<Discriminator>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub default: Option<serde_json::Value>,
-    /// Inline extensions to this object.
+    /// All extensions must be prefixed with `x-`, see
+    /// section Specification Extensions on https://swagger.io/specification/
+    /// for more information. So you could add a custom field `name` like:
+    /// `x-name: value` rather than `name: value`
+    /// In code, the `x-` prefix remains as part of the key: `extensions.get("x-name")`
     #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]
     pub extensions: IndexMap<String, serde_json::Value>,
 }
