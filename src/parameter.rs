@@ -181,52 +181,35 @@ impl SkipSerializeIfDefault {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Default, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub enum PathStyle {
     Matrix,
     Label,
+    #[default]
     Simple,
 }
 
-impl Default for PathStyle {
-    fn default() -> Self {
-        PathStyle::Simple
-    }
-}
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Default, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub enum QueryStyle {
+    #[default]
     Form,
     SpaceDelimited,
     PipeDelimited,
     DeepObject,
 }
 
-impl Default for QueryStyle {
-    fn default() -> Self {
-        QueryStyle::Form
-    }
-}
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Default, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub enum CookieStyle {
+    #[default]
     Form,
 }
 
-impl Default for CookieStyle {
-    fn default() -> CookieStyle {
-        CookieStyle::Form
-    }
-}
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Default, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub enum HeaderStyle {
+    #[default]
     Simple,
-}
-
-impl Default for HeaderStyle {
-    fn default() -> HeaderStyle {
-        HeaderStyle::Simple
-    }
 }

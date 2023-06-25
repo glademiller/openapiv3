@@ -163,7 +163,7 @@ mod tests {
         let expected = vec![
             ("get", operation.clone()),
             ("post", operation.clone()),
-            ("delete", operation.clone()),
+            ("delete", operation),
         ];
         assert_eq!(path_item.into_iter().collect::<Vec<_>>(), expected);
     }
