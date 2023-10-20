@@ -68,7 +68,7 @@ pub enum Type {
     Integer(IntegerType),
     Object(ObjectType),
     Array(ArrayType),
-    Boolean {},
+    Boolean(BooleanType),
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -212,6 +212,13 @@ pub struct ArrayType {
     pub max_items: Option<usize>,
     #[serde(default, skip_serializing_if = "is_false")]
     pub unique_items: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct BooleanType {
+    #[serde(rename = "enum", default, skip_serializing_if = "Vec::is_empty")]
+    pub enumeration: Vec<Option<bool>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
