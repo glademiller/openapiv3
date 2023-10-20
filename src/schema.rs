@@ -223,7 +223,7 @@ pub struct BooleanType {
     pub enumeration: Vec<Option<bool>>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "lowercase")]
 pub enum NumberFormat {
     Float,
@@ -242,7 +242,7 @@ impl FromStr for NumberFormat {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "lowercase")]
 pub enum IntegerFormat {
     Int32,
@@ -261,7 +261,7 @@ impl FromStr for IntegerFormat {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "kebab-case")]
 pub enum StringFormat {
     Date,
