@@ -262,7 +262,7 @@ impl FromStr for IntegerFormat {
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
-#[serde(rename_all = "lowercase")]
+#[serde(rename_all = "kebab-case")]
 pub enum StringFormat {
     Date,
     DateTime,
