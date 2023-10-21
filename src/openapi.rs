@@ -16,8 +16,7 @@ pub struct OpenAPI {
     /// An array of Server Objects, which provide connectivity information to a
     /// target server. If the servers property is not provided, or is an empty
     /// array, the default value would be a Server Object with a url value of /.
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Vec::is_empty")]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub servers: Vec<Server>,
     /// REQUIRED. The available paths and operations for the API.
     pub paths: Paths,
@@ -30,8 +29,7 @@ pub struct OpenAPI {
     /// be satisfied to authorize a request. Individual operations can override
     /// this definition. Global security settings may be overridden on a per-path
     /// basis.
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub security: Option<Vec<SecurityRequirement>>,
     /// A list of tags used by the specification with additional metadata.
     /// The order of the tags can be used to reflect on their order by the
@@ -39,12 +37,10 @@ pub struct OpenAPI {
     /// must be declared. The tags that are not declared MAY be organized
     /// randomly or based on the tool's logic. Each tag name in the list
     /// MUST be unique.
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Vec::is_empty")]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub tags: Vec<Tag>,
     /// Additional external documentation.
-    #[serde(rename = "externalDocs")]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "externalDocs", skip_serializing_if = "Option::is_none")]
     pub external_docs: Option<ExternalDocumentation>,
     /// Inline extensions to this object.
     #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]

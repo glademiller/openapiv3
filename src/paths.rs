@@ -45,8 +45,7 @@ pub struct PathItem {
     /// A unique parameter is defined by a combination of a name and location.
     /// The list can use the Reference Object to link to parameters that
     /// are defined at the OpenAPI Object's components/parameters.
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Vec::is_empty")]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub parameters: Vec<ReferenceOr<Parameter>>,
     /// Inline extensions to this object.
     #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]

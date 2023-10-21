@@ -1,3 +1,5 @@
+#![allow(clippy::expect_fun_call)]
+
 use indexmap::IndexMap;
 use newline_converter::dos2unix;
 use openapiv3::*;
@@ -286,7 +288,7 @@ fn test_operation_extension_docs() {
 #[test]
 fn global_security_removed_with_override() {
     let openapi: OpenAPI = serde_yaml::from_str(include_str!("../fixtures/adobe_aem.yaml"))
-        .expect(&format!("Could not deserialize adobe_aem.yaml"));
+        .expect("Could not deserialize adobe_aem.yaml");
 
     // Global security is set
     assert!(openapi.security.is_some());
