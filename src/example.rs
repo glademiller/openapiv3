@@ -20,8 +20,7 @@ pub struct Example {
     /// This provides the capability to reference examples that cannot
     /// easily be included in JSON or YAML documents. The `value` field and
     /// `externalValue` field are mutually exclusive.
-    #[serde(rename = "externalValue")]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "externalValue", skip_serializing_if = "Option::is_none")]
     pub external_value: Option<String>,
     /// Inline extensions to this object.
     #[serde(flatten, deserialize_with = "crate::util::deserialize_extensions")]

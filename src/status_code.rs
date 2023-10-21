@@ -36,7 +36,7 @@ impl<'de> Deserialize<'de> for StatusCode {
             where
                 E: de::Error,
             {
-                if value >= 100 && value < 1000 {
+                if (100..1000).contains(&value) {
                     Ok(StatusCode::Code(value as u16))
                 } else {
                     Err(E::invalid_value(Unexpected::Signed(value), &self))
@@ -47,7 +47,7 @@ impl<'de> Deserialize<'de> for StatusCode {
             where
                 E: de::Error,
             {
-                if value >= 100 && value < 1000 {
+                if (100..1000).contains(&value) {
                     Ok(StatusCode::Code(value as u16))
                 } else {
                     Err(E::invalid_value(Unexpected::Unsigned(value), &self))

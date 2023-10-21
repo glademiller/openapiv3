@@ -9,9 +9,9 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct Components {
-    /// An object to hold reusable Security Scheme Objects.
+    /// An object to hold reusable Schema Objects.
     #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
-    pub security_schemes: IndexMap<String, ReferenceOr<SecurityScheme>>,
+    pub schemas: IndexMap<String, ReferenceOr<Schema>>,
     /// An object to hold reusable Response Objects.
     #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
     pub responses: IndexMap<String, ReferenceOr<Response>>,
@@ -27,9 +27,9 @@ pub struct Components {
     /// An object to hold reusable Header Objects.
     #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
     pub headers: IndexMap<String, ReferenceOr<Header>>,
-    /// An object to hold reusable Schema Objects.
+    /// An object to hold reusable Security Scheme Objects.
     #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
-    pub schemas: IndexMap<String, ReferenceOr<Schema>>,
+    pub security_schemes: IndexMap<String, ReferenceOr<SecurityScheme>>,
     /// An object to hold reusable Link Objects.
     #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
     pub links: IndexMap<String, ReferenceOr<Link>>,
