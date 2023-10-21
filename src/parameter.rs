@@ -60,9 +60,12 @@ pub enum ParameterSchemaOrContent {
 
 pub type Content = IndexMap<String, MediaType>;
 
+/// Describes a single operation parameter.
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 #[serde(tag = "in", rename_all = "camelCase")]
 pub enum Parameter {
+    /// Parameters that are appended to the URL. For example, in /items?id=###,
+    /// the query parameter is id.
     #[serde(rename_all = "camelCase")]
     Query {
         #[serde(flatten)]
@@ -87,6 +90,8 @@ pub enum Parameter {
         #[serde(skip_serializing_if = "Option::is_none")]
         allow_empty_value: Option<bool>,
     },
+    /// Custom headers that are expected as part of the request. Note that
+    /// RFC7230 states header names are case insensitive.
     Header {
         #[serde(flatten)]
         parameter_data: ParameterData,
@@ -97,6 +102,10 @@ pub enum Parameter {
         #[serde(default, skip_serializing_if = "SkipSerializeIfDefault::skip")]
         style: HeaderStyle,
     },
+    /// Used together with Path Templating, where the parameter value is
+    /// actually part of the operation's URL. This does not include the host or
+    /// base path of the API. For example, in /items/{itemId}, the path
+    /// parameter is itemId.
     Path {
         #[serde(flatten)]
         parameter_data: ParameterData,
@@ -107,6 +116,7 @@ pub enum Parameter {
         #[serde(default, skip_serializing_if = "SkipSerializeIfDefault::skip")]
         style: PathStyle,
     },
+    /// Used to pass a specific cookie value to the API.
     Cookie {
         #[serde(flatten)]
         parameter_data: ParameterData,
@@ -184,8 +194,11 @@ impl SkipSerializeIfDefault {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub enum PathStyle {
+    /// Path-style parameters defined by RFC6570.
     Matrix,
+    /// Label style parameters defined by RFC6570.
     Label,
+    /// Simple style parameters defined by RFC6570.
     Simple,
 }
 
@@ -197,9 +210,13 @@ impl Default for PathStyle {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub enum QueryStyle {
+    /// Form style parameters defined by RFC6570.
     Form,
+    /// Space separated array values.
     SpaceDelimited,
+    /// Pipe separated array values.
     PipeDelimited,
+    /// Provides a simple way of rendering nested objects using form parameters.
     DeepObject,
 }
 
@@ -211,6 +228,7 @@ impl Default for QueryStyle {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub enum CookieStyle {
+    /// Form style parameters defined by RFC6570.
     Form,
 }
 
@@ -222,6 +240,7 @@ impl Default for CookieStyle {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub enum HeaderStyle {
+    /// Simple style parameters defined by RFC6570.
     Simple,
 }
 

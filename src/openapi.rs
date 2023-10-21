@@ -2,6 +2,7 @@ use crate::*;
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
+/// This is the root document object of the OpenAPI document.
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct OpenAPI {
     /// REQUIRED. This string MUST be the semantic version number of the

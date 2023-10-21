@@ -19,20 +19,28 @@ pub struct PathItem {
     /// this path. CommonMark syntax MAY be used for rich text representation.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+    /// A definition of a GET operation on this path.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub get: Option<Operation>,
+    /// A definition of a PUT operation on this path.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub put: Option<Operation>,
+    /// A definition of a POST operation on this path.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub post: Option<Operation>,
+    /// A definition of a DELETE operation on this path.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub delete: Option<Operation>,
+    /// A definition of a OPTIONS operation on this path.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub options: Option<Operation>,
+    /// A definition of a HEAD operation on this path.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub head: Option<Operation>,
+    /// A definition of a PATCH operation on this path.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub patch: Option<Operation>,
+    /// A definition of a TRACE operation on this path.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trace: Option<Operation>,
     /// An alternative server array to service all operations in this path.
