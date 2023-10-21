@@ -563,7 +563,7 @@ where
     F: Fn(&serde_json::Value) -> bool,
 {
     match enumeration {
-        Some(values) => values.iter().all(check),
+        Some(values) => values.iter().all(|value| value.is_null() || check(value)),
         None => true,
     }
 }
@@ -796,7 +796,9 @@ impl FromStr for StringFormat {
 mod tests {
     use serde_json::json;
 
-    use crate::{AnySchema, Schema, SchemaData, SchemaKind};
+    use crate::{
+        AnySchema, Schema, SchemaData, SchemaKind, StringType, Type, VariantOrUnknownOrEmpty,
+    };
 
     #[test]
     fn test_schema_with_extensions() {
@@ -886,6 +888,33 @@ mod tests {
                 assert_eq!(typ.unwrap(), "object");
                 assert_eq!(properties.len(), 3);
                 assert_eq!(one_of.len(), 3);
+            }
+            _ => panic!("incorrect kind {:#?}", schema),
+        }
+    }
+
+    #[test]
+    fn test_enum_with_null() {
+        let value = json! {
+            {
+                "type": "string",
+                "nullable": true,
+                "enum": [ null, "howdy" ]
+            }
+        };
+
+        let schema = serde_json::from_value::<Schema>(value).unwrap();
+        assert!(schema.schema_data.nullable);
+
+        match schema.schema_kind {
+            SchemaKind::Type(Type::String(StringType {
+                format: VariantOrUnknownOrEmpty::Empty,
+                pattern: None,
+                enumeration,
+                min_length: None,
+                max_length: None,
+            })) => {
+                assert_eq!(enumeration, vec![None, Some("howdy".to_string())]);
             }
             _ => panic!("incorrect kind {:#?}", schema),
         }
