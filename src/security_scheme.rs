@@ -91,12 +91,10 @@ pub struct OAuth2Flows {
     /// Configuration for the OAuth Resource Owner Password flow
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub password: Option<PasswordOAuth2Flow>,
-    /// Configuration for the OAuth Client Credentials flow. Previously called
-    /// application in OpenAPI 2.0.
+    /// Configuration for the OAuth Client Credentials flow.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub client_credentials: Option<ClientCredentialsOAuth2Flow>,
-    /// Configuration for the OAuth Authorization Code flow. Previously called
-    /// accessCode in OpenAPI 2.0.
+    /// Configuration for the OAuth Authorization Code flow.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub authorization_code: Option<AuthorizationCodeOAuth2Flow>,
 

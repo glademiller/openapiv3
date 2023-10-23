@@ -4,6 +4,8 @@ use crate::*;
 use indexmap::IndexMap;
 use serde::{Deserialize, Deserializer, Serialize};
 
+/// A container for the expected responses of an operation. The container maps
+/// a HTTP response code to the expected response.
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct Responses {
     /// The documentation of responses other than the ones declared
@@ -32,6 +34,8 @@ pub struct Responses {
     pub extensions: IndexMap<String, serde_json::Value>,
 }
 
+/// Describes a single response from an API Operation, including design-time,
+/// static links to operations based on the response.
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct Response {
     /// REQUIRED. A short description of the response.

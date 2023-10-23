@@ -2,6 +2,7 @@ use crate::*;
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
+/// Describes a single request body.
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct RequestBody {
     /// A brief description of the request body.
