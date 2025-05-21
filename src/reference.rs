@@ -73,3 +73,32 @@ impl<T> ReferenceOr<Box<T>> {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use serde_json::json;
+
+    #[test]
+    fn test_bad_responses() {
+        // Note: missing the "description" field
+        let value = json!({
+            "200": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        });
+
+        match serde_json::from_value::<crate::Responses>(value) {
+            Ok(_) => unreachable!(),
+            Err(e) => assert!(
+                e.to_string().contains("missing field `description`"),
+                "unhelpful error: {e}"
+            ),
+        }
+    }
+}
