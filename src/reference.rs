@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+#[derive(Serialize, Clone, Debug, PartialEq)]
 #[serde(untagged)]
 pub enum ReferenceOr<T> {
     Reference {
@@ -8,6 +8,36 @@ pub enum ReferenceOr<T> {
         reference: String,
     },
     Item(T),
+}
+
+impl<'de, T> Deserialize<'de> for ReferenceOr<T>
+where
+    T: Deserialize<'de>,
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let value = serde_json::Value::deserialize(deserializer)?;
+
+        fn to_ref<S>(value: &serde_json::Value) -> Option<ReferenceOr<S>> {
+            let obj = value.as_object()?;
+            if obj.len() != 1 {
+                return None;
+            }
+            let ref_val = obj.get("$ref")?;
+            let reference = ref_val.as_str()?.to_string();
+            Some(ReferenceOr::Reference { reference })
+        }
+
+        if let Some(r) = to_ref(&value) {
+            Ok(r)
+        } else {
+            use serde::de::Error;
+            let item = T::deserialize(value).map_err(D::Error::custom)?;
+            Ok(Self::Item(item))
+        }
+    }
 }
 
 impl<T> ReferenceOr<T> {
