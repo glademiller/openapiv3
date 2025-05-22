@@ -10,6 +10,10 @@ pub enum ReferenceOr<T> {
     Item(T),
 }
 
+// We implement Deserialize by hand in order to provide a useful error message.
+// The derived error is typically aggravating: "data did not match any variant
+// of untagged enum ReferenceOr". Instead, we deserialize to a Value, look for
+// $ref, and otherwise return the response from T::deserialize.
 impl<'de, T> Deserialize<'de> for ReferenceOr<T>
 where
     T: Deserialize<'de>,
