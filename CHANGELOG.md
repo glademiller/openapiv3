@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.0 (2025-05-22)
+
+- Improve deserialization error messages from `ReferenceOr`
+- Fix OAuth structure field visibility
+
 ## 2.0.0 (2023-12-08)
 
 - Add additional documentation
