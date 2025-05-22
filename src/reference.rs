@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+#[derive(Serialize, Clone, Debug, PartialEq)]
 #[serde(untagged)]
 pub enum ReferenceOr<T> {
     Reference {
@@ -8,6 +8,40 @@ pub enum ReferenceOr<T> {
         reference: String,
     },
     Item(T),
+}
+
+// We implement Deserialize by hand in order to provide a useful error message.
+// The derived error is typically aggravating: "data did not match any variant
+// of untagged enum ReferenceOr". Instead, we deserialize to a Value, look for
+// $ref, and otherwise return the response from T::deserialize.
+impl<'de, T> Deserialize<'de> for ReferenceOr<T>
+where
+    T: Deserialize<'de>,
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let value = serde_json::Value::deserialize(deserializer)?;
+
+        fn to_ref<S>(value: &serde_json::Value) -> Option<ReferenceOr<S>> {
+            let obj = value.as_object()?;
+            if obj.len() != 1 {
+                return None;
+            }
+            let ref_val = obj.get("$ref")?;
+            let reference = ref_val.as_str()?.to_string();
+            Some(ReferenceOr::Reference { reference })
+        }
+
+        if let Some(r) = to_ref(&value) {
+            Ok(r)
+        } else {
+            use serde::de::Error;
+            let item = T::deserialize(value).map_err(D::Error::custom)?;
+            Ok(Self::Item(item))
+        }
+    }
 }
 
 impl<T> ReferenceOr<T> {
@@ -70,6 +104,35 @@ impl<T> ReferenceOr<Box<T>> {
         match self {
             ReferenceOr::Reference { reference } => ReferenceOr::Reference { reference },
             ReferenceOr::Item(boxed) => ReferenceOr::Item(*boxed),
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::json;
+
+    #[test]
+    fn test_bad_responses() {
+        // Note: missing the "description" field
+        let value = json!({
+            "200": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        });
+
+        match serde_json::from_value::<crate::Responses>(value) {
+            Ok(_) => unreachable!(),
+            Err(e) => assert!(
+                e.to_string().contains("missing field `description`"),
+                "unhelpful error: {e}"
+            ),
         }
     }
 }

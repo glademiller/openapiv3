@@ -333,3 +333,22 @@ fn global_security_removed_with_override() {
         panic!("Path not found")
     }
 }
+
+/// Test that errors involving ReferenceOr are somewhat comprehensible
+#[test]
+fn test_ref_or_err() {
+    let (_, _, fitbit) = TEST_CASES
+        .iter()
+        .find(|(_, fname, _)| *fname == "fitbit.json")
+        .expect("unfit");
+
+    let unfitbit = fitbit.replace("minimum", "exclusiveMinimum");
+
+    match serde_json::from_str::<OpenAPI>(&unfitbit) {
+        Ok(_) => unreachable!("should not succeed"),
+        Err(e) => assert!(
+            e.to_string().contains("invalid type"),
+            "unhelpful error: {e}"
+        ),
+    }
+}
