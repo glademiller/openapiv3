@@ -1,6 +1,10 @@
 # Changelog
 
-## 2.1.0 (2025-05-22)
+## 2.2.0 (2025-06-02)
+
+- Fix regression in `ReferenceOr` parsing to preserve order and priority
+
+## 2.1.0 (2025-05-22) (yanked)
 
 - Improve deserialization error messages from `ReferenceOr`
 - Fix OAuth structure field visibility
