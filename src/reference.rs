@@ -178,4 +178,23 @@ mod tests {
         let props = obj.properties.keys().collect::<Vec<_>>();
         assert_eq!(props.as_slice(), ["z", "a", "b"]);
     }
+
+    #[test]
+    fn test_ref_and() {
+        // Note: missing the "description" field
+        let value = json!({
+            "description": "this is ignored",
+            "$ref": "#/foo/bar"
+        });
+
+        let ref_or_schema = serde_json::from_value::<ReferenceOr<Schema>>(value);
+
+        match ref_or_schema {
+            // Expected case
+            Ok(ReferenceOr::Reference { .. }) => (),
+
+            Ok(ReferenceOr::Item(_)) => panic!("parsed as item"),
+            Err(e) => panic!("failed to parse: {e}"),
+        }
+    }
 }
